@@ -2,6 +2,13 @@
 
 This folder is the Ruko app (hackathon problem P060) and nothing else.
 
+## Where things are (merged 20 Oct)
+
+- The app is the Ruko build copied from `C:\dev\hackathon-main` (8–10 Oct), plus the new pieces from this folder's first session. Its detailed build notes and rules are in [app/CLAUDE.md](app/CLAUDE.md); read it before changing code.
+- Documents: [docs/](docs/), with [docs/DECISIONS.md](docs/DECISIONS.md) as the source of truth, [docs/FIELD-TEST.md](docs/FIELD-TEST.md) for the 10-elder protocol, and [README.md](README.md) for the demo script.
+- Dev server: `npm --prefix app run dev -- -p 3200` (or the "ruko" launch config). Presenter mode: `npm --prefix app run demo:offline`. Tests: `npm --prefix app test`.
+- `C:\dev\hackathon-main` is the old copy: don't change it.
+
 ## Scope rules
 
 - Keep every file for this app inside this folder: code in `app/`, data in `data/`, documents in `docs/`.

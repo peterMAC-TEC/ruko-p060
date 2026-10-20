@@ -1,9 +1,10 @@
 import "server-only";
 import { z } from "zod";
+import { flags } from "../flags";
 import { geminiProvider } from "./gemini";
 import { AiError, DATA_ONLY, type AiMedia, type AiProvider } from "./provider";
 
-export const aiConfigured = () => Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_MODEL);
+export const aiConfigured = () => !flags.OFFLINE && Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_MODEL);
 
 export function getProvider(): AiProvider {
   const name = process.env.AI_PROVIDER ?? "gemini";

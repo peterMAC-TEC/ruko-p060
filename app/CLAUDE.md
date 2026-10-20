@@ -2,6 +2,8 @@
 
 Ruko ("stop" in Hindi) stops digital-arrest scams before money moves.
 
+**Since 20 Oct this app lives in `claud 2/Ruko (P060)/app`** (copied from `C:\dev\hackathon-main`, which is left as it was). The documents are one level up: every `docs/…` path below means `../docs/…`. Git is at `Ruko (P060)/`.
+
 @AGENTS.md
 
 **Read these first:**
@@ -11,7 +13,7 @@ Ruko ("stop" in Hindi) stops digital-arrest scams before money moves.
 
 - `docs/ADVANCEMENT_PROMPT_V2.md` (9 Oct): the user's v2 direction. There are three core features: Scam Radar, Money Lock and Family Shield. `docs/V2_AUDIT_AND_PLAN.md` holds the audit, the Android/iOS platform reality report and the phased plan. **Don't build anything that needs a risky permission (overlay, usage access, notification listener, accessibility) until the user approves it there.**
 
-`_old-policy-xray/` is a parked, unrelated project (P056). Never read, edit or import from it. `docs/old-problem-analysis.md` is background research only.
+`_old-policy-xray/` (P056) and `docs/old-problem-analysis.md` were not copied here; never bring them in.
 
 ## The brief, in short
 - **North star:** the share of role-played scam calls where the person stops before transferring. It's measured with 10 older adults in Bengaluru, comparing a without-Ruko baseline with with-Ruko calls, plus harmless control calls for the false-alarm rate.
@@ -58,12 +60,18 @@ Ruko ("stop" in Hindi) stops digital-arrest scams before money moves.
   - **UPI PIN + duress PIN** (`lib/pin.ts`, scrypt, 3 tries → 5-min lock shared with `/api/pin`). Practice PIN 1234; Kamala's demo safety PIN 4321. Duress → transfer held + `duress`, customer sees "processing" (`customerView`, `?view=customer`), freeze + urgent family alert.
   - **Coercion signals** (`lib/coercion.ts`, needs ≥2, capped) captured in `BankApp`; **mule intelligence** (`payeeIntel`, `/api/mules`, demo reports for rbi.verify@axis, safe.custody@ybl); **30-second pause** before the PIN when the threat is elevated+.
   - **App hardening**: CSP + headers (`next.config.ts`), CSRF origin check + rate limits (`lib/guard.ts` via `proxy.ts`), lab only on private hosts without a researcher login, salt fails closed in production, `publicUser()`, protocol fingerprint on /results (`lib/protocol.ts`).
-- [ ] Step 6: trials, Expo app, polish, demo script, backup video
+- [x] **Merge (20 Oct)**, see the last section of docs/DECISIONS.md:
+  - **AI check:** "Tell me what they said" (tap to talk in Hindi/English, or type) and "Show me a photo" on `/check`. Gemini, via `lib/ai/*` from the Last Call reuse kit, returns warning signs with evidence; `lib/signs.ts` decides (code, not the AI). `/api/check/read` stores nothing, and `/api/check` stores sign codes only.
+  - **WhatsApp fallback** on the STOP and result screens, and **plain-English family reasons**.
+  - **Presenter mode** `npm run demo:offline` (port 3300, `RUKO_OFFLINE=1`: in-memory data, no AI).
+  - **Tests:** `npm test` (all `scripts/check-*.ts`; `check-signs.ts` is new). Live AI cases: `npm run check:ai`.
+  - **Docs:** `../docs/FIELD-TEST.md` (the 10-elder protocol) and `../README.md` (the 2-minute demo script).
+- [ ] Step 6: trials, Expo app, polish, backup video
 
 Dev server: port 3200 (`npm run dev -- -p 3200`).
 
 ## Stack
-Next.js 16 (App Router), Tailwind 4, shadcn/ui, PWA, Supabase, Claude via the Anthropic API, Sarvam AI (Indian languages), ElevenLabs (English), Vapi + Twilio (real phone calls only). Expo Android comes last. Deploy on Vercel with the **petermac-tec** account only, never yaswanth528.
+Next.js 16 (App Router), Tailwind 4, shadcn/ui, PWA, Supabase, Gemini for the AI check (Claude via the Anthropic API was the earlier plan), Sarvam AI (Indian languages), ElevenLabs (English), Vapi + Twilio (real phone calls only). Expo Android comes last. Deploy on Vercel with the **petermac-tec** account only, never yaswanth528.
 
 ## Rules
 1. **Consent first.** No call interception or recording without permission. Store signals, not audio. Transcripts auto-delete.

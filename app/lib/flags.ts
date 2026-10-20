@@ -10,8 +10,9 @@ export const flags = {
   MOCK_TELEPHONY: on(process.env.MOCK_TELEPHONY, true),
   /** Call-state signals come from the on-screen signal panel instead of the phone. */
   MOCK_SIGNALS: on(process.env.MOCK_SIGNALS, true),
+  /** Presenter mode (`npm run demo:offline`): in-memory demo data and no AI, so nothing depends on the network. */
+  OFFLINE: on(process.env.RUKO_OFFLINE, false),
 };
 
-export const hasSupabase = Boolean(
-  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
-);
+export const hasSupabase =
+  !on(process.env.RUKO_OFFLINE, false) && Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);

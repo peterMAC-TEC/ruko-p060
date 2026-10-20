@@ -117,3 +117,26 @@ The user asked for Ruko to be "way more advanced", built as a top security engin
 - **Every payment now needs the UPI PIN** (practice PIN 1234). The trial's "pressed Pay" (level 6) is now "submitted with the PIN".
 - **The trial lab** is open without login only on localhost/private-network hosts.
 - **Still the user's to do:** rotate the Supabase secret key; set `RUKO_HASH_SALT` and `RUKO_BANK_SIGNING_KEY` before any deploy.
+
+## Merge with the new P060 session (20 Oct)
+A second session started P060 from scratch in `claud 2/Ruko (P060)`, with a Gemini key and code reused from the Last Call prototype (`reuse/`). The user said "merge this and hackathon main setup" and chose: **copy hackathon-main in as the base, add the new pieces, deploy from here.**
+- **Copied** `C:\dev\hackathon-main` → `app/` (code) and `docs/` (documents) on 20 Oct. The original folder is untouched. Left out: `node_modules`, `.next`, `_old-policy-xray` (the unrelated P056 project), `docs/old-problem-analysis.md`. Git starts here (the original had none).
+- **Supabase:** the paused `ruko` project (ref udwynjujhglfdhermzvm) was **restored**, not replaced: the name was taken, and the free plan allows two active projects (the other is last-call). No schema changes.
+- **Not rebuilt,** because the old build already covers them: the family circle and invite links, the role-play lab, the results page, and bank-side friction. This session's own plan for those parts was dropped.
+
+### Added in the merge (judgement calls)
+- **AI check of what they said or showed** (`/api/check/read`, `lib/ai/*`, `lib/signs.ts`). Gemini replaces the Anthropic plan, because there is a Gemini key and no Anthropic key. It uses the reuse kit's provider.
+  - **The AI only reads.** It returns warning signs (11 kinds), each with the exact words or visible text as evidence. **Code decides:** signs become the Scam Radar's answers and can raise its verdict.
+  - A STOP needs a scam's own move (arrest on a call, secrecy, pay to clear a name, safe account) plus one more sign, or any 3 signs.
+- **Fewer false alarms:** when the AI has read the words and found no sign, a lone keyword hit (e.g. "parcel" in a real delivery update) is no longer a "Be careful". This was found by the live test. Without the AI, the phone's own phrase check behaves as before. A STOP is never lowered.
+- **Free Gemini tier is the weak spot.**
+  - `gemini-3.5-flash` allows only **20 requests a day** (used up during testing on 20 Oct). The lite models are often "busy" (503) or take 15–30 s.
+  - So the app tries three models in a chain (`gemini-3.5-flash`, `gemini-3.1-flash-lite`, `gemini-flash-lite-latest`), starting the next after **8 s** (the reuse kit used 12 s).
+  - It gives up at **30 s** and falls back to the phone's own phrase check. After 5 s it shows "Still checking… Meanwhile, don't send money or share any OTP."
+  - A paid Gemini key would make checks fast and reliable, for pennies at this volume. **This needs the user's OK.**
+- **Privacy:** Ruko stores only the sign codes, never the words, the clip or the photo. On Google's free tier, Google may use what is sent to improve its products. So the field-test consent says so, and practice drills use only fictional content. A paid key would avoid this.
+- **Tap to talk** (tap, speak, tap again) instead of hold-to-talk: easier for older hands. It uses Hindi (`hi-IN`) or Indian English (`en-IN`) speech-to-text, and records a clip for the AI when the browser can't transcribe.
+- **WhatsApp fallback:** "Also send Priya a WhatsApp" (pre-filled `wa.me` link) on the STOP and result screens. Indian SMS needs DLT registration.
+- **Family alert reasons** are now plain English ("Told to keep it secret") instead of codes ("q keep secret").
+- **Presenter mode:** `npm run demo:offline` (`RUKO_OFFLINE=1`) runs everything on the laptop with in-memory demo data and no AI, so the demo never depends on the network.
+- **Tests** stay in the old build's style (`tsx` scripts) rather than the reuse kit's Vitest; `npm test` runs them all. `npm run check:ai` runs the live AI cases (they use the free quota).
