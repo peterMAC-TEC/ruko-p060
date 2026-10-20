@@ -7,6 +7,7 @@ import { activeIntents } from "@/lib/callIntent";
 import { IDENTITY_LR, QUESTION_TACTIC, TACTICS } from "@/lib/threat";
 import { lockMoney, observe, recordAction, type NewObservation } from "@/lib/threat-server";
 import { addRiskEvent, getUser, listCircle, loadPatternLibrary } from "@/lib/store";
+import { cleanSigns, reasonLabels, SIGN_IDS, withSigns } from "@/lib/signs";
 
 // The device has already shown STOP (the check runs on the device against the
 // cached library, in well under a second). This route records the result and,
@@ -31,22 +32,28 @@ const Body = z.object({
   said: z.string().max(2000).optional(),
   // How long the device took from the last answer to showing the warning.
   msToWarning: z.number().min(0).max(60_000).optional(),
+  // Warning signs the AI found in what they said or showed (/api/check/read).
+  // Only the codes are stored; the evidence stays on the device.
+  signs: z.array(z.object({ id: z.enum(SIGN_IDS), evidence: z.string().max(400) })).max(SIGN_IDS.length).optional(),
+  patternId: z.string().max(64).optional(),
 });
 
 export async function POST(request: Request) {
   const parsed = Body.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Invalid check" }, { status: 400 });
-  const { elderId, identity, answers, said, msToWarning } = parsed.data;
+  const { elderId, identity, answers, said, msToWarning, signs: rawSigns, patternId: aiPatternId } = parsed.data;
   const allowed = await canActAsElder(elderId);
   if (!allowed.ok) return deny(allowed);
 
   const [lib, elder] = await Promise.all([loadPatternLibrary(), getUser(elderId)]);
   const sensitivity: Sensitivity = elder?.sensitivity ?? "normal";
-  const result = runRadar(lib, { identity, answers, said, sensitivity });
+  // The same verdict the device showed: the radar, then (only when the AI read the words or photo) its signs.
+  const radar = runRadar(lib, { identity, answers, said, sensitivity });
+  const result = rawSigns ? withSigns(radar, cleanSigns(rawSigns), lib, aiPatternId) : radar;
   const demo = isDemoId(elderId);
   const patternId = result.pattern?.id ?? null;
   const codes = patternId ? [`pattern_${patternId}`, ...result.signals] : result.signals;
-  const reasons = codes.map((code) => ({ code, label: code.replace(/_/g, " "), points: 0, hard: false }));
+  const reasons = reasonLabels(codes, lib).map((r) => ({ ...r, points: 0, hard: false }));
   const score = result.level === "stop" ? 90 : result.level === "caution" ? 45 : 0;
 
   let familyAlerted = false;

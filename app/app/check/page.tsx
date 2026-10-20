@@ -29,7 +29,13 @@ async function Check({ searchParams }: Pick<PageProps<"/check">, "searchParams">
   const practice = isTrialAccountId(page.elderId);
   return (
     <>
-      <CheckApp elderId={page.elderId} demo={page.demo} trusted={practice ? undefined : trusted} sensitivity={elder?.sensitivity ?? "normal"} />
+      <CheckApp
+        elderId={page.elderId}
+        demo={page.demo}
+        trusted={practice ? undefined : trusted}
+        elderName={elder?.name}
+        sensitivity={elder?.sensitivity ?? "normal"}
+      />
       {practice && <PracticeHomeButton />}
     </>
   );

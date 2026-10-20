@@ -1,10 +1,11 @@
 "use client";
 
-import { ChevronDown, HelpCircle, Phone, PhoneOff, ShieldAlert } from "lucide-react";
+import { ChevronDown, HelpCircle, MessageCircle, Phone, PhoneOff, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import type { Strings, UiLang } from "@/lib/i18n";
 import type { ScamPattern } from "@/lib/patterns";
+import { waLink } from "@/lib/utils";
 
 // The STOP screen (v2 §3.5): full-screen red-amber, names the scam, states the
 // one rule being broken, and offers exactly three actions. Calm wording, no blame.
@@ -15,6 +16,7 @@ export function StopScreen({
   pattern,
   trusted,
   familyAlerted,
+  elderName,
   onHungUp,
 }: {
   t: Strings;
@@ -22,6 +24,8 @@ export function StopScreen({
   pattern: ScamPattern | null;
   trusted?: { name: string; phone: string };
   familyAlerted: boolean;
+  /** For the WhatsApp message to the trusted person. */
+  elderName?: string;
   onHungUp: () => void;
 }) {
   const [hangUpShown, setHangUpShown] = useState(false);
@@ -71,6 +75,19 @@ export function StopScreen({
             <Phone className="size-6" strokeWidth={2.4} />
             {trusted ? t.callTrusted(trusted.name.split(" ")[0]) : t.call1930}
           </a>
+
+          {trusted?.phone && (
+            // The fallback that always reaches family: no SMS registration, no app of ours on their phone.
+            <a
+              href={waLink(trusted.phone, t.whatsappText(elderName?.split(" ")[0] ?? ""))}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-[64px] items-center justify-center gap-3 rounded-2xl border-2 border-white/60 text-[20px] font-bold"
+            >
+              <MessageCircle className="size-6" strokeWidth={2.4} />
+              {t.whatsappFamily(trusted.name.split(" ")[0])}
+            </a>
+          )}
 
           <button
             onClick={() => setExplainOpen((v) => !v)}

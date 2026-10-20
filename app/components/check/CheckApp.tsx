@@ -3,9 +3,11 @@
 import {
   Banknote,
   Building2,
+  Camera,
   Check,
   HelpCircle,
   Landmark,
+  MessageCircle,
   MessageCircleWarning,
   Mic,
   Package,
@@ -27,6 +29,10 @@ import { PostCall } from "@/components/radar/PostCall";
 import { StopScreen } from "@/components/radar/StopScreen";
 import { useVerifiedCalls } from "@/components/radar/VerifiedCall";
 import { practiceEvent, usePatternLibrary } from "@/lib/client";
+import { compressImage } from "@/lib/image";
+import { SIGN_TEXT, signsToAnswers, withSigns, type Sign } from "@/lib/signs";
+import { waLink } from "@/lib/utils";
+import { useVoiceCapture } from "@/lib/voice-capture";
 import { useLang, type UiLang } from "@/lib/i18n";
 import type { Identity } from "@/lib/patterns";
 import { RADAR_QUESTIONS, runRadar, STOP_THRESHOLD, type Answer, type RadarQuestion, type RadarResult, type Sensitivity } from "@/lib/radar";
@@ -34,8 +40,15 @@ import { RADAR_QUESTIONS, runRadar, STOP_THRESHOLD, type Answer, type RadarQuest
 // Scam Radar's guided check (v2): who they claim to be, then five yes/no
 // questions. The check runs on the device against the cached pattern library,
 // so the STOP screen appears the moment the second "yes" is given, even offline.
+// Or: tell Ruko what they said (voice or typing), or show a photo. The AI
+// (/api/check/read) finds warning signs with evidence; code decides the verdict
+// (lib/signs.ts). Without the AI, the phone's own phrase check answers.
 
-type Step = { kind: "who" } | { kind: "q"; i: number } | { kind: "say" } | { kind: "result"; r: RadarResult };
+type Step = { kind: "who" } | { kind: "q"; i: number } | { kind: "say" } | { kind: "photo" } | { kind: "result"; r: RadarResult };
+type ReadReply =
+  | { ok: true; heard: string; identity: Identity; patternId: string | null; signs: Sign[] }
+  | { ok: false; reason?: string };
+type FinishExtra = { identity: Identity; signs?: Sign[]; patternId?: string | null };
 
 const IDENTITY_ICONS: Record<Identity, typeof Shield> = {
   police: Shield,
@@ -83,11 +96,13 @@ export function CheckApp({
   elderId,
   demo,
   trusted,
+  elderName,
   sensitivity = "normal",
 }: {
   elderId: string;
   demo: boolean;
   trusted?: { name: string; phone: string };
+  elderName?: string;
   sensitivity?: Sensitivity;
 }) {
   const { t, toggle, lang } = useLang();
@@ -101,8 +116,23 @@ export function CheckApp({
   const [micMissing, setMicMissing] = useState(false);
   const [stopOpen, setStopOpen] = useState(false);
   const [familyAlerted, setFamilyAlerted] = useState(false);
+  const [signs, setSigns] = useState<Sign[] | null>(null);
+  /** Who answered: the AI, the phone's own phrase check, or nobody (couldn't check). */
+  const [engine, setEngine] = useState<"ai" | "local" | "none" | null>(null);
+  const [busy, setBusy] = useState(false);
+  /** The free AI tier can take 20 s or more: after a few seconds, say what to do meanwhile. */
+  const [slow, setSlow] = useState(false);
+  const [clip, setClip] = useState<Blob | null>(null);
+  const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
   const rec = useRef<Recognition | null>(null);
   const triggeredAt = useRef(0);
+  const voice = useVoiceCapture(lang, (o) => {
+    if (o.engine === "browser") {
+      setSaid((prev) => (prev.trim() ? `${prev.trim()} ${o.transcript}` : o.transcript));
+      setClip(null);
+    } else setClip(o.audio);
+  });
+  const recording = voice.state === "listening";
 
   // Trial practice phones: note that the person opened Ruko's check.
   useEffect(() => practiceEvent(elderId, "ruko_check_opened"), [elderId]);
@@ -121,13 +151,22 @@ export function CheckApp({
 
   // Report the result once the STOP screen is actually on screen, with how long it took.
   const report = useCallback(
-    async (r: RadarResult, finalAnswers: Partial<Record<RadarQuestion, Answer>>, finalSaid: string) => {
+    async (r: RadarResult, finalAnswers: Partial<Record<RadarQuestion, Answer>>, finalSaid: string, extra: FinishExtra) => {
       const msToWarning = triggeredAt.current ? Math.round(performance.now() - triggeredAt.current) : undefined;
       try {
         const res = await fetch("/api/check", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ elderId, identity, answers: finalAnswers, said: finalSaid || undefined, msToWarning }),
+          body: JSON.stringify({
+            elderId,
+            identity: extra.identity,
+            answers: finalAnswers,
+            said: finalSaid || undefined,
+            msToWarning,
+            // Sent whenever the AI ran, even empty: "the AI read it and found nothing" matters to the verdict.
+            signs: extra.signs,
+            patternId: extra.patternId ?? undefined,
+          }),
         });
         const d = await res.json();
         if (res.ok && d.familyAlerted) setFamilyAlerted(true);
@@ -136,19 +175,72 @@ export function CheckApp({
       }
       if (r.level === "stop") speak(`${t.stopWord}. ${r.pattern?.rule[lang] ?? t.factLine}`, lang);
     },
-    [elderId, identity, lang, t],
+    [elderId, lang, t],
   );
 
-  const finish = (finalAnswers: Partial<Record<RadarQuestion, Answer>>, finalSaid: string) => {
+  const finish = (finalAnswers: Partial<Record<RadarQuestion, Answer>>, finalSaid: string, extra: FinishExtra = { identity }) => {
     triggeredAt.current = performance.now();
-    const r = runRadar(lib, { identity, answers: finalAnswers, said: finalSaid, sensitivity });
+    const radar = runRadar(lib, { identity: extra.identity, answers: finalAnswers, said: finalSaid, sensitivity });
+    const r = extra.signs ? withSigns(radar, extra.signs, lib, extra.patternId) : radar;
     setStep({ kind: "result", r });
     if (r.level === "stop") {
       setStopOpen(true);
       practiceEvent(elderId, "stop_screen_shown");
     }
     // After paint, so the timing measures what the person actually saw.
-    requestAnimationFrame(() => report(r, finalAnswers, finalSaid));
+    requestAnimationFrame(() => report(r, finalAnswers, finalSaid, extra));
+  };
+
+  // "Check this": the AI reads the words, the voice clip or the photo into signs.
+  const runCheck = async (source: "say" | "photo") => {
+    if (busy) return;
+    const form = new FormData();
+    form.append("elderId", elderId);
+    if (source === "photo") {
+      if (!photo) return;
+      form.append("image", photo.blob, "photo.jpg");
+    } else if (said.trim()) form.append("transcript", said.trim());
+    else if (clip) form.append("audio", clip, `voice.${clip.type.includes("mp4") ? "mp4" : clip.type.includes("ogg") ? "ogg" : "webm"}`);
+    else return;
+    setBusy(true);
+    const slowTimer = setTimeout(() => setSlow(true), 5000);
+    let reply: ReadReply = { ok: false, reason: "offline" };
+    try {
+      const res = await fetch("/api/check/read", { method: "POST", body: form, signal: AbortSignal.timeout(35_000) });
+      reply = await res.json();
+    } catch {
+      // Offline or too slow: handled below.
+    }
+    clearTimeout(slowTimer);
+    setSlow(false);
+    setBusy(false);
+    if (reply.ok) {
+      const who = identity !== "unknown" ? identity : reply.identity;
+      setIdentity(who);
+      setSigns(reply.signs);
+      setEngine("ai");
+      finish(signsToAnswers(reply.signs, answers), reply.heard, { identity: who, signs: reply.signs, patternId: reply.patternId });
+      return;
+    }
+    setSigns(null);
+    // The AI is busy or off: the phone's own phrase check, when there are words to check.
+    if (source === "say" && said.trim()) {
+      setEngine("local");
+      finish(answers, said);
+      return;
+    }
+    // Nothing could be checked (a photo or a clip without the AI). Never say "fine": send them to family.
+    setEngine("none");
+    setStep({ kind: "result", r: { level: "caution", yes: 0, pattern: null, signals: ["check_unavailable"] } });
+  };
+
+  const pickPhoto = async (file: File | undefined) => {
+    if (!file) return;
+    const blob = await compressImage(file);
+    setPhoto((old) => {
+      if (old) URL.revokeObjectURL(old.url);
+      return { blob, url: URL.createObjectURL(blob) };
+    });
   };
 
   const answer = (a: Answer) => {
@@ -162,7 +254,7 @@ export function CheckApp({
     else setStep({ kind: "q", i: step.i + 1 });
   };
 
-  const listen = (mode: "answer" | "say") => {
+  const listen = () => {
     const R = getRecognition();
     if (!R) {
       setMicMissing(true);
@@ -170,14 +262,13 @@ export function CheckApp({
     }
     const r = new R();
     r.lang = speechLang(lang);
-    r.interimResults = mode === "say";
-    r.continuous = mode === "say";
+    r.interimResults = false;
+    r.continuous = false;
     r.onresult = (e) => {
       const text = Array.from(e.results)
         .map((res) => res[0]?.transcript ?? "")
         .join(" ");
-      if (mode === "say") setSaid(text);
-      else if (YES.test(text)) answer("yes");
+      if (YES.test(text)) answer("yes");
       else if (NO.test(text)) answer("no");
     };
     r.onend = () => setListening(false);
@@ -188,19 +279,42 @@ export function CheckApp({
   };
 
   const restart = () => {
+    voice.stop();
     setAnswers({});
     setSaid("");
+    setClip(null);
+    setPhoto((old) => {
+      if (old) URL.revokeObjectURL(old.url);
+      return null;
+    });
+    setSigns(null);
+    setEngine(null);
     setIdentity("unknown");
     setStopOpen(false);
     setFamilyAlerted(false);
     setStep({ kind: "who" });
   };
 
+  const slowNote = slow && (
+    <p className="mb-3 rounded-2xl bg-warn-soft p-4 text-[19px] font-bold text-warn" role="status">
+      {t.stillChecking}
+    </p>
+  );
   const action =
     step.kind === "say" ? (
-      <BigButton variant="brand" onClick={() => finish(answers, said)}>
-        {t.next}
-      </BigButton>
+      <>
+        {slowNote}
+        <BigButton variant="brand" disabled={busy || recording || (!said.trim() && !clip)} onClick={() => void runCheck("say")}>
+          {busy ? t.checking : t.checkThis}
+        </BigButton>
+      </>
+    ) : step.kind === "photo" ? (
+      <>
+        {slowNote}
+        <BigButton variant="brand" disabled={busy || !photo} onClick={() => void runCheck("photo")}>
+          {busy ? t.checking : t.checkThis}
+        </BigButton>
+      </>
     ) : step.kind === "result" ? (
       <BigButton variant="secondary" onClick={restart}>
         {t.checkAgain}
@@ -241,6 +355,13 @@ export function CheckApp({
             <Mic className="size-6" strokeWidth={2.2} />
             {t.checkSay}
           </button>
+          <button
+            onClick={() => setStep({ kind: "photo" })}
+            className="-mt-2 flex min-h-14 items-center gap-3 rounded-2xl border-2 border-dashed border-calm/35 px-4 py-3 text-left leading-snug font-bold text-calm"
+          >
+            <Camera className="size-6" strokeWidth={2.2} />
+            {t.checkShow}
+          </button>
         </div>
       )}
 
@@ -273,7 +394,7 @@ export function CheckApp({
               {t.readAloud}
             </button>
             <button
-              onClick={() => (listening ? stopListening() : listen("answer"))}
+              onClick={() => (listening ? stopListening() : listen())}
               className={`flex min-h-12 items-center gap-2 rounded-full px-4 text-[16px] font-bold shadow-soft ${listening ? "bg-calm text-white" : "bg-white"}`}
             >
               <Mic className={`size-5 ${listening ? "animate-pulse" : "text-calm"}`} />
@@ -303,23 +424,69 @@ export function CheckApp({
 
       {step.kind === "say" && (
         <div className="flex flex-col gap-5">
-          <BackLink t={t} onBack={() => setStep({ kind: "who" })} />
-          <Title>{t.checkSay}</Title>
-          <button
-            onClick={() => (listening ? stopListening() : listen("say"))}
-            className={`flex min-h-20 items-center justify-center gap-3 rounded-2xl text-[21px] font-bold shadow-soft ${listening ? "bg-calm text-white" : "bg-white"}`}
-          >
-            <Mic className={`size-7 ${listening ? "animate-pulse" : "text-calm"}`} strokeWidth={2.2} />
-            {listening ? t.stopListening : t.listen}
-          </button>
-          {micMissing && <p className="text-[16px] text-ink-soft">{t.noMic}</p>}
-          <textarea
-            value={said}
-            onChange={(e) => setSaid(e.target.value)}
-            placeholder={t.typeHere}
-            rows={4}
-            className="w-full rounded-2xl border-2 border-transparent bg-white p-4 text-[20px] shadow-soft outline-none focus:border-calm"
+          <BackLink
+            t={t}
+            onBack={() => {
+              voice.stop();
+              setStep({ kind: "who" });
+            }}
           />
+          <Title sub={t.saySub}>{t.sayTitle}</Title>
+          {voice.supported ? (
+            <button
+              onClick={() => (recording ? voice.stop() : void voice.start())}
+              aria-pressed={recording}
+              className={`flex min-h-24 items-center justify-center gap-3 rounded-[28px] text-[23px] font-bold shadow-soft transition ${
+                recording ? "scale-[1.02] bg-calm text-white" : "bg-white"
+              }`}
+            >
+              <Mic className={`size-8 ${recording ? "animate-pulse" : "text-calm"}`} strokeWidth={2.2} />
+              {recording ? t.tapToFinish : t.tapToTalk}
+            </button>
+          ) : (
+            <p className="text-[17px] text-ink-soft">{t.noMic}</p>
+          )}
+          {recording && (
+            <p className="rounded-2xl bg-white p-4 text-[20px] leading-snug shadow-soft" aria-live="polite">
+              {voice.engine === "audio" ? t.recordingNote : voice.interim || t.listening}
+            </p>
+          )}
+          {clip && !said.trim() && !recording && <p className="text-[18px] font-bold text-calm">✓ {t.recorded}</p>}
+          {voice.error && <p className="text-[17px] font-bold text-warn">{t.voiceErrors[voice.error]}</p>}
+          <label className="flex flex-col gap-2">
+            <span className="text-[16px] font-bold text-ink-soft">{t.orType}</span>
+            <textarea
+              value={said}
+              onChange={(e) => setSaid(e.target.value)}
+              placeholder={t.typeHere}
+              rows={4}
+              className="w-full rounded-2xl border-2 border-transparent bg-white p-4 text-[20px] shadow-soft outline-none focus:border-calm"
+            />
+          </label>
+        </div>
+      )}
+
+      {step.kind === "photo" && (
+        <div className="flex flex-col gap-5">
+          <BackLink t={t} onBack={() => setStep({ kind: "who" })} />
+          <Title sub={t.photoSub}>{t.photoTitle}</Title>
+          {photo && (
+            // eslint-disable-next-line @next/next/no-img-element -- a local blob preview, nothing to optimise
+            <img src={photo.url} alt="" className="max-h-[40dvh] w-full rounded-2xl bg-white object-contain shadow-soft" />
+          )}
+          <label className="flex min-h-20 cursor-pointer items-center justify-center gap-3 rounded-[28px] bg-white text-[21px] font-bold shadow-soft active:scale-[0.98]">
+            <Camera className="size-7 text-calm" strokeWidth={2.2} />
+            {photo ? t.retakePhoto : t.takePhoto}
+            <input
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              onChange={(e) => {
+                void pickPhoto(e.target.files?.[0]);
+                e.target.value = "";
+              }}
+            />
+          </label>
         </div>
       )}
 
@@ -330,7 +497,9 @@ export function CheckApp({
               <h1 className="text-[28px] leading-tight font-bold tracking-tight">
                 {step.r.level === "caution" ? t.cautionTitle : t.clearTitle}
               </h1>
-              <p className="mt-2 text-[19px]">{step.r.level === "caution" ? t.cautionBody : t.clearBody}</p>
+              <p className="mt-2 text-[19px]">
+                {engine === "none" ? t.couldNotCheck : step.r.level === "caution" ? t.cautionBody : t.clearBody}
+              </p>
               {step.r.level === "caution" && step.r.pattern && (
                 <p className="mt-3 text-[18px] font-bold">{step.r.pattern.rule[lang]}</p>
               )}
@@ -344,6 +513,21 @@ export function CheckApp({
               {familyAlerted && <p className="mt-3 font-bold text-calm">✓ {t.familyTold}</p>}
             </section>
           )}
+          {signs && signs.length > 0 && (
+            <section className="rounded-[28px] bg-white p-5 shadow-soft" aria-live="polite">
+              <h2 className="text-[20px] font-bold">{t.noticed}</h2>
+              <ul className="mt-3 flex flex-col gap-4">
+                {signs.map((sg) => (
+                  <li key={sg.id}>
+                    <p className="text-[19px] leading-snug font-bold">{SIGN_TEXT[sg.id][lang]}</p>
+                    <p className="mt-1 text-[17px] leading-snug text-ink-soft">&ldquo;{sg.evidence}&rdquo;</p>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+          {engine === "ai" && signs?.length === 0 && <p className="text-[18px] text-ink-soft">{t.noticedNone}</p>}
+          {engine === "local" && <p className="text-[16px] text-ink-soft">{t.checkedOnPhone}</p>}
           {trusted && (
             <a
               href={`tel:${trusted.phone.replace(/\s/g, "")}`}
@@ -351,6 +535,17 @@ export function CheckApp({
             >
               <PhoneCall className="size-6" />
               {t.callTrusted(trusted.name.split(" ")[0])}
+            </a>
+          )}
+          {trusted && step.r.level !== "clear" && (
+            <a
+              href={waLink(trusted.phone, t.whatsappText(elderName?.split(" ")[0] ?? ""))}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex min-h-16 items-center justify-center gap-3 rounded-2xl border-2 border-calm/40 bg-white text-[19px] font-bold text-calm"
+            >
+              <MessageCircle className="size-6" />
+              {t.whatsappFamily(trusted.name.split(" ")[0])}
             </a>
           )}
           <PostCall t={t} patternId={step.r.pattern?.id} warned={step.r.level !== "clear"} />
@@ -368,6 +563,7 @@ export function CheckApp({
           pattern={step.r.pattern}
           trusted={trusted}
           familyAlerted={familyAlerted}
+          elderName={elderName}
           onHungUp={() => setTimeout(() => setStopOpen(false), 2500)}
         />
       )}
