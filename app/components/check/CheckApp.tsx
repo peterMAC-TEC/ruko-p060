@@ -122,6 +122,10 @@ export function CheckApp({
   const [busy, setBusy] = useState(false);
   /** The free AI tier can take 20 s or more: after a few seconds, say what to do meanwhile. */
   const [slow, setSlow] = useState(false);
+  /** STOP is on screen and the AI is still adding its evidence. */
+  const [aiPending, setAiPending] = useState(false);
+  /** Each check gets a number, so a late AI answer never lands on a newer check. */
+  const runId = useRef(0);
   const [clip, setClip] = useState<Blob | null>(null);
   const [photo, setPhoto] = useState<{ blob: Blob; url: string } | null>(null);
   const rec = useRef<Recognition | null>(null);
@@ -192,26 +196,52 @@ export function CheckApp({
   };
 
   // "Check this": the AI reads the words, the voice clip or the photo into signs.
+  // Free-tier AI can take 20-30 s, so the phone never makes a frightened person wait for it:
+  // when the words already match a known scam, STOP shows at once from the phone's own check
+  // and the AI's evidence arrives after; otherwise words wait at most 10 s for the AI.
+  const askAi = async (form: FormData, timeoutMs: number): Promise<ReadReply> => {
+    try {
+      const res = await fetch("/api/check/read", { method: "POST", body: form, signal: AbortSignal.timeout(timeoutMs) });
+      return await res.json();
+    } catch {
+      return { ok: false, reason: "offline" };
+    }
+  };
+
   const runCheck = async (source: "say" | "photo") => {
     if (busy) return;
     const form = new FormData();
     form.append("elderId", elderId);
+    const words = source === "say" ? said.trim() : "";
     if (source === "photo") {
       if (!photo) return;
       form.append("image", photo.blob, "photo.jpg");
-    } else if (said.trim()) form.append("transcript", said.trim());
+    } else if (words) form.append("transcript", words);
     else if (clip) form.append("audio", clip, `voice.${clip.type.includes("mp4") ? "mp4" : clip.type.includes("ogg") ? "ogg" : "webm"}`);
     else return;
-    setBusy(true);
-    const slowTimer = setTimeout(() => setSlow(true), 5000);
-    let reply: ReadReply = { ok: false, reason: "offline" };
-    try {
-      const res = await fetch("/api/check/read", { method: "POST", body: form, signal: AbortSignal.timeout(35_000) });
-      reply = await res.json();
-    } catch {
-      // Offline or too slow: handled below.
+    const run = ++runId.current;
+
+    if (words && runRadar(lib, { identity, answers, said: words, sensitivity }).level === "stop") {
+      setSigns(null);
+      setEngine("local");
+      finish(answers, words);
+      setAiPending(true);
+      const reply = await askAi(form, 35_000);
+      if (run !== runId.current) return;
+      setAiPending(false);
+      // The family was already alerted by the STOP; the AI only adds what it noticed, with the words.
+      if (reply.ok) {
+        setSigns(reply.signs);
+        setEngine("ai");
+      }
+      return;
     }
+
+    setBusy(true);
+    const slowTimer = setTimeout(() => setSlow(true), 4000);
+    const reply = await askAi(form, words ? 10_000 : 35_000);
     clearTimeout(slowTimer);
+    if (run !== runId.current) return;
     setSlow(false);
     setBusy(false);
     if (reply.ok) {
@@ -224,9 +254,9 @@ export function CheckApp({
     }
     setSigns(null);
     // The AI is busy or off: the phone's own phrase check, when there are words to check.
-    if (source === "say" && said.trim()) {
+    if (words) {
       setEngine("local");
-      finish(answers, said);
+      finish(answers, words);
       return;
     }
     // Nothing could be checked (a photo or a clip without the AI). Never say "fine": send them to family.
@@ -279,6 +309,10 @@ export function CheckApp({
   };
 
   const restart = () => {
+    runId.current++;
+    setBusy(false);
+    setSlow(false);
+    setAiPending(false);
     voice.stop();
     setAnswers({});
     setSaid("");
@@ -527,7 +561,12 @@ export function CheckApp({
             </section>
           )}
           {engine === "ai" && signs?.length === 0 && <p className="text-[18px] text-ink-soft">{t.noticedNone}</p>}
-          {engine === "local" && <p className="text-[16px] text-ink-soft">{t.checkedOnPhone}</p>}
+          {aiPending && (
+            <p className="text-[16px] text-ink-soft" role="status">
+              {t.aiDoubleChecking}
+            </p>
+          )}
+          {engine === "local" && !aiPending && <p className="text-[16px] text-ink-soft">{t.checkedOnPhone}</p>}
           {trusted && (
             <a
               href={`tel:${trusted.phone.replace(/\s/g, "")}`}

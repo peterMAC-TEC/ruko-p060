@@ -159,3 +159,9 @@ A second session started P060 from scratch in `claud 2/Ruko (P060)`, with a Gemi
   - **Rotate the Supabase secret key.** It was pasted in a chat on 8 Oct; it is still the one in use. When it changes, update `app/.env.local` and the Vercel variable.
   - **Decide on a paid Gemini key**, for fast AI checks and no free-tier data use (see above).
 - **Follow-ups:** two Supabase advisor warnings (`ruko_pin_fail` and `ruko_no_update` have a mutable search_path), from the 8–10 Oct schema.
+
+## Free-only fixes (20 Oct, the user asked for free solutions for now)
+- **No waiting on the free AI for obvious scams:** when the words already match a known scam (the phone's own phrase check says STOP), STOP shows at once (0.06 s, it was 22 s on the live link) and the family is alerted. The AI's quoted evidence is added when it arrives ("Ruko's AI is double-checking the words…"). It never alerts the family a second time.
+- **Other words wait at most 10 s** for the AI (it was 30 s), then the phone answers by itself. Photos and voice clips still need the AI (up to 35 s).
+- **Priya's screen** loads in about 0.3 s once the app is awake. The 8 s seen once was the first request after a deploy. Before a demo, open both phones a minute early, or use presenter mode.
+- **No paid Gemini key for now.** The free daily limit (20 checks on the best model) resets every day at midnight Pacific time (12:30 pm IST).
