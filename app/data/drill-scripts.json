@@ -1,0 +1,884 @@
+{
+  "version": 1,
+  "scripts": [
+    {
+      "id": "scam_digital_arrest",
+      "title_en": "Investigation officer: money-laundering case and \"digital arrest\"",
+      "title_hi": "जाँच अधिकारी: मनी लॉन्ड्रिंग केस और \"डिजिटल अरेस्ट\"",
+      "caller_name": "Officer Sethi (drill character)",
+      "caller_role": "Senior officer, Central Investigation Cell – DRILL",
+      "is_scam": true,
+      "ruko_pattern_id": "digital_arrest",
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "da_open",
+          "stage": "open",
+          "line_en": "Good morning, this is Officer Sethi from the Central Investigation Cell, Mumbai office. Am I speaking to the person who uses this number?",
+          "line_hi": "नमस्ते, मैं सेंट्रल इन्वेस्टिगेशन सेल, मुंबई ऑफ़िस से ऑफ़िसर सेठी बोल रहा हूँ। क्या यह नंबर आप ही इस्तेमाल करते हैं?",
+          "branches": {
+            "hesitate": {
+              "en": "This is an official matter. Please just confirm, it will take one minute.",
+              "hi": "यह सरकारी मामला है। बस कन्फ़र्म कर दीजिए, एक मिनट लगेगा।"
+            }
+          }
+        },
+        {
+          "id": "da_hook",
+          "stage": "hook",
+          "line_en": "Your Aadhaar has been found linked to a bank account used in a six crore money laundering case. Your name is in the FIR.",
+          "line_hi": "आपका आधार एक ऐसे बैंक अकाउंट से जुड़ा मिला है जो छह करोड़ के मनी लॉन्ड्रिंग केस में इस्तेमाल हुआ। FIR में आपका नाम है।",
+          "branches": {
+            "hesitate": {
+              "en": "You may well be innocent. That is exactly why we must verify you today.",
+              "hi": "हो सकता है आप बेक़सूर हों। इसीलिए आज ही आपका वेरिफ़िकेशन ज़रूरी है।"
+            }
+          }
+        },
+        {
+          "id": "da_disclose",
+          "stage": "verify_fake",
+          "line_en": "For the record, please read me the four-digit case code shown on your screen.",
+          "line_hi": "रिकॉर्ड के लिए, अपनी स्क्रीन पर दिख रहा चार अंकों का केस कोड पढ़कर बताइए।",
+          "branches": {
+            "hesitate": {
+              "en": "If you don't cooperate, your file goes forward marked as non-cooperation.",
+              "hi": "आप सहयोग नहीं करेंगे तो आपकी फ़ाइल \"असहयोग\" लिखकर आगे भेज दी जाएगी।"
+            }
+          }
+        },
+        {
+          "id": "da_fear",
+          "stage": "fear",
+          "line_en": "An arrest warrant is ready in your name. From now you are under digital arrest, and your questioning will happen on this call.",
+          "line_hi": "आपके नाम का अरेस्ट वारंट तैयार है। अब से आप डिजिटल अरेस्ट में हैं, और पूछताछ इसी कॉल पर होगी।",
+          "branches": {
+            "hesitate": {
+              "en": "If this call is cut, the case will record you as absconding.",
+              "hi": "अगर यह कॉल कटी, तो केस में आपको फ़रार लिखा जाएगा।"
+            }
+          }
+        },
+        {
+          "id": "da_isolate",
+          "stage": "isolate",
+          "line_en": "Stay on this call and keep your camera on. Do not disconnect, even if someone else calls you.",
+          "line_hi": "इसी कॉल पर रहिए और कैमरा चालू रखिए। कोई और फ़ोन करे, तब भी कॉल मत काटिए।",
+          "branches": {
+            "hesitate": {
+              "en": "This is for your own protection. People in this case may try to contact you.",
+              "hi": "यह आपकी अपनी सुरक्षा के लिए है। इस केस के लोग आपसे संपर्क करने की कोशिश कर सकते हैं।"
+            }
+          }
+        },
+        {
+          "id": "da_secrecy",
+          "stage": "secrecy",
+          "line_en": "This is a confidential case, so do not tell your family, neighbours or bank staff. Do you understand?",
+          "line_hi": "यह गोपनीय केस है, इसलिए परिवार, पड़ोसी या बैंक वालों को कुछ मत बताइए। समझ गए?",
+          "branches": {
+            "hesitate": {
+              "en": "If you tell anyone, the confidentiality breaks and clearing your name will take much longer.",
+              "hi": "किसी को बताया तो गोपनीयता टूट जाएगी और आपका नाम साफ़ होने में बहुत देर लगेगी।"
+            }
+          }
+        },
+        {
+          "id": "da_verify_fake",
+          "stage": "verify_fake",
+          "line_en": "My senior has seen your file. If your money is clean, you will get a clearance certificate today itself.",
+          "line_hi": "मेरे सीनियर ने आपकी फ़ाइल देख ली है। आपका पैसा साफ़ निकला तो आज ही क्लियरेंस सर्टिफ़िकेट मिल जाएगा।"
+        },
+        {
+          "id": "da_pivot",
+          "stage": "pivot_money",
+          "line_en": "To prove your money is clean, your savings and fixed deposits must be checked in a secure verification account.",
+          "line_hi": "आपका पैसा साफ़ है, यह साबित करने के लिए आपकी बचत और FD की जाँच एक सुरक्षित वेरिफ़िकेशन अकाउंट में होगी।",
+          "branches": {
+            "hesitate": {
+              "en": "It is only a verification. Every rupee comes back to you within three days.",
+              "hi": "यह सिर्फ़ वेरिफ़िकेशन है। तीन दिन में एक-एक रुपया आपको वापस मिल जाएगा।"
+            }
+          }
+        },
+        {
+          "id": "da_transfer",
+          "stage": "instruct_transfer",
+          "line_en": "Open your Sahyog Bank app now. Break your fixed deposit and transfer four lakh seventy-five thousand rupees to Secure Verification Account, ending 4471.",
+          "line_hi": "अभी अपना सहयोग बैंक ऐप खोलिए। FD तोड़िए और चार लाख पचहत्तर हज़ार रुपये \"सिक्योर वेरिफ़िकेशन अकाउंट\" में भेजिए, जिसके आख़िरी अंक 4471 हैं।",
+          "branches": {
+            "hesitate": {
+              "en": "The verification window closes in thirty minutes. After that the file goes to court.",
+              "hi": "वेरिफ़िकेशन की विंडो तीस मिनट में बंद हो जाएगी। उसके बाद फ़ाइल कोर्ट चली जाएगी।"
+            }
+          }
+        },
+        {
+          "id": "da_cover_story",
+          "stage": "pressure",
+          "line_en": "If the bank asks, say the money is for buying a property. Do not mention this case.",
+          "line_hi": "बैंक पूछे तो कहिए कि पैसा प्रॉपर्टी ख़रीदने के लिए है। इस केस का ज़िक्र मत कीजिए।"
+        },
+        {
+          "id": "da_override",
+          "stage": "pressure",
+          "line_en": "The bank is showing a hold? That is routine, so continue anyway, or the case moves forward today.",
+          "line_hi": "बैंक होल्ड दिखा रहा है? यह आम बात है, फिर भी आगे बढ़िए, वरना केस आज ही आगे बढ़ जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "If this bank is slow, you can use another bank's app. Just finish it now.",
+              "hi": "यह बैंक धीमा है तो किसी दूसरे बैंक का ऐप इस्तेमाल कर लीजिए। बस अभी पूरा कीजिए।"
+            }
+          }
+        },
+        {
+          "id": "da_close",
+          "stage": "close",
+          "line_en": "Good, your clearance certificate will come on WhatsApp. Stay available for the next step.",
+          "line_hi": "ठीक है, आपका क्लियरेंस सर्टिफ़िकेट WhatsApp पर आएगा। अगले स्टेप के लिए उपलब्ध रहिए।"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call: no money moved, and you did nothing wrong. Real police never arrest anyone or ask for money on a call, so hang up and call 1930 or visit cybercrime.gov.in.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी: कोई पैसा नहीं गया, और आपने कुछ ग़लत नहीं किया। असली पुलिस कभी कॉल पर गिरफ़्तार नहीं करती, न पैसे माँगती है, इसलिए फ़ोन काटिए और 1930 पर कॉल कीजिए या cybercrime.gov.in पर जाइए।"
+        }
+      ]
+    },
+    {
+      "id": "scam_courier_drugs",
+      "title_en": "Courier parcel stopped at the airport with drugs",
+      "title_hi": "एयरपोर्ट पर पकड़ा गया पार्सल, जिसमें ड्रग्स मिले",
+      "caller_name": "Priya (SwiftParcel), then Officer Naik (drill characters)",
+      "caller_role": "SwiftParcel international desk, then narcotics unit, Central Investigation Cell – DRILL",
+      "is_scam": true,
+      "ruko_pattern_id": "courier_drugs",
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "cd_ivr",
+          "stage": "open",
+          "line_en": "This is an automated message from SwiftParcel: your parcel has been held. Stay on the line to speak to an executive.",
+          "line_hi": "यह SwiftParcel का ऑटोमैटिक मैसेज है: आपका पार्सल रोका गया है। एग्ज़ीक्यूटिव से बात करने के लिए लाइन पर बने रहिए।"
+        },
+        {
+          "id": "cd_hook",
+          "stage": "hook",
+          "line_en": "Hello, Priya from the SwiftParcel international desk. A parcel booked in your name from Mumbai to Taiwan was stopped at the airport inspection.",
+          "line_hi": "हैलो, मैं SwiftParcel इंटरनेशनल डेस्क से प्रिया बोल रही हूँ। आपके नाम से मुंबई से ताइवान बुक हुआ एक पार्सल एयरपोर्ट जाँच में रोका गया है।",
+          "branches": {
+            "hesitate": {
+              "en": "It is booked with your name and this phone number. That is why I am informing you.",
+              "hi": "यह आपके नाम और इसी फ़ोन नंबर से बुक है। इसीलिए मैं आपको बता रही हूँ।"
+            }
+          }
+        },
+        {
+          "id": "cd_fear",
+          "stage": "fear",
+          "line_en": "Inside there are five passports, three bank cards and one hundred forty grams of drugs. This is a serious offence.",
+          "line_hi": "इसके अंदर पाँच पासपोर्ट, तीन बैंक कार्ड और एक सौ चालीस ग्राम ड्रग्स मिले हैं। यह गंभीर अपराध है।",
+          "branches": {
+            "hesitate": {
+              "en": "If you did not send it, then someone has misused your identity. You must report it now, or it stays on your name.",
+              "hi": "अगर आपने नहीं भेजा, तो किसी ने आपकी पहचान का ग़लत इस्तेमाल किया है। अभी शिकायत कीजिए, वरना यह आपके नाम पर ही रहेगा।"
+            }
+          }
+        },
+        {
+          "id": "cd_disclose",
+          "stage": "verify_fake",
+          "line_en": "To file your complaint, please read me the six-digit tracking reference shown on your screen.",
+          "line_hi": "आपकी शिकायत दर्ज करने के लिए, स्क्रीन पर दिख रहा छह अंकों का ट्रैकिंग रेफ़रेंस पढ़कर बताइए।"
+        },
+        {
+          "id": "cd_handover",
+          "stage": "isolate",
+          "line_en": "I am transferring you directly to the Central Investigation Cell narcotics unit. Please do not disconnect.",
+          "line_hi": "मैं आपकी कॉल सीधे सेंट्रल इन्वेस्टिगेशन सेल की नारकोटिक्स यूनिट को ट्रांसफ़र कर रही हूँ। कृपया कॉल मत काटिए।",
+          "branches": {
+            "hesitate": {
+              "en": "If you cut now, the complaint will not register and the case stays open on your name.",
+              "hi": "अभी काटा तो शिकायत दर्ज नहीं होगी और केस आपके नाम पर खुला रहेगा।"
+            }
+          }
+        },
+        {
+          "id": "cd_officer",
+          "stage": "fear",
+          "line_en": "This is Officer Naik, narcotics unit, and your name is now in a drug trafficking case. This is not a small matter.",
+          "line_hi": "मैं नारकोटिक्स यूनिट से ऑफ़िसर नाइक बोल रहा हूँ, और अब आपका नाम ड्रग तस्करी के केस में है। यह छोटी बात नहीं है।",
+          "branches": {
+            "hesitate": {
+              "en": "I am trying to help you. Answer calmly and this can be sorted out today.",
+              "hi": "मैं आपकी मदद करने की कोशिश कर रहा हूँ। शांति से जवाब दीजिए, आज ही मामला सुलझ सकता है।"
+            }
+          }
+        },
+        {
+          "id": "cd_secrecy",
+          "stage": "secrecy",
+          "line_en": "This case is confidential. Do not discuss it with anyone until your statement is complete, not even family.",
+          "line_hi": "यह केस गोपनीय है। जब तक आपका बयान पूरा न हो, किसी से बात मत कीजिए, परिवार से भी नहीं।",
+          "branches": {
+            "hesitate": {
+              "en": "Talking to others now can spoil your statement. Just ten more minutes.",
+              "hi": "अभी दूसरों से बात करने से आपका बयान ख़राब हो सकता है। बस दस मिनट और।"
+            }
+          }
+        },
+        {
+          "id": "cd_good_cop",
+          "stage": "verify_fake",
+          "line_en": "I believe you. If you cooperate, I can record you as a witness, not as an accused.",
+          "line_hi": "मुझे आप पर भरोसा है। आप सहयोग करें तो मैं आपको आरोपी नहीं, गवाह के तौर पर दर्ज कर सकता हूँ।"
+        },
+        {
+          "id": "cd_pivot",
+          "stage": "pivot_money",
+          "line_en": "For that, a refundable verification deposit of ninety-five thousand five hundred rupees is needed. It comes back after the inquiry.",
+          "line_hi": "इसके लिए पंचानवे हज़ार पाँच सौ रुपये का वेरिफ़िकेशन डिपॉज़िट चाहिए, जो वापस मिलता है। जाँच के बाद लौटा दिया जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "Without this deposit, I cannot change your status to witness.",
+              "hi": "यह डिपॉज़िट नहीं हुआ तो मैं आपको गवाह नहीं बना पाऊँगा।"
+            }
+          }
+        },
+        {
+          "id": "cd_transfer",
+          "stage": "instruct_transfer",
+          "line_en": "Open Sahyog Bank and send ninety-five thousand five hundred rupees to Narcotics Case Verification, ending 2209. Stay on the line while you do it.",
+          "line_hi": "सहयोग बैंक खोलिए और पंचानवे हज़ार पाँच सौ रुपये \"नारकोटिक्स केस वेरिफ़िकेशन\" में भेजिए, आख़िरी अंक 2209 हैं। भेजते समय लाइन पर बने रहिए।"
+        },
+        {
+          "id": "cd_override",
+          "stage": "pressure",
+          "line_en": "If the bank shows a warning, just continue. Banks show that for every large payment.",
+          "line_hi": "बैंक कोई चेतावनी दिखाए तो बस आगे बढ़िए। बड़ी रक़म पर बैंक हमेशा ऐसा दिखाता है।",
+          "branches": {
+            "hesitate": {
+              "en": "Please hurry. The case will be sent forward within the hour.",
+              "hi": "जल्दी कीजिए। एक घंटे के अंदर केस आगे भेज दिया जाएगा।"
+            }
+          }
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call: no money moved, and you did nothing wrong. Couriers never hand your call to the police, so hang up and call 1930 or visit cybercrime.gov.in.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी: कोई पैसा नहीं गया, और आपने कुछ ग़लत नहीं किया। कूरियर कंपनी कभी आपकी कॉल पुलिस को नहीं जोड़ती, इसलिए फ़ोन काटिए और 1930 पर कॉल कीजिए या cybercrime.gov.in पर जाइए।"
+        }
+      ]
+    },
+    {
+      "id": "scam_courier_aadhaar",
+      "title_en": "Courier finds your Aadhaar copy: accounts to be frozen",
+      "title_hi": "कूरियर में आपके आधार की कॉपी: खाते फ़्रीज़ होंगे",
+      "caller_name": "Rakesh (SwiftParcel), then Officer Rao (drill characters)",
+      "caller_role": "SwiftParcel returns hub, then cyber desk, Central Investigation Cell – DRILL",
+      "is_scam": true,
+      "ruko_pattern_id": "courier_drugs",
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "ca_open",
+          "stage": "open",
+          "line_en": "Hello, this is Rakesh from SwiftParcel, Bengaluru hub. I am calling about a parcel linked to this number.",
+          "line_hi": "हैलो, मैं SwiftParcel बेंगलुरु हब से राकेश बोल रहा हूँ। इस नंबर से जुड़े एक पार्सल के बारे में फ़ोन किया है।"
+        },
+        {
+          "id": "ca_hook",
+          "stage": "hook",
+          "line_en": "A returned parcel has a copy of your Aadhaar and four SIM cards inside. Did you send it?",
+          "line_hi": "एक लौटे हुए पार्सल में आपके आधार की कॉपी और चार सिम कार्ड मिले हैं। क्या यह आपने भेजा था?",
+          "branches": {
+            "hesitate": {
+              "en": "Please don't worry, I am only trying to help. Just tell me yes or no.",
+              "hi": "घबराइए मत, मैं बस मदद करना चाहता हूँ। सिर्फ़ हाँ या ना बताइए।"
+            }
+          }
+        },
+        {
+          "id": "ca_disclose",
+          "stage": "verify_fake",
+          "line_en": "To check the parcel, please read me the six-digit reference number shown on your screen.",
+          "line_hi": "पार्सल चेक करने के लिए, स्क्रीन पर दिख रहा छह अंकों का रेफ़रेंस नंबर पढ़कर बताइए।"
+        },
+        {
+          "id": "ca_fear",
+          "stage": "fear",
+          "line_en": "Then your Aadhaar has been misused. It was used to open bank accounts that received fraud money.",
+          "line_hi": "तो फिर आपके आधार का ग़लत इस्तेमाल हुआ है। इससे ऐसे बैंक अकाउंट खोले गए जिनमें धोखाधड़ी का पैसा आया।"
+        },
+        {
+          "id": "ca_handover",
+          "stage": "isolate",
+          "line_en": "I am connecting you to the Central Investigation Cell cyber desk to register your complaint. Please stay on the line.",
+          "line_hi": "आपकी शिकायत दर्ज कराने के लिए मैं आपको सेंट्रल इन्वेस्टिगेशन सेल के साइबर डेस्क से जोड़ रहा हूँ। लाइन पर बने रहिए।",
+          "branches": {
+            "hesitate": {
+              "en": "If you don't register today, the misuse will be counted as yours.",
+              "hi": "आज शिकायत नहीं की तो यह ग़लत इस्तेमाल आपके ही नाम माना जाएगा।"
+            }
+          }
+        },
+        {
+          "id": "ca_officer",
+          "stage": "fear",
+          "line_en": "This is Officer Rao, cyber desk: your Aadhaar is linked to three accounts in a hawala case. Every account in your name will be frozen in two hours.",
+          "line_hi": "मैं साइबर डेस्क से ऑफ़िसर राव बोल रहा हूँ: आपका आधार हवाला केस के तीन अकाउंट से जुड़ा है। दो घंटे में आपके नाम के सारे अकाउंट फ़्रीज़ हो जाएँगे।",
+          "branches": {
+            "hesitate": {
+              "en": "Once frozen, you will not be able to use your pension or savings for months.",
+              "hi": "एक बार फ़्रीज़ हुआ तो महीनों तक आप अपनी पेंशन या बचत इस्तेमाल नहीं कर पाएँगे।"
+            }
+          }
+        },
+        {
+          "id": "ca_balance",
+          "stage": "verify_fake",
+          "line_en": "To separate your genuine account, open your Sahyog Bank app and read me the balance it shows.",
+          "line_hi": "आपका असली अकाउंट अलग करने के लिए, सहयोग बैंक ऐप खोलिए और जो बैलेंस दिख रहा है वह पढ़कर बताइए।"
+        },
+        {
+          "id": "ca_secrecy",
+          "stage": "secrecy",
+          "line_en": "Do not tell your bank about this call. Some bank staff are part of this racket.",
+          "line_hi": "इस कॉल के बारे में अपने बैंक को मत बताइए। कुछ बैंक वाले भी इस गिरोह में शामिल हैं।",
+          "branches": {
+            "hesitate": {
+              "en": "If they find out, they can move your money before we protect it.",
+              "hi": "अगर उन्हें पता चल गया, तो हमारे बचाने से पहले वे आपका पैसा हटा सकते हैं।"
+            }
+          }
+        },
+        {
+          "id": "ca_isolate",
+          "stage": "isolate",
+          "line_en": "Keep this call on speaker and stay alone in the room until we finish.",
+          "line_hi": "यह कॉल स्पीकर पर रखिए और जब तक हम ख़त्म न करें, कमरे में अकेले रहिए।"
+        },
+        {
+          "id": "ca_pivot",
+          "stage": "pivot_money",
+          "line_en": "We will keep your money in a government safe custody account until your name is cleared. It comes back in forty-eight hours.",
+          "line_hi": "जब तक आपका नाम साफ़ नहीं होता, हम आपका पैसा सरकारी सेफ़ कस्टडी अकाउंट में रखेंगे। अड़तालीस घंटे में वापस आ जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "This is only to protect you. If it stays in your account, it will be frozen with the others.",
+              "hi": "यह सिर्फ़ आपको बचाने के लिए है। आपके अकाउंट में रहा तो बाक़ी के साथ यह भी फ़्रीज़ हो जाएगा।"
+            }
+          }
+        },
+        {
+          "id": "ca_transfer",
+          "stage": "instruct_transfer",
+          "line_en": "Transfer two lakh forty thousand rupees to Safe Custody Account Cyber Desk, ending 7730. Use NEFT from the app.",
+          "line_hi": "दो लाख चालीस हज़ार रुपये \"सेफ़ कस्टडी अकाउंट साइबर डेस्क\" में भेजिए, आख़िरी अंक 7730 हैं। ऐप से NEFT कीजिए।"
+        },
+        {
+          "id": "ca_override",
+          "stage": "pressure",
+          "line_en": "If the bank asks you to wait, don't wait. The freeze starts soon and your money will be stuck.",
+          "line_hi": "बैंक रुकने को कहे तो मत रुकिए। फ़्रीज़ जल्दी शुरू होगा और आपका पैसा अटक जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "I am on your side. Finish this one step and you are safe.",
+              "hi": "मैं आपकी तरफ़ हूँ। बस यह एक काम पूरा कीजिए, फिर आप सुरक्षित हैं।"
+            }
+          }
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call: no money moved, and you did nothing wrong. There is no such thing as a safe custody account, so hang up and call 1930 or visit cybercrime.gov.in.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी: कोई पैसा नहीं गया, और आपने कुछ ग़लत नहीं किया। \"सेफ़ कस्टडी अकाउंट\" जैसी कोई चीज़ नहीं होती, इसलिए फ़ोन काटिए और 1930 पर कॉल कीजिए या cybercrime.gov.in पर जाइए।"
+        }
+      ]
+    },
+    {
+      "id": "scam_telecom_disconnect",
+      "title_en": "Telecom desk: your number will be cut in 2 hours",
+      "title_hi": "टेलीकॉम डेस्क: 2 घंटे में आपका नंबर बंद होगा",
+      "caller_name": "Telecom Verification Desk, then Officer Iyer (drill characters)",
+      "caller_role": "Telecom Verification Desk, then Central Investigation Cell – DRILL",
+      "is_scam": true,
+      "ruko_pattern_id": "digital_arrest",
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "td_ivr",
+          "stage": "open",
+          "line_en": "This is the Telecom Verification Desk: your mobile number will be disconnected in two hours. Stay on the line to speak to an officer.",
+          "line_hi": "यह टेलीकॉम वेरिफ़िकेशन डेस्क है: आपका मोबाइल नंबर दो घंटे में बंद कर दिया जाएगा। अधिकारी से बात करने के लिए लाइन पर बने रहिए।"
+        },
+        {
+          "id": "td_hook",
+          "stage": "hook",
+          "line_en": "A second SIM was issued on your Aadhaar in Mumbai. It is sending illegal advertisements and harassment messages.",
+          "line_hi": "आपके आधार पर मुंबई में एक दूसरा सिम जारी हुआ है। उससे ग़ैरक़ानूनी विज्ञापन और परेशान करने वाले मैसेज भेजे जा रहे हैं।",
+          "branches": {
+            "hesitate": {
+              "en": "If it is not yours, you must give a clarification today, or both numbers will be blocked.",
+              "hi": "अगर वह आपका नहीं है, तो आज ही सफ़ाई देनी होगी, वरना दोनों नंबर बंद हो जाएँगे।"
+            }
+          }
+        },
+        {
+          "id": "td_disclose",
+          "stage": "verify_fake",
+          "line_en": "I am raising a complaint for you. Please read me the four-digit complaint code shown on your screen.",
+          "line_hi": "मैं आपके लिए शिकायत दर्ज कर रहा हूँ। स्क्रीन पर दिख रहा चार अंकों का शिकायत कोड पढ़कर बताइए।"
+        },
+        {
+          "id": "td_fear",
+          "stage": "fear",
+          "line_en": "There are seventeen complaints against that number. I must connect you to the Central Investigation Cell for a police clarification.",
+          "line_hi": "उस नंबर पर सत्रह शिकायतें हैं। पुलिस में सफ़ाई के लिए मुझे आपको सेंट्रल इन्वेस्टिगेशन सेल से जोड़ना होगा।"
+        },
+        {
+          "id": "td_isolate",
+          "stage": "isolate",
+          "line_en": "Stay on the line. If you hang up, the disconnection will go ahead automatically.",
+          "line_hi": "लाइन पर बने रहिए। फ़ोन काटा तो नंबर अपने-आप बंद हो जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "It will take only five minutes, and then your number is safe.",
+              "hi": "बस पाँच मिनट लगेंगे, फिर आपका नंबर सुरक्षित है।"
+            }
+          }
+        },
+        {
+          "id": "td_officer",
+          "stage": "fear",
+          "line_en": "This is Officer Iyer, Central Investigation Cell: that SIM is also linked to a bank account in a money laundering case. You are now a suspect.",
+          "line_hi": "मैं सेंट्रल इन्वेस्टिगेशन सेल से ऑफ़िसर अय्यर बोल रहा हूँ: वह सिम मनी लॉन्ड्रिंग केस के एक बैंक अकाउंट से भी जुड़ा है। अब आप संदिग्ध हैं।",
+          "branches": {
+            "hesitate": {
+              "en": "I am not saying you did it. But you must prove it, today.",
+              "hi": "मैं नहीं कह रहा कि आपने किया। लेकिन साबित तो आपको ही करना होगा, आज ही।"
+            }
+          }
+        },
+        {
+          "id": "td_video",
+          "stage": "isolate",
+          "line_en": "Please switch to video and stay in front of the camera until your statement is finished.",
+          "line_hi": "कृपया वीडियो चालू कीजिए और बयान पूरा होने तक कैमरे के सामने रहिए।"
+        },
+        {
+          "id": "td_secrecy",
+          "stage": "secrecy",
+          "line_en": "Your statement is being recorded. Do not discuss this with anyone, or it will count as tampering with evidence.",
+          "line_hi": "आपका बयान रिकॉर्ड हो रहा है। किसी से इस बारे में बात मत कीजिए, वरना इसे सबूत से छेड़छाड़ माना जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "Once you are cleared, you can tell anyone you like.",
+              "hi": "एक बार आपका नाम साफ़ हो जाए, फिर आप जिसे चाहें बता दीजिए।"
+            }
+          }
+        },
+        {
+          "id": "td_pivot",
+          "stage": "pivot_money",
+          "line_en": "To prove your savings are not from this case, the amount must be checked by our financial verification unit.",
+          "line_hi": "यह साबित करने के लिए कि आपकी बचत इस केस की नहीं है, रक़म की जाँच हमारी फ़ाइनेंशियल वेरिफ़िकेशन यूनिट करेगी।"
+        },
+        {
+          "id": "td_transfer",
+          "stage": "instruct_transfer",
+          "line_en": "Send one lakh fifty thousand rupees to Financial Verification Unit, ending 5512. It is returned after the verification report.",
+          "line_hi": "एक लाख पचास हज़ार रुपये \"फ़ाइनेंशियल वेरिफ़िकेशन यूनिट\" में भेजिए, आख़िरी अंक 5512 हैं। वेरिफ़िकेशन रिपोर्ट के बाद लौटा दिया जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "Your number goes off in one hour. Please do it now.",
+              "hi": "एक घंटे में आपका नंबर बंद हो जाएगा। कृपया अभी कीजिए।"
+            }
+          }
+        },
+        {
+          "id": "td_override",
+          "stage": "pressure",
+          "line_en": "If the bank stops you, tell them it is for a family medical expense, and continue.",
+          "line_hi": "बैंक रोके तो कहिए कि परिवार के इलाज का ख़र्च है, और आगे बढ़िए।"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call: no money moved, and you did nothing wrong. Telecom offices never call to cut your number or pass you to the police, so hang up and call 1930 or visit cybercrime.gov.in.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी: कोई पैसा नहीं गया, और आपने कुछ ग़लत नहीं किया। टेलीकॉम विभाग कभी नंबर बंद करने या पुलिस से जोड़ने के लिए फ़ोन नहीं करता, इसलिए फ़ोन काटिए और 1930 पर कॉल कीजिए या cybercrime.gov.in पर जाइए।"
+        }
+      ]
+    },
+    {
+      "id": "scam_electricity_cut",
+      "title_en": "Power board: electricity will be cut tonight",
+      "title_hi": "बिजली बोर्ड: आज रात बिजली कट जाएगी",
+      "caller_name": "Mr Kumar (drill character)",
+      "caller_role": "\"Billing officer\", City Power Board (fictional)",
+      "is_scam": true,
+      "ruko_pattern_id": "electricity_cut",
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "ec_open",
+          "stage": "open",
+          "line_en": "Hello, this is Kumar from the City Power Board billing office. Is the electricity connection at your house in your name?",
+          "line_hi": "हैलो, मैं सिटी पावर बोर्ड के बिलिंग ऑफ़िस से कुमार बोल रहा हूँ। आपके घर का बिजली कनेक्शन आपके नाम पर है?"
+        },
+        {
+          "id": "ec_hook",
+          "stage": "hook",
+          "line_en": "Last month's bill is showing unpaid in our system. Your connection will be cut tonight at nine thirty.",
+          "line_hi": "हमारे सिस्टम में पिछले महीने का बिल बाक़ी दिख रहा है। आज रात साढ़े नौ बजे आपका कनेक्शन काट दिया जाएगा।",
+          "branches": {
+            "hesitate": {
+              "en": "Maybe you did pay, but it has not updated. That is why I am calling, to help you.",
+              "hi": "हो सकता है आपने भरा हो, पर अपडेट नहीं हुआ। इसीलिए तो मैं मदद के लिए फ़ोन कर रहा हूँ।"
+            }
+          }
+        },
+        {
+          "id": "ec_fear",
+          "stage": "fear",
+          "line_en": "Once it is cut, reconnection takes three to four days, with a reconnection charge.",
+          "line_hi": "एक बार कट गया तो दोबारा जोड़ने में तीन-चार दिन लगेंगे, और रीकनेक्शन चार्ज अलग से लगेगा।"
+        },
+        {
+          "id": "ec_disclose",
+          "stage": "verify_fake",
+          "line_en": "Let me check your record. Please read me the consumer reference number shown on your screen.",
+          "line_hi": "मैं आपका रिकॉर्ड देखता हूँ। स्क्रीन पर दिख रहा कंज़्यूमर रेफ़रेंस नंबर पढ़कर बताइए।"
+        },
+        {
+          "id": "ec_isolate",
+          "stage": "isolate",
+          "line_en": "No need to call the office, they will only keep you on hold. I am handling your case personally.",
+          "line_hi": "ऑफ़िस में फ़ोन करने की ज़रूरत नहीं, वहाँ बस होल्ड पर रखेंगे। आपका मामला मैं ख़ुद देख रहा हूँ।",
+          "branches": {
+            "hesitate": {
+              "en": "The office closes at six. After that, nobody can stop the line crew.",
+              "hi": "ऑफ़िस छह बजे बंद हो जाता है। उसके बाद लाइन वालों को कोई नहीं रोक पाएगा।"
+            }
+          }
+        },
+        {
+          "id": "ec_small_pay",
+          "stage": "instruct_transfer",
+          "line_en": "First, to update your record, pay just ten rupees to CPB Bill Update from your Sahyog Bank app.",
+          "line_hi": "पहले रिकॉर्ड अपडेट करने के लिए, सहयोग बैंक ऐप से \"CPB बिल अपडेट\" में सिर्फ़ दस रुपये भेजिए।"
+        },
+        {
+          "id": "ec_code",
+          "stage": "verify_fake",
+          "line_en": "It did not go through? Then read me the six-digit code that just appeared on your screen, and I will do it from my side.",
+          "line_hi": "पेमेंट नहीं हुआ? तो अभी स्क्रीन पर आया छह अंकों का कोड पढ़कर बताइए, मैं अपनी तरफ़ से कर देता हूँ।",
+          "branches": {
+            "hesitate": {
+              "en": "It is only the payment code, it is needed to stop the disconnection.",
+              "hi": "यह तो बस पेमेंट का कोड है, कनेक्शन कटने से रोकने के लिए चाहिए।"
+            }
+          }
+        },
+        {
+          "id": "ec_pivot",
+          "stage": "pivot_money",
+          "line_en": "The system now shows the full amount with the reconnection fee: six thousand three hundred sixty rupees.",
+          "line_hi": "अब सिस्टम में रीकनेक्शन फ़ीस के साथ पूरी रक़म दिख रही है: छह हज़ार तीन सौ साठ रुपये।"
+        },
+        {
+          "id": "ec_transfer",
+          "stage": "instruct_transfer",
+          "line_en": "Send six thousand three hundred sixty rupees to CPB Field Officer, ending 0921, and the line stays on.",
+          "line_hi": "छह हज़ार तीन सौ साठ रुपये \"CPB फ़ील्ड ऑफ़िसर\" में भेजिए, आख़िरी अंक 0921 हैं, और आपकी बिजली नहीं कटेगी।",
+          "branches": {
+            "hesitate": {
+              "en": "Why is it in an officer's name? It is our field collection account, that is normal.",
+              "hi": "ऑफ़िसर के नाम पर क्यों? यह हमारा फ़ील्ड कलेक्शन अकाउंट है, यह आम बात है।"
+            }
+          }
+        },
+        {
+          "id": "ec_pressure",
+          "stage": "pressure",
+          "line_en": "Only twenty minutes left before the line crew reaches your area. Please do it now.",
+          "line_hi": "लाइन वाले बीस मिनट में आपके इलाक़े में पहुँच जाएँगे। कृपया अभी कीजिए।"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call: no money moved, and you did nothing wrong. The power board never cuts power tonight over a personal call, so check your bill on the official app and call 1930 or visit cybercrime.gov.in if money is taken.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी: कोई पैसा नहीं गया, और आपने कुछ ग़लत नहीं किया। बिजली बोर्ड कभी निजी कॉल पर आज रात बिजली काटने की बात नहीं करता, इसलिए असली ऐप पर बिल देखिए, और पैसा चला जाए तो 1930 पर कॉल कीजिए या cybercrime.gov.in पर जाइए।"
+        }
+      ]
+    },
+    {
+      "id": "control_bank_kyc",
+      "title_en": "Bank KYC reminder (genuine)",
+      "title_hi": "बैंक का KYC रिमाइंडर (असली)",
+      "caller_name": "Meena (drill character)",
+      "caller_role": "Customer service officer, Sahyog Bank, Jayanagar branch (calls from a 1600 number)",
+      "is_scam": false,
+      "ruko_pattern_id": null,
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "bk_open",
+          "stage": "open",
+          "line_en": "Good afternoon, this is Meena from Sahyog Bank, Jayanagar branch. Is this a good time to talk for a minute?",
+          "line_hi": "नमस्ते, मैं सहयोग बैंक, जयनगर ब्रांच से मीना बोल रही हूँ। क्या एक मिनट बात करने का समय है?"
+        },
+        {
+          "id": "bk_hook",
+          "stage": "hook",
+          "line_en": "Your account's KYC is due for its regular update this year. Nothing is wrong with your account.",
+          "line_hi": "आपके अकाउंट का KYC इस साल नियमित अपडेट के लिए ड्यू है। आपके अकाउंट में कोई दिक़्क़त नहीं है।"
+        },
+        {
+          "id": "bk_options",
+          "stage": "hook",
+          "line_en": "If your address and documents have not changed, a simple self-declaration is enough. You can do it in the app, at an ATM, or at any branch.",
+          "line_hi": "अगर आपका पता और कागज़ नहीं बदले हैं, तो बस एक सेल्फ़-डिक्लेरेशन काफ़ी है। यह ऐप में, ATM पर या किसी भी ब्रांच में हो जाएगा।"
+        },
+        {
+          "id": "bk_no_rush",
+          "stage": "hook",
+          "line_en": "There is no hurry. Your account stays active, and you have until the thirty-first of December.",
+          "line_hi": "कोई जल्दी नहीं है। आपका अकाउंट चालू रहेगा, और आपके पास इकतीस दिसंबर तक का समय है।"
+        },
+        {
+          "id": "bk_safety",
+          "stage": "close",
+          "line_en": "Please remember, we will never ask for your OTP, PIN or password, on a call or at the branch.",
+          "line_hi": "याद रखिए, हम कभी भी आपका OTP, PIN या पासवर्ड नहीं माँगेंगे, न फ़ोन पर, न ब्रांच में।"
+        },
+        {
+          "id": "bk_verify",
+          "stage": "close",
+          "line_en": "If you want to check this call, you can phone the number printed on your passbook or debit card.",
+          "line_hi": "अगर आप इस कॉल की जाँच करना चाहें, तो अपनी पासबुक या डेबिट कार्ड पर छपे नंबर पर फ़ोन कर सकते हैं।"
+        },
+        {
+          "id": "bk_bye",
+          "stage": "close",
+          "line_en": "Do you have any questions for me? Thank you, have a good day.",
+          "line_hi": "आपका कोई सवाल है? धन्यवाद, आपका दिन अच्छा रहे।"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call, and this one was an everyday, genuine kind of call: it asked for no money, no secrets and no codes. Checking a call is always okay, and 1930 is there if you ever need it.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी, और यह एक आम, असली तरह की कॉल थी: इसमें न पैसे माँगे गए, न कुछ छिपाने को कहा, न कोई कोड। कॉल की जाँच करना हमेशा ठीक है, और ज़रूरत पड़े तो 1930 मौजूद है।"
+        }
+      ]
+    },
+    {
+      "id": "control_relative_favour",
+      "title_en": "Nephew asks a small favour (genuine)",
+      "title_hi": "भतीजे का छोटा-सा काम (असली)",
+      "caller_name": "Rahul (drill character)",
+      "caller_role": "Nephew, calling from his own saved number",
+      "is_scam": false,
+      "ruko_pattern_id": null,
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "rf_open",
+          "stage": "open",
+          "line_en": "Hello, it's Rahul! How are you, is your knee feeling better now?",
+          "line_hi": "हैलो, मैं राहुल! कैसे हैं आप, घुटना अब कुछ ठीक है?"
+        },
+        {
+          "id": "rf_hook",
+          "stage": "hook",
+          "line_en": "I'm in Mysuru till Sunday, and Amma's medicine delivery is coming to your house tomorrow. Could you keep it for me?",
+          "line_hi": "मैं रविवार तक मैसूरु में हूँ, और अम्मा की दवाई की डिलीवरी कल आपके घर आएगी। आप रख लेंगे क्या?"
+        },
+        {
+          "id": "rf_no_pressure",
+          "stage": "hook",
+          "line_en": "Nothing urgent. If it's a problem, no worries at all, I'll ask the neighbour.",
+          "line_hi": "कोई जल्दी नहीं है। दिक़्क़त हो तो बिल्कुल कोई बात नहीं, मैं पड़ोसी से कह दूँगा।"
+        },
+        {
+          "id": "rf_payment",
+          "stage": "instruct_transfer",
+          "line_en": "It's six hundred forty rupees cash on delivery; if you like, send it to my number on Sahyog Bank, it's already saved as Rahul. I'll return it on Sunday.",
+          "line_hi": "डिलीवरी पर छह सौ चालीस रुपये देने हैं; चाहें तो सहयोग बैंक से मेरे नंबर पर भेज दीजिए, \"राहुल\" नाम से पहले से सेव है। रविवार को लौटा दूँगा।"
+        },
+        {
+          "id": "rf_open_door",
+          "stage": "close",
+          "line_en": "Or just tell them to come back Monday, that's fine too. Tell Amma I called.",
+          "line_hi": "या उन्हें सोमवार को आने को कह दीजिए, वह भी ठीक है। अम्मा को बता दीजिएगा कि मेरा फ़ोन आया था।"
+        },
+        {
+          "id": "rf_bye",
+          "stage": "close",
+          "line_en": "Call me back on my number if anything comes up. Okay, take care, bye!",
+          "line_hi": "कुछ भी हो तो मेरे नंबर पर फ़ोन कर लीजिए। ठीक है, अपना ध्यान रखिए, बाय!"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call, and this one was an everyday, genuine kind of call: a known person, a small amount, no hurry and no secrets. Checking a call is always okay, and 1930 is there if you ever need it.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी, और यह एक आम, असली तरह की कॉल थी: जाना-पहचाना व्यक्ति, छोटी रक़म, न जल्दी, न कुछ छिपाना। कॉल की जाँच करना हमेशा ठीक है, और ज़रूरत पड़े तो 1930 मौजूद है।"
+        }
+      ]
+    },
+    {
+      "id": "control_courier_delivery",
+      "title_en": "Courier delivery confirmation (genuine)",
+      "title_hi": "कूरियर डिलीवरी की पुष्टि (असली)",
+      "caller_name": "Suresh (drill character)",
+      "caller_role": "Delivery partner, SwiftParcel",
+      "is_scam": false,
+      "ruko_pattern_id": null,
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "cv_open",
+          "stage": "open",
+          "line_en": "Hello, SwiftParcel delivery here. I have a parcel for this number, from an online order.",
+          "line_hi": "हैलो, SwiftParcel डिलीवरी से बोल रहा हूँ। इस नंबर के लिए एक पार्सल है, ऑनलाइन ऑर्डर का।"
+        },
+        {
+          "id": "cv_hook",
+          "stage": "hook",
+          "line_en": "It is prepaid, so nothing to pay. I am in your area, can I come between two and four today?",
+          "line_hi": "यह प्रीपेड है, कुछ देना नहीं है। मैं आपके इलाक़े में हूँ, आज दो से चार के बीच आ जाऊँ?"
+        },
+        {
+          "id": "cv_landmark",
+          "stage": "hook",
+          "line_en": "Is there a landmark near your house? I am near the temple on the main road.",
+          "line_hi": "आपके घर के पास कोई निशानी है? मैं मेन रोड वाले मंदिर के पास हूँ।"
+        },
+        {
+          "id": "cv_options",
+          "stage": "hook",
+          "line_en": "If you are not home, I can leave it with the security, or bring it tomorrow. Whatever suits you.",
+          "line_hi": "आप घर पर न हों तो सिक्योरिटी के पास छोड़ दूँ, या कल ले आऊँ। जैसा आपको ठीक लगे।"
+        },
+        {
+          "id": "cv_track",
+          "stage": "close",
+          "line_en": "You can also track it in the app you ordered from.",
+          "line_hi": "आप जिस ऐप से ऑर्डर किया था, उसमें भी इसे ट्रैक कर सकते हैं।"
+        },
+        {
+          "id": "cv_bye",
+          "stage": "close",
+          "line_en": "Okay, see you in the afternoon. Thank you.",
+          "line_hi": "ठीक है, दोपहर में मिलते हैं। धन्यवाद।"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call, and this one was an everyday, genuine kind of call: nothing to pay, no threats and no codes. Checking a call is always okay, and 1930 is there if you ever need it.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी, और यह एक आम, असली तरह की कॉल थी: न कुछ देना, न कोई धमकी, न कोई कोड। कॉल की जाँच करना हमेशा ठीक है, और ज़रूरत पड़े तो 1930 मौजूद है।"
+        }
+      ]
+    },
+    {
+      "id": "control_power_outage",
+      "title_en": "Planned power outage notice (genuine)",
+      "title_hi": "बिजली बंद रहने की पहले से सूचना (असली)",
+      "caller_name": "City Power Board information line (drill character)",
+      "caller_role": "Recorded notice, City Power Board (fictional)",
+      "is_scam": false,
+      "ruko_pattern_id": null,
+      "steps": [
+        {
+          "id": "drill_disclosure",
+          "stage": "open",
+          "line_en": "This is a Ruko safety practice call. Say RUKO at any time to stop.",
+          "line_hi": "यह Ruko की सुरक्षा अभ्यास कॉल है। रोकने के लिए कभी भी \"रुको\" बोलिए।"
+        },
+        {
+          "id": "po_open",
+          "stage": "open",
+          "line_en": "Namaskara. This is an information call from City Power Board.",
+          "line_hi": "नमस्कार। यह सिटी पावर बोर्ड की सूचना कॉल है।"
+        },
+        {
+          "id": "po_hook",
+          "stage": "hook",
+          "line_en": "Because of planned maintenance, power will be off in your area this Thursday, from ten in the morning to two in the afternoon.",
+          "line_hi": "पहले से तय मरम्मत के काम की वजह से, इस गुरुवार सुबह दस बजे से दोपहर दो बजे तक आपके इलाक़े में बिजली बंद रहेगी।"
+        },
+        {
+          "id": "po_reason",
+          "stage": "hook",
+          "line_en": "The work is cable replacement and tree trimming near the transformer.",
+          "line_hi": "ट्रांसफ़ॉर्मर के पास केबल बदलने और पेड़ों की छँटाई का काम होगा।"
+        },
+        {
+          "id": "po_no_action",
+          "stage": "hook",
+          "line_en": "You do not need to do anything. Your bill and your connection are not affected.",
+          "line_hi": "आपको कुछ करने की ज़रूरत नहीं है। आपके बिल या कनेक्शन पर कोई असर नहीं पड़ेगा।"
+        },
+        {
+          "id": "po_details",
+          "stage": "close",
+          "line_en": "For details, check the City Power Board app or call the helpline printed on your bill.",
+          "line_hi": "ज़्यादा जानकारी के लिए सिटी पावर बोर्ड का ऐप देखिए या अपने बिल पर छपे हेल्पलाइन नंबर पर फ़ोन कीजिए।"
+        },
+        {
+          "id": "po_bye",
+          "stage": "close",
+          "line_en": "We regret the inconvenience. Thank you.",
+          "line_hi": "असुविधा के लिए खेद है। धन्यवाद।"
+        },
+        {
+          "id": "debrief",
+          "stage": "close",
+          "line_en": "This was a Ruko practice call, and this one was an everyday, genuine kind of call: no payment, no deadline on you and no codes. Checking a call is always okay, and 1930 is there if you ever need it.",
+          "line_hi": "यह Ruko की अभ्यास कॉल थी, और यह एक आम, असली तरह की कॉल थी: न पेमेंट, न आप पर कोई डेडलाइन, न कोई कोड। कॉल की जाँच करना हमेशा ठीक है, और ज़रूरत पड़े तो 1930 मौजूद है।"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,344 @@
+<title>Ruko Blueprint</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Instrument+Serif&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  /* Layout: a single reading column with wide breakouts for tables and the pillar grid; the "moment" strip carries the thesis. */
+  :root {
+    --paper: #f6f3ee;
+    --surface: #ffffff;
+    --ink: #13201f;
+    --ink-soft: #56635f;
+    --line: rgba(19, 32, 31, 0.12);
+    --calm: #0b4a45;
+    --calm-soft: #e2eeea;
+    --signal: #c2321f;
+    --signal-soft: #fbe5e1;
+    --gold: #93560a;
+    --gold-soft: #fbefd9;
+    --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
+    --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0e1413; --surface: #151d1c; --ink: #e8efec; --ink-soft: #a3b2ad; --line: rgba(232, 239, 236, 0.12);
+      --calm: #6fd0bd; --calm-soft: #16302c; --signal: #ff7a63; --signal-soft: #3a1c17; --gold: #e2b86b; --gold-soft: #33280f;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0e1413; --surface: #151d1c; --ink: #e8efec; --ink-soft: #a3b2ad; --line: rgba(232, 239, 236, 0.12);
+    --calm: #6fd0bd; --calm-soft: #16302c; --signal: #ff7a63; --signal-soft: #3a1c17; --gold: #e2b86b; --gold-soft: #33280f;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--paper); color: var(--ink); font-family: var(--font-body);
+    font-size: 17px; line-height: 1.6; padding-inline: 16px; padding-block: 0 64px;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  .read { max-width: 68ch; }
+  h1, h2, h3 { text-wrap: balance; }
+  h2 { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 4.4vw, 42px); line-height: 1.08; margin: 0 0 14px; }
+  h3 { font-size: 19px; margin: 0; }
+  p { margin: 0 0 12px; }
+  a { color: var(--calm); text-underline-offset: 3px; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--calm); outline-offset: 2px; border-radius: 4px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+  section { padding-block: 44px; border-top: 1px solid var(--line); display: grid; gap: 18px; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  header.hero { padding-block: 56px 40px; display: grid; gap: 18px; }
+  .hero h1 { font-family: var(--font-display); font-weight: 400; font-size: clamp(44px, 8vw, 92px); line-height: 0.98; margin: 0; letter-spacing: -0.01em; }
+  .hero h1 s { color: var(--ink-soft); text-decoration-color: var(--signal); text-decoration-thickness: 3px; }
+  .hero .lede { font-size: clamp(18px, 2.2vw, 22px); max-width: 60ch; color: var(--ink); }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-family: var(--font-mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--calm-soft); color: var(--calm); }
+  .chip.warn { background: var(--gold-soft); color: var(--gold); }
+
+  /* The thesis strip: who owns each moment of a digital arrest. */
+  .moments { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); }
+  .moment { padding: 20px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+  .moment + .moment { border-left: 1px solid var(--line); }
+  .moment .who { color: var(--ink-soft); font-size: 15px; }
+  .moment.gap { background: var(--calm); color: #fff; }
+  .moment.gap .eyebrow, .moment.gap .who { color: rgba(255, 255, 255, 0.78); }
+  .moment.gap h3 { font-family: var(--font-display); font-weight: 400; font-size: 28px; }
+  @media (max-width: 720px) {
+    .moments { grid-template-columns: 1fr; }
+    .moment + .moment { border-left: 0; border-top: 1px solid var(--line); }
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .stat { display: grid; gap: 2px; padding: 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); }
+  .stat b { font-family: var(--font-mono); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 14px; color: var(--ink-soft); }
+
+  blockquote { margin: 0; padding: 20px 22px; border-radius: 14px; background: var(--calm-soft); color: var(--ink); font-family: var(--font-display); font-size: clamp(22px, 3vw, 30px); line-height: 1.2; }
+
+  .pillars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 760px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+  .pillar .top { display: flex; align-items: baseline; gap: 10px; }
+  .pillar .tag { font-family: var(--font-mono); font-size: 12px; color: var(--calm); }
+  .pillar p { margin: 0; color: var(--ink-soft); font-size: 15.5px; }
+  .ev { display: flex; gap: 8px; align-items: baseline; font-size: 14px; padding-top: 10px; border-top: 1px dashed var(--line); }
+  .ev .lvl { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+  .lvl.strong { background: var(--calm-soft); color: var(--calm); }
+  .lvl.mod { background: var(--gold-soft); color: var(--gold); }
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 15px; }
+  th, td { text-align: left; padding: 12px 14px; vertical-align: top; border-bottom: 1px solid var(--line); }
+  th { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  td.was { color: var(--ink-soft); }
+
+  ol.rules { margin: 0; padding-left: 22px; display: grid; gap: 8px; }
+  ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+
+  .weeks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+  @media (max-width: 820px) { .weeks { grid-template-columns: 1fr; } }
+  .week { border-top: 3px solid var(--calm); padding-top: 12px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+  .week .dates { font-family: var(--font-mono); font-size: 13px; color: var(--ink-soft); }
+  .week ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 15.5px; }
+  .note { padding: 14px 16px; border-radius: 12px; background: var(--gold-soft); color: var(--ink); font-size: 15.5px; }
+
+  .pitch { counter-reset: p; display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+  .pitch li { counter-increment: p; display: grid; grid-template-columns: 34px 1fr; gap: 10px; font-size: 17px; }
+  .pitch li::before { content: counter(p); font-family: var(--font-mono); font-size: 13px; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--calm); color: var(--paper); margin-top: 2px; }
+
+  .sources { font-size: 14.5px; color: var(--ink-soft); columns: 2 280px; column-gap: 28px; }
+  .sources a { display: block; margin-bottom: 6px; break-inside: avoid; }
+  footer { padding-top: 28px; border-top: 1px solid var(--line); color: var(--ink-soft); font-size: 14px; }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="hero">
+    <span class="eyebrow">ForgeX 2.0 · P060 · Strategy, 9 Oct 2026</span>
+    <h1><s>“You are under digital arrest.”</s><br>Ruko.</h1>
+    <p class="lede">The plan to make Ruko the best defence in the world against digital-arrest scams, built from five research reports on how the scam works, what has stopped it in other countries, the psychology, Indian law, and who will pay.</p>
+    <div class="meta">
+      <span class="chip">8 pillars</span>
+      <span class="chip">15 design rules</span>
+      <span class="chip">Build plan to 28 Oct</span>
+      <span class="chip warn">7 decisions need your OK</span>
+    </div>
+  </header>
+
+  <section>
+    <span class="eyebrow">The insight</span>
+    <div class="read">
+      <h2>A digital arrest is a capture, and the money leaves through the bank.</h2>
+      <p>Scammers combine authority, fear and isolation (“stay on camera, tell no one”) for hours or weeks. Then the victim breaks FDs, takes gold loans and sends RTGS transfers, often at the branch and in many instalments. One Mumbai couple made 26 branch visits in 40 days. Recovering the money afterwards barely works, so prevention is the only thing that counts.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>₹1,935 cr</b><span>lost to digital arrest in 2024 (1,23,672 complaints)</span></div>
+      <div class="stat"><b>₹18 cr</b><span>actually returned to victims, of ≈₹7,000 cr frozen via 1930</span></div>
+      <div class="stat"><b>₹58.5 lakh</b><span>Rajkot, Sep 2026: warned by one bank, she paid through another</span></div>
+      <div class="stat"><b>98.5%</b><span>of fraud value is in transfers above ₹10,000 (RBI)</span></div>
+    </div>
+    <div class="moments" role="table" aria-label="Who owns each moment of the scam">
+      <div class="moment" role="row"><span class="eyebrow">The call</span><h3>Number and screen</h3><span class="who">Truecaller labels numbers. Telcos label spam. Google warns when you share your screen.</span></div>
+      <div class="moment gap" role="row"><span class="eyebrow">Between the call and the money</span><h3>Nobody. That’s Ruko.</h3><span class="who">The person is captured, isolated and frightened. Family and branch staff are who actually stop it today.</span></div>
+      <div class="moment" role="row"><span class="eyebrow">The transaction</span><h3>Bank fraud engines</h3><span class="who">They score the payment, not the person, and one warning just sends the victim to another bank.</span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Positioning</span>
+    <blockquote>Ruko is the safety layer between the scam call and the money. It breaks the isolation, brings in the family, makes the bank pause, and proves it works.</blockquote>
+    <div class="read">
+      <p>Ruko means “stop”, which matches the Prime Minister’s digital-arrest advice: “Stop, Think, Take action.” <strong>Banks pay</strong>, and families use it free through their bank. The timing suits banks:</p>
+      <ul class="plain">
+        <li>From 1 Jan 2027, frauds done “under coercion or duress” count as fraudulent, which moves cost onto banks.</li>
+        <li>RBI’s April 2026 proposals cover a 1-hour hold and trusted-person approval for customers aged 70+. They are still proposals.</li>
+        <li>The Supreme Court is pressing RBI for a debit-hold procedure.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">What makes Ruko the best</span>
+    <h2>Eight pillars</h2>
+    <div class="pillars">
+      <article class="pillar">
+        <div class="top"><span class="tag">P1</span><h3>“Is this call real?”</h3></div>
+        <p>A calm voice (with a keypad option) checks the real scam phrases: parcel, Aadhaar misuse, TRAI, “stay on camera”, “RBI verification”. Then it answers with one fixed fact: no police, CBI, ED, RBI or court arrests anyone or takes money on a video call. Real bank calls come from 1600 numbers.</p>
+        <div class="ev"><span class="lvl mod">Moderate</span><span>Knowing the scam: 9% lost money vs 34%. The Kochi rescue turned on that one sentence.</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P2</span><h3>Silent “Tell my family”</h3></div>
+        <p>One tap, nothing the scammer can see. The family is told what to <em>say</em>: “Are you safe? I’m with you. Hang up; I’ll call back in 2 minutes.” If someone told you to tell no one, that is the scam.</p>
+        <div class="ev"><span class="lvl strong">Strong</span><span>51% of people who had someone intervene avoided losing money (FINRA).</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P3</span><h3>Smart pause at the bank</h3></div>
+        <p>It warns only on real risk. The safe choice is always the biggest button. It reads behaviour instead of the reason the customer gives: new payee, broken FDs, a gold loan followed by RTGS, a live call, large cash withdrawals. A 1-hour hold, trusted-person approval for customers 70+, and the hold follows the person across banks.</p>
+        <div class="ev"><span class="lvl strong">Strong</span><span>Randomised trial: scam payments 22% → 4% (−81%), and −94% on repeat. UK refund rules plus delay powers: −21%.</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P4</span><h3>Branch and fraud-desk co-pilot</h3></div>
+        <p>A teller screen with 3 questions (“Do you trust this payee?”), a quiet room and official proof. One-tap “Call 1930” and “E-lock account”. The desk calls likely victims proactively, and the trusted contact is told within a fixed time.</p>
+        <div class="ev"><span class="lvl strong">Strong</span><span>Hong Kong’s proactive calls drove ≈half of its 2025 loss drop. UK branch protocol: £258m prevented.</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P5</span><h3>Ruko Lock</h3></div>
+        <p>Savings are locked against digital transfer. Unlocking needs family or a branch visit, plus a 12–24 hour cooling-off. It is switched on by default during onboarding.</p>
+        <div class="ev"><span class="lvl mod">Moderate</span><span>Singapore locked S$6.6bn with no reported fraud on locked money. Hong Kong made it opt-in and got ~3,200 users.</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P6</span><h3>Practice that protects</h3></div>
+        <p>Interactive drills under 5 minutes, each for a specific scam and channel, mixed with genuine calls. Boosters every 2–4 weeks. A fictional agency, the stop word RUKO, and a kind debrief.</p>
+        <div class="ev"><span class="lvl strong">Strong</span><span>Interactive practice works and static tips don’t. Repeated contact: 22.4% vs 8.6% fewer repeat victims (US RCT).</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P7</span><h3>Proof (the moat)</h3></div>
+        <p>It measures stop rate with Ruko versus without, false alarms, time to stop, and money lost before the save. Over time it builds shared scam-script intelligence that banks and telcos can’t see on their own.</p>
+        <div class="ev"><span class="lvl mod">Gap</span><span>No competitor publishes any effectiveness data. Banks need evidence for RBI and their boards.</span></div>
+      </article>
+      <article class="pillar">
+        <div class="top"><span class="tag">P8</span><h3>Reach everyone (after 28 Oct)</h3></div>
+        <p>A basic-phone version by missed call, phone menu or SMS. The family’s phone and the branch carry the protection for elders who aren’t online. English, Hindi, Kannada, then the rest.</p>
+        <div class="ev"><span class="lvl mod">Context</span><span>Only 41% of Indian elders own a smartphone, and 66% find digital tools confusing (HelpAge).</span></div>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Needs your OK</span>
+    <h2>Seven changes to earlier decisions</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Area</th><th>Was</th><th>Now</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td>Drill scripts</td><td class="was">May say “CBI” or “police”</td><td>A fictional agency (“Central Investigation Cell – DRILL”)</td><td>Impersonating a public servant (BNS §204) doesn’t require cheating</td></tr>
+          <tr><td>Family members</td><td class="was">Added directly by the elder</td><td>The family member gets an invite and accepts it</td><td>DPDP: each person consents to their own data</td></tr>
+          <tr><td>SMS alerts</td><td class="was">Twilio international route</td><td>App alerts first; DLT registration for SMS, or skip SMS for now</td><td>The international route shows a random sender, which looks like a scam</td></tr>
+          <tr><td>Who pays</td><td class="was">Families subscribe</td><td>Banks pay; families get it free through the bank</td><td>Truecaller is free, and bank liability rises in 2027</td></tr>
+          <tr><td>Name</td><td class="was">Family Safety Circle</td><td>“Ruko Family”</td><td>Truecaller’s launch uses “safety circle” language</td></tr>
+          <tr><td>Isolation alerts</td><td class="was">Passive monitoring</td><td>Only on risk events or when the elder triggers them</td><td>Google Play bans monitoring adults</td></tr>
+          <tr><td>Results</td><td class="was">One stop-rate percentage</td><td>“Furthest step reached” scale, control calls, exact intervals; called a feasibility pilot</td><td>Ten people can’t support stronger claims</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">How every screen behaves</span>
+    <h2>Design rules from the evidence</h2>
+    <ol class="rules read">
+      <li>Name the scam, then state the “never” rule.</li>
+      <li>Calm first: “You are safe. You have done nothing wrong.”</li>
+      <li>One physical action per screen, starting with “End the call”.</li>
+      <li>The safe button is always the biggest one.</li>
+      <li>No shame, ever: “This happens to doctors, officers and engineers.”</li>
+      <li>Show proof instead of arguing, and always show 1930 and cybercrime.gov.in.</li>
+      <li>Warn only on risk. Aim for warnings on fewer than 10% of routine payments.</li>
+      <li>Text at least 20px, tap targets about 12mm, 7:1 contrast on warnings, every alert read aloud.</li>
+    </ol>
+    <div class="read">
+      <p><strong>Trust and compliance, built in:</strong></p>
+      <ul class="plain">
+        <li>A separate consent for each purpose, checked with teach-back.</li>
+        <li>Each family member consents for themselves.</li>
+        <li>The elder is always the user, and adults are never monitored.</li>
+        <li>Ruko keeps signals, never audio.</li>
+        <li>Drills use a fictional agency and an ethics-consent form.</li>
+        <li>Privacy notices in English, Hindi and Kannada.</li>
+        <li>Data stays in India.</li>
+        <li>RBI items are labelled “proposed”.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Build plan</span>
+    <h2>19 days to 28 October</h2>
+    <div class="weeks">
+      <div class="week">
+        <span class="dates num">10–16 Oct</span>
+        <h3>Foundations and the trial essentials</h3>
+        <ul>
+          <li>Accounts, protected server, consent per purpose, family invite and accept</li>
+          <li>P1 “Is this call real?” in English and Hindi</li>
+          <li>P2 silent “Tell my family”, with the script</li>
+          <li>P3 upgrade: safe-first warning, cross-channel hold, trusted person, FD and cash signals</li>
+        </ul>
+      </div>
+      <div class="week">
+        <span class="dates num">17–23 Oct</span>
+        <h3>Drills, proof and trials</h3>
+        <ul>
+          <li>P6 drills, plus P7 trial logging and results dashboard</li>
+          <li>Run the 10-elder trials from about 18 Oct</li>
+          <li>P4 teller screen; P5 Ruko Lock (simple)</li>
+        </ul>
+      </div>
+      <div class="week">
+        <span class="dates num">24–28 Oct</span>
+        <h3>Ship and pitch</h3>
+        <ul>
+          <li>Rotate the database key, deploy</li>
+          <li>Polish, demo script, backup video</li>
+          <li>Pitch built on the research numbers</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note read">This is a lot for one person alongside running trials. If time runs short, cut in this order: Ruko Lock, then the teller screen, then the Hindi voice. Never cut the safety foundations, the family alert or the measured results.</p>
+  </section>
+
+  <section>
+    <span class="eyebrow">Business</span>
+    <h2>Banks pay; families are protected.</h2>
+    <div class="read">
+      <ul class="plain">
+        <li><strong>Primary:</strong> “Vulnerable Customer Protection” for banks, at ₹10–25 per enrolled senior per month, plus a ₹3–8 lakh 90-day pilot. Start with small finance and co-operative banks; they move faster and have fewer vendors.</li>
+        <li><strong>Secondary:</strong> drill-based stop-rate audits (₹2–5 lakh per 100 people), an insurer add-on, an elder-care partner such as Emoha, and a low-cost family plan as an entry point.</li>
+        <li><strong>First conversations:</strong> AU Small Finance Bank, a Bengaluru co-operative bank with many pensioners, then Emoha and HDFC ERGO.</li>
+        <li><strong>Risks:</strong> RBI may finalise the rules differently. Free public tools and Truecaller push prices down. Bank sales take 6–18 months.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">On stage</span>
+    <h2>The 60-second pitch</h2>
+    <ol class="pitch read">
+      <li>Indians lost ₹1,935 crore to digital arrest in 2024. Recovery returns almost nothing. Only prevention works.</li>
+      <li>The scam’s weapon is isolation, and the money leaves through the bank, often at the branch, over days.</li>
+      <li>Truecaller labels calls. Google warns about screen-sharing. Nobody owns the moment between the call and the money. Ruko does. (Live demo.)</li>
+      <li>We measured it: without Ruko, X of 10 elders stopped; with Ruko, Y of 10. False alarms: Z. This was a feasibility pilot.</li>
+      <li>From 2027, coercion frauds fall on banks, and RBI has proposed trusted-person approval for 70+. Ruko is that system, built for elders and proven.</li>
+    </ol>
+  </section>
+
+  <section>
+    <span class="eyebrow">Key sources</span>
+    <div class="sources">
+      <a href="https://rbi.org.in/Scripts/PublicationsView.aspx?id=23810">RBI discussion paper, 9 Apr 2026</a>
+      <a href="https://www.medianama.com/2026/06/223-rbi-final-amendment-directions-limiting-customer-liability-digital-transactions-effect-2027/">RBI liability amendment (from Jan 2027)</a>
+      <a href="https://inc42.com/?p=504907">Digital-arrest figures (MHA via Inc42)</a>
+      <a href="https://www.verdictum.in/supreme-court/digital-arrest-scams-interim-directions-rbi-1619172">Supreme Court interim directions</a>
+      <a href="https://www.onmanorama.com/news/kerala/2025/12/18/never-seen-so-panicked-kochi-bank-manager-saved-elderly-customer-losing-4-5-lakh-digital-arrest-scam.amp.html">Kochi branch rescue</a>
+      <a href="https://deshgujarat.com/2026/10/02/despite-bank-warning-doctor-gripped-by-fear-transfers-%e2%82%b958-50-lakh-in-digital-arrest-scam/">Rajkot: warned, paid through another bank</a>
+      <a href="https://www.nottingham.ac.uk/cedex/documents/papers/cedex-discussion-paper-2023-08.pdf">CeDEx payment-warning trial</a>
+      <a href="https://www.finrafoundation.org/exposed-to-scams">FINRA Foundation: Exposed to Scams</a>
+      <a href="https://www.psr.org.uk/news-and-updates/latest-news/news/payment-fraud-falls-by-73m-following-psr-reimbursement-scheme/">UK reimbursement evaluation (−21%)</a>
+      <a href="https://www.adcc.gov.hk/en-hk/statistic.html">Hong Kong anti-deception statistics</a>
+      <a href="https://www.mas.gov.sg/news/parliamentary-replies/2024/pq-on-srf-and-money-lock">Singapore Money Lock</a>
+      <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11689558/">US Postal Inspection Service RCT</a>
+      <a href="https://crr.bc.edu/people-can-spot-a-scam-after-seeing-fakes">People can spot a scam after seeing fakes</a>
+      <a href="https://support.google.com/googleplay/android-developer/answer/9888380">Google Play stalkerware policy</a>
+      <a href="https://devgan.in/bns/section/204/">BNS §204</a>
+      <a href="https://www.dpdpa.com/dpdparules/rule3.html">DPDP Rules: notice</a>
+      <a href="https://www.etvbharat.com/en/technology/truecaller-launches-family-protection-feature-in-india-what-is-it-key-features-enn26031304993">Truecaller Family Protection, India</a>
+      <a href="https://blog.google/security/android-expands-pilot-in-call-scam-protection-financial-apps/">Google in-call scam protection</a>
+    </div>
+  </section>
+
+  <footer>Full research and every source: <span class="num">docs/research/01–05</span> and <span class="num">docs/BLUEPRINT.md</span> in the hackathon main folder. RBI April 2026 items are proposals, not law. Several figures come from news reports and need checking against primary sources before you quote them on stage.</footer>
+</div>

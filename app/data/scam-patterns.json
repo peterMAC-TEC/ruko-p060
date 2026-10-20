@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "patterns": [
+    {
+      "id": "digital_arrest",
+      "severity": "high",
+      "identity": ["police"],
+      "name": { "en": "Digital arrest (fake police, CBI or customs)", "hi": "डिजिटल अरेस्ट (नकली पुलिस, CBI या कस्टम)" },
+      "rule": {
+        "en": "Police, CBI, customs and courts never arrest anyone or ask for money on a phone or video call.",
+        "hi": "पुलिस, CBI, कस्टम या कोर्ट कभी फ़ोन या वीडियो कॉल पर किसी को गिरफ्तार नहीं करते और न पैसे माँगते हैं।"
+      },
+      "explain": {
+        "en": [
+          "\"Digital arrest\" does not exist in Indian law.",
+          "They keep you on camera and tell you to keep it secret so no one can stop them.",
+          "Hang up. Your money is safe as long as you don't send it."
+        ],
+        "hi": [
+          "भारतीय कानून में \"डिजिटल अरेस्ट\" जैसा कुछ नहीं होता।",
+          "वे आपको कैमरे पर रखते हैं और चुप रहने को कहते हैं ताकि कोई उन्हें रोक न सके।",
+          "फ़ोन काट दें। जब तक आप पैसे नहीं भेजते, आपका पैसा सुरक्षित है।"
+        ]
+      },
+      "phrases": ["digital\\s*arrest", "डिजिटल\\s*(अरेस्ट|गिरफ्तारी)", "\\bcbi\\b", "\\bncb\\b", "narcotics", "enforcement directorate", "\\bwarrant", "money\\s*launder", "supreme court", "\\barrest", "गिरफ्तार", "सीबीआई", "वारंट", "stay on (the )?(video|camera)", "कैमरे पर"]
+    },
+    {
+      "id": "courier_drugs",
+      "severity": "high",
+      "identity": ["courier"],
+      "name": { "en": "Courier parcel with \"drugs\"", "hi": "पार्सल में \"ड्रग्स\" वाला धोखा" },
+      "rule": {
+        "en": "Couriers never transfer your call to the police, and no case is ever settled over the phone.",
+        "hi": "कूरियर कंपनी कभी आपकी कॉल पुलिस को नहीं जोड़ती, और कोई केस फ़ोन पर नहीं निपटता।"
+      },
+      "explain": {
+        "en": [
+          "They say a parcel in your name had drugs or fake passports.",
+          "Then a fake officer joins to scare you into paying.",
+          "Hang up and check on the courier's official website, not on this call."
+        ],
+        "hi": [
+          "वे कहते हैं कि आपके नाम के पार्सल में ड्रग्स या नकली पासपोर्ट मिले।",
+          "फिर एक नकली अफ़सर डराकर पैसे माँगता है।",
+          "फ़ोन काटें और कूरियर की असली वेबसाइट पर जाँचें, इस कॉल पर नहीं।"
+        ]
+      },
+      "phrases": ["parcel", "package", "fedex", "\\bdhl\\b", "dtdc", "courier", "drugs", "\\bmdma\\b", "fake passport", "पार्सल", "कूरियर", "ड्रग"]
+    },
+    {
+      "id": "kyc_block",
+      "severity": "high",
+      "identity": ["bank"],
+      "name": { "en": "KYC or bank account block", "hi": "KYC या बैंक खाता बंद होने का धोखा" },
+      "rule": {
+        "en": "Banks never ask for your OTP, PIN or password, or ask you to install an app. Real bank calls come from numbers starting with 1600.",
+        "hi": "बैंक कभी आपका OTP, PIN या पासवर्ड नहीं माँगता, न कोई ऐप डलवाता है। असली बैंक की कॉल 1600 से शुरू होने वाले नंबर से आती है।"
+      },
+      "explain": {
+        "en": [
+          "They say your account will be blocked today unless you update KYC.",
+          "The link or app they send gives them control of your money.",
+          "Hang up and call the number on the back of your bank card."
+        ],
+        "hi": [
+          "वे कहते हैं कि KYC अपडेट नहीं की तो आज खाता बंद हो जाएगा।",
+          "उनका भेजा लिंक या ऐप आपके पैसे पर उनका कब्ज़ा करा देता है।",
+          "फ़ोन काटें और अपने बैंक कार्ड के पीछे लिखे नंबर पर फ़ोन करें।"
+        ]
+      },
+      "phrases": ["\\bkyc\\b", "account (will be |is )?(blocked|frozen|suspended|closed)", "pan card", "aadhaar (link|update)", "re-?kyc", "केवाईसी", "खाता बंद", "अकाउंट बंद", "\\brbi\\b", "आरबीआई"]
+    },
+    {
+      "id": "electricity_cut",
+      "severity": "medium",
+      "identity": ["electricity"],
+      "name": { "en": "Electricity disconnection", "hi": "बिजली कटने का धोखा" },
+      "rule": {
+        "en": "The electricity board never threatens to cut your power tonight through a personal call or WhatsApp. Pay only on the official app or at the office.",
+        "hi": "बिजली विभाग कभी निजी कॉल या WhatsApp पर आज रात बिजली काटने की धमकी नहीं देता। बिल सिर्फ़ असली ऐप या दफ़्तर में भरें।"
+      },
+      "explain": {
+        "en": [
+          "They say your bill is unpaid and power will be cut in hours.",
+          "They push you to pay a personal number or install an app.",
+          "Check your bill on the official BESCOM or board app first."
+        ],
+        "hi": [
+          "वे कहते हैं कि बिल बाकी है और कुछ घंटों में बिजली कट जाएगी।",
+          "वे निजी नंबर पर पैसे भेजने या ऐप डालने को कहते हैं।",
+          "पहले बिजली विभाग के असली ऐप पर अपना बिल देखें।"
+        ]
+      },
+      "phrases": ["electricity", "bijli", "bescom", "power (will be )?(cut|disconnected)", "connection (will be )?cut", "बिजली", "कनेक्शन कट"]
+    },
+    {
+      "id": "fake_customer_care",
+      "severity": "medium",
+      "identity": ["customer_care"],
+      "name": { "en": "Fake customer care or refund", "hi": "नकली कस्टमर केयर या रिफ़ंड" },
+      "rule": {
+        "en": "Real customer care never asks you to share your screen, an OTP, or send money to receive a refund.",
+        "hi": "असली कस्टमर केयर कभी स्क्रीन शेयर, OTP या रिफ़ंड पाने के लिए पैसे भेजने को नहीं कहता।"
+      },
+      "explain": {
+        "en": [
+          "Refunds never need you to pay or scan a QR code.",
+          "Scanning a QR code sends money; it never receives it.",
+          "Use only the help section inside the official app."
+        ],
+        "hi": [
+          "रिफ़ंड के लिए कभी पैसे भेजने या QR कोड स्कैन करने की ज़रूरत नहीं होती।",
+          "QR कोड स्कैन करने से पैसे जाते हैं, आते नहीं।",
+          "सिर्फ़ असली ऐप के अंदर वाले हेल्प सेक्शन का इस्तेमाल करें।"
+        ]
+      },
+      "phrases": ["customer care", "refund", "cashback", "reverse (the )?transaction", "scan (the )?qr", "amazon", "flipkart", "रिफंड", "रिफ़ंड", "कस्टमर केयर"]
+    },
+    {
+      "id": "family_emergency",
+      "severity": "high",
+      "identity": ["family"],
+      "name": { "en": "Family emergency (possibly a cloned voice)", "hi": "परिवार पर संकट (आवाज़ नकली हो सकती है)" },
+      "rule": {
+        "en": "If a family member says they're in trouble, hang up and call them back on their own number. Ask for your family code word.",
+        "hi": "अगर परिवार का कोई सदस्य मुसीबत में होने की बात कहे, तो फ़ोन काटकर उनके अपने नंबर पर वापस फ़ोन करें। परिवार का कोड शब्द पूछें।"
+      },
+      "explain": {
+        "en": [
+          "Scammers can copy a voice from a few seconds of video.",
+          "They create panic so you pay before you check.",
+          "Calling back on the number you know takes one minute."
+        ],
+        "hi": [
+          "धोखेबाज़ कुछ सेकंड के वीडियो से किसी की आवाज़ की नकल बना सकते हैं।",
+          "वे घबराहट पैदा करते हैं ताकि आप जाँचने से पहले पैसे भेज दें।",
+          "जाने-पहचाने नंबर पर वापस फ़ोन करने में एक मिनट लगता है।"
+        ]
+      },
+      "phrases": ["accident", "hospital", "(son|daughter|grandson|beta).{0,20}(arrested|in jail|caught)", "\\bbail\\b", "urgent money", "एक्सीडेंट", "अस्पताल", "बेटा.{0,15}(पकड़|गिरफ्तार)", "ज़मानत"]
+    },
+    {
+      "id": "investment_task",
+      "severity": "medium",
+      "identity": ["investment"],
+      "name": { "en": "Investment, task or trading group", "hi": "निवेश, टास्क या ट्रेडिंग ग्रुप" },
+      "rule": {
+        "en": "Real jobs and investments never ask you to pay first. Guaranteed high returns are always a scam.",
+        "hi": "असली नौकरी या निवेश कभी पहले पैसे नहीं माँगते। पक्का ऊँचा मुनाफ़ा हमेशा धोखा होता है।"
+      },
+      "explain": {
+        "en": [
+          "They let you win small amounts first to build trust.",
+          "Then they ask for a big deposit to \"unlock\" your money.",
+          "You can't withdraw because the app is fake."
+        ],
+        "hi": [
+          "पहले वे भरोसा जीतने के लिए छोटी रकम जिताते हैं।",
+          "फिर आपका पैसा \"खोलने\" के लिए बड़ी रकम माँगते हैं।",
+          "आप पैसे निकाल नहीं पाते क्योंकि ऐप नकली होता है।"
+        ]
+      },
+      "phrases": ["\\btask", "part.?time job", "like (the )?videos", "telegram", "trading", "crypto", "guaranteed (return|profit)", "double (your|the) money", "\\bipo\\b", "निवेश", "टास्क", "मुनाफ़ा"]
+    },
+    {
+      "id": "sextortion",
+      "severity": "high",
+      "identity": ["video_stranger"],
+      "name": { "en": "Video call blackmail", "hi": "वीडियो कॉल से ब्लैकमेल" },
+      "rule": {
+        "en": "If a stranger threatens to share a video, don't pay. Paying never stops it. Report it at cybercrime.gov.in.",
+        "hi": "अगर कोई अनजान व्यक्ति वीडियो फैलाने की धमकी दे, तो पैसे न दें। पैसे देने से यह कभी नहीं रुकता। cybercrime.gov.in पर शिकायत करें।"
+      },
+      "explain": {
+        "en": [
+          "A stranger video-calls and records a few seconds, often edited.",
+          "Then fake officers or \"YouTube staff\" demand money.",
+          "This happens to many people. You have done nothing wrong by reporting it."
+        ],
+        "hi": [
+          "कोई अनजान व्यक्ति वीडियो कॉल करके कुछ सेकंड रिकॉर्ड करता है, अक्सर एडिट किया हुआ।",
+          "फिर नकली अफ़सर या \"YouTube वाले\" पैसे माँगते हैं।",
+          "यह बहुत लोगों के साथ होता है। शिकायत करना बिल्कुल सही है।"
+        ]
+      },
+      "phrases": ["video (will go |go )?viral", "recording of you", "\\bnude", "leak (the )?video", "youtube", "बदनाम", "वीडियो वायरल"]
+    },
+    {
+      "id": "loan_app",
+      "severity": "medium",
+      "identity": ["loan"],
+      "name": { "en": "Loan app harassment", "hi": "लोन ऐप से परेशान करना" },
+      "rule": {
+        "en": "Lenders are not allowed to threaten you or message your contacts. Never pay a \"recovery agent\" on a personal UPI ID.",
+        "hi": "लोन देने वाले आपको धमका नहीं सकते, न आपके कॉन्टैक्ट्स को मैसेज कर सकते हैं। किसी \"रिकवरी एजेंट\" के निजी UPI पर कभी पैसे न भेजें।"
+      },
+      "explain": {
+        "en": [
+          "Many instant-loan apps are illegal and not registered with RBI.",
+          "They threaten to send edited photos to your contacts.",
+          "Report the app at sachet.rbi.org.in and cybercrime.gov.in."
+        ],
+        "hi": [
+          "कई इंस्टेंट लोन ऐप गैरकानूनी हैं और RBI में पंजीकृत नहीं हैं।",
+          "वे आपकी एडिट की गई फ़ोटो कॉन्टैक्ट्स को भेजने की धमकी देते हैं।",
+          "ऐप की शिकायत sachet.rbi.org.in और cybercrime.gov.in पर करें।"
+        ]
+      },
+      "phrases": ["\\bloan\\b", "recovery agent", "\\bemi\\b", "your contacts", "morphed", "लोन", "वसूली"]
+    },
+    {
+      "id": "otp_screenshare",
+      "severity": "high",
+      "identity": ["tech_support"],
+      "name": { "en": "OTP or screen-sharing request", "hi": "OTP या स्क्रीन शेयर करवाने का धोखा" },
+      "rule": {
+        "en": "Never share an OTP or install AnyDesk, TeamViewer or QuickSupport because a caller asked. No real company needs your screen.",
+        "hi": "किसी कॉल करने वाले के कहने पर कभी OTP न बताएँ और AnyDesk, TeamViewer या QuickSupport न डालें। किसी असली कंपनी को आपकी स्क्रीन की ज़रूरत नहीं होती।"
+      },
+      "explain": {
+        "en": [
+          "An OTP is a key to your account. Whoever has it can take your money.",
+          "Screen-sharing apps let them watch you type your PIN.",
+          "If you already installed one, uninstall it and call your bank."
+        ],
+        "hi": [
+          "OTP आपके खाते की चाबी है। जिसके पास यह है, वह आपका पैसा ले सकता है।",
+          "स्क्रीन शेयर वाले ऐप से वे आपको PIN डालते हुए देख लेते हैं।",
+          "अगर ऐप डाल लिया है, तो उसे हटाएँ और अपने बैंक को फ़ोन करें।"
+        ]
+      },
+      "phrases": ["anydesk", "teamviewer", "quick ?support", "rustdesk", "screen ?shar", "\\botp\\b", "\\bapk\\b", "install (this|the|an?) app", "ओटीपी", "स्क्रीन शेयर"]
+    }
+  ]
+}
