@@ -43,3 +43,6 @@ next-env.d.ts
 
 # parked P056 project, not part of Ruko
 /_old-policy-xray/
+
+.vercel
+.env*

@@ -2,7 +2,7 @@
 
 **Problem P060, "This is the CBI. You are under digital arrest."** Scammers posing as police, customs or couriers keep older people on video calls for hours and push them to move their savings. Ruko helps them, and their family, stop before money moves.
 
-- **Live:** see the link in [docs/DECISIONS.md](docs/DECISIONS.md) (section "Deploy"). The demo people Kamala (72) and her daughter Priya are an open sandbox.
+- **Live:** **https://ruko-seven.vercel.app** (elder: `/app`, family: `/family`, laptop demo: `/demo`). The demo people, Kamala (72) and her daughter Priya, are an open sandbox. `/lab` and `/results` are locked: open `/lab/unlock?key=<RUKO_LAB_KEY from app/.env.local>` once on the facilitator's browser.
 - **Code:** [app/](app/) (Next.js 16, Supabase, Gemini). Developer notes: [app/README.md](app/README.md) and [app/CLAUDE.md](app/CLAUDE.md).
 - **Field test protocol (10 older adults and their families):** [docs/FIELD-TEST.md](docs/FIELD-TEST.md)
 - **Decisions:** [docs/DECISIONS.md](docs/DECISIONS.md)
@@ -50,7 +50,7 @@ Two phones: **Kamala's** (elder, `/app`) and **Priya's** (family, `/family`, wit
 | 0:45 | Priya's phone rings and flashes red. Hold it up. | "At the same moment her daughter's phone rings with the reasons in plain words, a one-tap call and what to say. The scammer's power is isolation. Ruko breaks it." |
 | 1:00 | Kamala's phone: **Call Priya** / **Also send Priya a WhatsApp**. | "If the app alert is missed, WhatsApp always gets through. Indian SMS needs business registration, so we don't depend on it." |
 | 1:10 | Back, **Tell me what they said** → tap **Tap and speak** and say *"He said he is from CBI, I am under digital arrest, don't tell my son, transfer to the RBI safe account."* → **Check this**. | "Or she can just tell Ruko, in her own words. With the AI on, it lists each warning sign **with her exact words as evidence**. The AI only reads; plain code decides. Offline, the phone's own phrase check answers." |
-| 1:30 | Laptop `/demo` → **Start the scam call** → **She tries to send ₹4,80,000**. | "If she still goes to pay, her bank pauses the 'safe account' payment, alerts Priya and shows the fraud desk why." |
+| 1:30 | Laptop `/demo` → **Start the scam call** → **Open the payment** → **Send** on Kamala's phone → practice PIN **1234**. | "If she still goes to pay, her bank pauses the 'safe account' payment, alerts Priya and shows the fraud desk why." |
 | 1:45 | `/results` (Illustrative, clearly labelled). | "Our north star is the share of role-played scam calls where the person stops before transferring, with Ruko vs without, for 10 older adults and their families. The protocol is in the repo." |
 | 1:55 | — | "Ruko. One button between a scared parent and their savings." |
 

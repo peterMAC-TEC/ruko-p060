@@ -140,3 +140,22 @@ A second session started P060 from scratch in `claud 2/Ruko (P060)`, with a Gemi
 - **Family alert reasons** are now plain English ("Told to keep it secret") instead of codes ("q keep secret").
 - **Presenter mode:** `npm run demo:offline` (`RUKO_OFFLINE=1`) runs everything on the laptop with in-memory demo data and no AI, so the demo never depends on the network.
 - **Tests** stay in the old build's style (`tsx` scripts) rather than the reuse kit's Vitest; `npm test` runs them all. `npm run check:ai` runs the live AI cases (they use the free quota).
+
+## Deploy (20 Oct)
+- **Live: https://ruko-seven.vercel.app.** This is a new Vercel project `ruko` (team peter-74be, the petermac-tec login) on the free plan, linked from `app/`. Redeploy with `cd app && npx vercel@latest deploy --prod`.
+- **The functions run in Mumbai** (`"regions": ["bom1"]` in `app/vercel.json`), next to the Supabase database. In the US default region, the family alert took **17 s**; in Mumbai it takes **1.2 s**. `vercel.json` also pins the framework to Next.js (the CLI-created project defaulted to "Other" and served 404s).
+- **Environment:** 13 production variables, piped from `app/.env.local` and never shown: DEMO_MODE/MOCK flags, Supabase, Gemini, and three new secrets generated for production (`RUKO_HASH_SALT`, `RUKO_BANK_SIGNING_KEY`, `RUKO_LAB_KEY`).
+- **The lab and results are locked in production:** the facilitator opens `/lab/unlock?key=<RUKO_LAB_KEY>` once per browser.
+- **Verified on the live link at phone width (20 Oct):**
+  - home;
+  - the guided check → STOP → family told (1.2 s);
+  - the WhatsApp and call links;
+  - the family screen with plain reasons;
+  - "Tell me what they said" in Hinglish → AI → STOP (22 s on the free tier, with "Still checking…" shown);
+  - the Hindi screens;
+  - `/demo`'s bank hold with the family alert;
+  - `/help`; `/lab` and `/results` locked.
+- **Still the user's to do:**
+  - **Rotate the Supabase secret key.** It was pasted in a chat on 8 Oct; it is still the one in use. When it changes, update `app/.env.local` and the Vercel variable.
+  - **Decide on a paid Gemini key**, for fast AI checks and no free-tier data use (see above).
+- **Follow-ups:** two Supabase advisor warnings (`ruko_pin_fail` and `ruko_no_update` have a mutable search_path), from the 8–10 Oct schema.
