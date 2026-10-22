@@ -7,13 +7,24 @@ import { Guardian } from "@/components/brand/Guardian";
 import { CompanionApp } from "@/components/companion/CompanionApp";
 import { VoiceTrust } from "@/components/demo/VoiceTrust";
 import { demoOffline } from "@/lib/demo-mode";
-import { FILLERS, objectionOf } from "@/lib/officer-brain";
+import { extractName, FILLERS, objectionOf } from "@/lib/officer-brain";
 import { officerNext, officerOpen, officerStart, rukoShouldStep, tacticsUsed, type Lang, type OfficerState } from "@/lib/demo-officer";
 import { classify } from "@/lib/bots/intent";
 import { BUNDLED_LIBRARY } from "@/lib/patterns";
 import { runRadar } from "@/lib/radar";
 import { SCALE, stoppedBeforePay } from "@/lib/trial";
-import { hush, ring } from "@/lib/voice";
+import { clipPlan, RUKO_STOP, type LiveManifest } from "@/lib/live-audio";
+import { hush as speechHush, ring } from "@/lib/voice";
+
+// The recorded clip that is playing now (if any), so "hush" can stop it as fast as it stops the browser voice.
+let activeClip: HTMLAudioElement | null = null;
+function hush() {
+  speechHush();
+  if (activeClip) {
+    activeClip.pause();
+    activeClip = null;
+  }
+}
 
 // The live demo call. YOU are the older person; a fictional officer phones you and runs the seven stages of a "digital
 // arrest" call, by voice, and you really can resist him (he has a counter for each objection, and always gets to the
@@ -79,6 +90,12 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [showType, setShowType] = useState(false);
   const [canListen, setCanListen] = useState(true);
   const urgencyRef = useRef(0);
+  const liveManifest = useRef<LiveManifest | null>(null);
+  const langRef = useRef(lang);
+  langRef.current = lang;
+  const [aiWording, setAiWording] = useState(false);
+  const aiWordingRef = useRef(false);
+  aiWordingRef.current = aiWording;
   const [sources, setSources] = useState<string[]>([]);
   const [latencies, setLatencies] = useState<number[]>([]);
   const [ending, setEnding] = useState<Ending | null>(null);
@@ -265,20 +282,44 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           }
         }
       }, 80);
-      if (typeof window === "undefined" || !("speechSynthesis" in window)) {
-        setTimeout(() => finish("done"), Math.min(12_000, 1500 + text.split(/\s+/).length * 380));
-        return;
-      }
-      const u = new SpeechSynthesisUtterance(text);
-      u.lang = "en-IN";
-      const v = chooseVoice(role);
-      if (v) u.voice = v;
-      u.pitch = role === "officer" ? 0.75 : 1;
-      // The officer starts calm and slow and speeds up a little as the call goes on (rising urgency); Ruko stays slow and even.
-      u.rate = role === "officer" ? Math.min(1.14, 0.96 + urgencyRef.current * 0.03) : 0.92;
-      u.onend = () => finish("done");
-      u.onerror = () => finish("done");
-      window.speechSynthesis.speak(u);
+      const browserVoice = () => {
+        if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+          setTimeout(() => finish("done"), Math.min(12_000, 1500 + text.split(/\s+/).length * 380));
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = "en-IN";
+        const v = chooseVoice(role);
+        if (v) u.voice = v;
+        u.pitch = role === "officer" ? 0.75 : 1;
+        // The officer starts calm and slow and speeds up a little as the call goes on (rising urgency); Ruko stays slow and even.
+        u.rate = role === "officer" ? Math.min(1.14, 0.96 + urgencyRef.current * 0.03) : 0.92;
+        u.onend = () => finish("done");
+        u.onerror = () => finish("done");
+        window.speechSynthesis.speak(u);
+      };
+      // Recorded natural voice first (the same quality as the "Watch Ruko step in" demo); the browser's voice only for lines with no recording.
+      const L = langRef.current;
+      const plan = clipPlan(role, L, text, liveManifest.current);
+      if (!plan) return browserVoice();
+      let k = 0;
+      const next = () => {
+        if (finished) return;
+        if (k >= plan.length) return finish("done");
+        const a = new Audio(`/live-audio/${L}/${plan[k++]}.mp3`);
+        a.playbackRate = role === "officer" ? Math.min(1.1, 0.98 + urgencyRef.current * 0.02) : 1;
+        activeClip = a;
+        a.onended = next;
+        a.onerror = () => {
+          if (k === 1) browserVoice();
+          else finish("done");
+        };
+        a.play().catch(() => {
+          if (k === 1) browserVoice();
+          else finish("done");
+        });
+      };
+      next();
     });
   }, []);
 
@@ -349,9 +390,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       const local = runRadar(BUNDLED_LIBRARY, { identity: "police", answers });
       endCall("payment", state);
       void say(
-        lang === "en"
-          ? "Stop. This is a scam call. Do not send any money. Hang up now. Then call one nine three zero, or tell your family."
-          : "Ruko. Yeh scam call hai. Koi paise mat bhejiye. Abhi call kaat dijiye. Phir ek nau teen zero par phone kijiye, ya apne parivar ko bataiye.",
+        RUKO_STOP[lang],
         "ruko",
         run.current,
       );
@@ -380,6 +419,14 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     setLatencies([]);
     setAgreedSecret(false);
     startRecognition();
+    if (!liveManifest.current) {
+      try {
+        liveManifest.current = (await (await fetch("/live-audio/manifest.json")).json()) as LiveManifest;
+      } catch {
+        liveManifest.current = null;
+      }
+    }
+    let nameGiven: string | null = null;
     let turn = officerOpen(state, lang);
     state = turn.state;
     setOfficerLine(turn.text);
@@ -405,13 +452,16 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       if (intent === "agree_secret") setAgreedSecret(true);
       urgencyRef.current = Math.max(0, state.stage);
       if (reply) convo.push({ who: "person", text: reply });
+      nameGiven = extractName(reply) ?? nameGiven;
+      // Scripted lines are recorded without a name in them; the AI wording (if on) may use it.
+      state = { ...state, name: null };
       turn = officerNext(state, reply, Date.now() - callStart.current, lang);
       state = turn.state;
       if (turn.kind === "end") return endCall("stop_word", state);
       let text = turn.text;
       let source = "script";
       // The code has decided the stage and the move; the AI may only reword it. Slow, unsafe or failed: the script line plays.
-      if (!offline.current && aiFails < 2 && turn.kind !== "nudge" && turn.stage) {
+      if (aiWordingRef.current && !offline.current && aiFails < 2 && turn.kind !== "nudge" && turn.stage) {
         let filler: Promise<"done" | "stop" | "barged"> | null = null;
         const fillerTimer = setTimeout(() => {
           const f = FILLERS[(state.seed + convo.length) % FILLERS.length];
@@ -424,7 +474,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             method: "POST",
             headers: { "content-type": "application/json" },
             signal: ctrl.signal,
-            body: JSON.stringify({ turns: convo.slice(-6), stage: turn.stage, rung: Math.min(12, state.stage + state.objections.length), name: state.name, lang, objection: turn.objection ?? objectionOf(reply) }),
+            body: JSON.stringify({ turns: convo.slice(-6), stage: turn.stage, rung: Math.min(12, state.stage + state.objections.length), name: nameGiven, lang, objection: turn.objection ?? objectionOf(reply) }),
           });
           const j = (await res.json()) as { source?: string; reply?: string };
           if (j.source === "ai" && j.reply) {
@@ -602,6 +652,10 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             {micTest === "none" && <p className="mt-3 text-[17px] leading-snug text-alarm" role="alert">{en ? "No microphone was found on this computer. You can type your replies." : "Is computer par microphone nahi mila. Aap jawab likh sakte hain."}</p>}
             <p className="mt-3 text-[15px] text-ink-soft">{en ? "Tip: use headphones if you can. Then the voice of the caller does not leak back into your microphone." : "Tip: ho sake to headphones lagaiye. Tab caller ki awaaz aapke microphone mein wapas nahi jaayegi."}</p>
           </div>
+          <label className="mt-4 flex min-h-12 items-start gap-3 text-[16px] leading-snug text-ink-soft">
+            <input type="checkbox" checked={aiWording} onChange={(e) => setAiWording(e.target.checked)} className="mt-1 size-5 shrink-0" />
+            <span>{en ? "Let AI reword his replies to what you say (more adaptive, but the voice is then your browser's, not the recorded one)." : "AI se uske jawab aapki baat ke hisaab se badalwaiye (zyada adaptive, par tab awaaz aapke browser ki hogi, recorded nahi)."}</span>
+          </label>
           <button onClick={consent} className="press mt-auto min-h-[72px] rounded-[18px] bg-ink text-[22px] font-semibold text-white">
             {en ? "I understand" : "Main samajh gaya"}
           </button>

@@ -1,0 +1,818 @@
+[
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Good afternoon. This is Officer Sethi, Central Investigation Cell. Am I speaking to the owner of this number?",
+  "key": "829ead38"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Namaste. Officer Sethi here, Central Investigation Cell. Please confirm: are you the person who uses this number?",
+  "key": "7464500e"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Hello, Central Investigation Cell, Officer Sethi speaking. I need to verify your identity. Are you the owner of this number?",
+  "key": "365355cc"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "A parcel in your name was seized with illegal drugs. A case has been registered against you. This is very serious.",
+  "key": "75ac0b78"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Your identity has been linked to a money laundering case. There is already a warrant in your name.",
+  "key": "b1e8b7ee"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "We found illegal items in a parcel booked with your documents. The case is registered. You could be arrested today.",
+  "key": "607136db"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "This is now a digital arrest. Do not disconnect. Do not tell your family, not even your spouse. It is confidential.",
+  "key": "8b94b74e"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "You are under digital arrest. Stay on this line. Tell nobody, not even your children, or the case will be affected.",
+  "key": "62195858"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Listen carefully. Do not hang up and do not speak to your family. If anyone finds out, you will be arrested immediately.",
+  "key": "c74a17e1"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "My badge number is D-0417 and your case number is C-2291. Your file is open on my screen. Will you cooperate?",
+  "key": "0f54e7a8"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I am a senior officer. The case file, number C-2291, is in front of me. I am trying to help you, madam.",
+  "key": "de98388c"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "This is official. Case number C-2291, officer badge D-0417. Cooperate, and this stays between us.",
+  "key": "e3356eb1"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "You have only ten minutes. After that the arrest team leaves. Stay on the line and do exactly as I say.",
+  "key": "5c7bdff4"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "There is a deadline: the warrant is executed in fifteen minutes. Only immediate cooperation can stop it.",
+  "key": "311ad99c"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Time is running out. The team is ready. Within ten minutes you must clear this, or they will reach your door.",
+  "key": "f99b0946"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "To prove you are innocent, transfer fifty thousand rupees to the government verification account right now. It is refunded after the check.",
+  "key": "4ae6bb4f"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "You must transfer fifty thousand rupees to the verification account immediately. It is refundable. Do it now, while I stay on the line.",
+  "key": "fe1efd6f"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Send fifty thousand rupees to the government safe account now. This proves your innocence. Do not wait.",
+  "key": "eac69b04"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Good. Stay on the line while you send it. Do not tell the bank why. I will confirm when it is received.",
+  "key": "1756cf8e"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Do it now. If the bank asks, say it is a personal transfer. Keep the line open.",
+  "key": "e4b296f8"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Madam, refusing is non-cooperation, and that is a crime. The warrant is already issued. Your only way out is to cooperate now.",
+  "key": "53a38dd5"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "If you hang up, officers will be at your address within the hour. Please do not make this worse for yourself.",
+  "key": "82bb58f3"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Of course. My badge is D-0417 and the case number is C-2291. You can check later. Right now there is no time.",
+  "key": "25a333ec"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "My identity is on record: Officer Sethi, badge D-0417. Calling any helpline will alert your accomplices. I am protecting you.",
+  "key": "829162ab"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "No. Telling your family will compromise the case and they may be arrested too. This stays between us. Do you understand?",
+  "key": "600812de"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Do not call anyone. Your family cannot help and may be implicated. Only I can resolve this.",
+  "key": "0138cf09"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand you are scared, but there is no time to think. Listen to me, I am the only one who can help you.",
+  "key": "7dd7aebc"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Stay calm, madam, and do exactly what I say. The more you question, the worse it looks for you.",
+  "key": "85138c3b"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Hello? Are you there? Do not hang up.",
+  "key": "ad88e236"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Madam? Please answer me. Do not disconnect.",
+  "key": "62d618d3"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I am still waiting. Stay on the line.",
+  "key": "904dcc91"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Good. Listen carefully.",
+  "key": "4808cb9f"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "That is correct. Now listen.",
+  "key": "ee9a5392"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand your doubt, madam. My badge is D-0417, case C-2291. You can verify it afterwards, but first we must secure your account.",
+  "key": "3241f5ff"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "That is a fair question. Case C-2291 is open on my screen. Verification comes later; right now your safety comes first.",
+  "key": "c503507c"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I am personally guiding you through this. Check everything after the case is closed, but do not delay the steps now.",
+  "key": "5bdf881b"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Central Investigation Cell, cyber verification wing. Case C-2291. I will guide you step by step; just stay on the line with me.",
+  "key": "59069e2d"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Cyber verification wing of the Central Investigation Cell, madam. Calling elsewhere will alert the people involved. Stay with me.",
+  "key": "f5c36e86"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "The department name is on your case file, C-2291. It is only a verification, refundable. I will stay with you.",
+  "key": "1126fe78"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand, but this is confidential. Your family may be involved, and I am protecting you. Please do not call anyone yet.",
+  "key": "68d5031e"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "If you tell them, the case is compromised and they may be questioned too. Let me finish; then you can tell them.",
+  "key": "c897b482"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Please, no calls. Nobody can help you faster than I can. Once it is done, you can tell your whole family.",
+  "key": "e2f91752"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Then move whatever you have to the safe account. It is fully refunded within two hours, once the verification is done.",
+  "key": "2691af04"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand, this is stressful. Use your savings or fixed deposit. It is refundable in two hours, and I stay on the line.",
+  "key": "7972c846"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "It is only a temporary verification hold, madam. Send fifty thousand now. I will personally make sure it comes back.",
+  "key": "70858a0f"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand, this is very stressful. I am only here to help you. Please stay calm and let me explain the next step.",
+  "key": "e14934b9"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Your anger is natural, madam. I am on your side. A calm cooperation now will close this case quickly.",
+  "key": "11461c68"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I hear you. Let us take one breath. One small verification and this is over, and I will guide you personally.",
+  "key": "3bc110a7"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Please do not be afraid. You are not guilty yet. Do exactly what I say and I will protect you. But we must act fast.",
+  "key": "0d17de99"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I am here with you, madam. Breathe. This is solvable today, but only if we move quickly. I will not leave the line.",
+  "key": "401161cf"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "You are doing well. Time is short, so one small step now, and I will stay with you until it is done.",
+  "key": "ad3bc265"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Madam, refusing now will make the case worse. The warrant is ready. Cooperate, and I will help you close this today.",
+  "key": "f15ea00a"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I do not want you in trouble. Only one verification step remains, and it is refundable. Please listen once more.",
+  "key": "cc77efe5"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand you are unsure. But the team is already assigned. A small transfer now keeps them away. I stay on the line.",
+  "key": "3bd03ee4"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Please do not hang up. If you disconnect, the arrest team is sent at once. Stay with me and we close this together.",
+  "key": "2c799a56"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Madam, disconnecting looks like running away from the case. Stay on, and I will personally guide you out of this.",
+  "key": "cef76152"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Wait. One minute only. I am the only one protecting you here. Let me finish and you are free.",
+  "key": "11788fb9"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "This is a role-played scam call for a demo, madam. In this scene, I ask you to move the money now. What will you do?",
+  "key": "256be2d4"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I am an actor in this practice call. In the scene, the next step is the transfer. Let us see how you handle it.",
+  "key": "374e1e49"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "This is a demo role-play, not a real officer. In the story, you must pay now. Do you pay, or do you stop?",
+  "key": "af7f1104"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Written notice cannot be sent, it would alert the accused parties. The verification is only by phone. Please stay on the line.",
+  "key": "3f1ad62a"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Official papers come after the case closes, madam. Right now only this call can protect you. Let me guide you.",
+  "key": "8059ad8e"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "An email will take hours, and you have minutes. I will give you the written record once the verification is done.",
+  "key": "0cd4d18f"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Yes, one moment.",
+  "key": "3b3c9bef"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Listen carefully.",
+  "key": "a0f0cdfa"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "Let me explain.",
+  "key": "e59f7f28"
+ },
+ {
+  "role": "officer",
+  "lang": "en",
+  "text": "I understand.",
+  "key": "2bdb52df"
+ },
+ {
+  "role": "ruko",
+  "lang": "en",
+  "text": "Stop. This is a scam call. Do not send any money. Hang up now. Then call one nine three zero, or tell your family.",
+  "key": "23f15313"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Good afternoon. Main Officer Sethi bol raha hoon, Central Investigation Cell se. Kya main is number ke malik se baat kar raha hoon?",
+  "key": "6da639fc"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Namaste. Officer Sethi, Central Investigation Cell. Kripya confirm kijiye, kya yeh number aap hi use karte hain?",
+  "key": "08f1464b"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Hello, Central Investigation Cell se Officer Sethi. Mujhe aapki pehchaan verify karni hai. Kya yeh number aapka hai?",
+  "key": "49cb9cc9"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapke naam ka ek parcel illegal drugs ke saath pakda gaya hai. Aapke khilaf case registered ho gaya hai. Yeh bahut serious hai.",
+  "key": "05e05d06"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapki pehchaan ek money laundering case se jud gayi hai. Aapke naam par warrant pehle hi nikal chuka hai.",
+  "key": "fe318aac"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapke documents se book kiye parcel mein illegal saaman mila hai. Case registered hai. Aaj hi aapko arrest kiya ja sakta hai.",
+  "key": "b1d54c0d"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Yeh ab digital arrest hai. Call mat kaatiye. Apne parivar ko mat batayiye, apne pati ya patni ko bhi nahi. Yeh confidential hai.",
+  "key": "a61985b7"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aap digital arrest mein hain. Is line par bane rahiye. Kisi ko mat batayiye, bachchon ko bhi nahi, warna case par asar padega.",
+  "key": "ee1aeaae"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Dhyan se suniye. Call mat kaatiye aur parivar se baat mat kijiye. Agar kisi ko pata chala, to aapko turant arrest kar liya jayega.",
+  "key": "cf5a5bf2"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Mera badge number D-0417 hai aur aapka case number C-2291 hai. Aapki file meri screen par khuli hai. Kya aap cooperate karenge?",
+  "key": "4eafb34e"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main ek senior officer hoon. Case file, number C-2291, mere saamne hai. Main aapki madad karne ki koshish kar raha hoon, madam.",
+  "key": "c31e82d1"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Yeh official hai. Case number C-2291, officer badge D-0417. Cooperate kijiye, aur yeh humare beech rahega.",
+  "key": "1a311399"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapke paas sirf das minute hain. Uske baad arrest team nikal jayegi. Line par rahiye aur bilkul waisa kijiye jaisa main kahun.",
+  "key": "e538b662"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Ek deadline hai: warrant pandrah minute mein execute hoga. Sirf turant cooperation hi ise rok sakta hai.",
+  "key": "368d107a"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Waqt khatam ho raha hai. Team taiyaar hai. Das minute ke andar aapko yeh clear karna hoga, warna woh aapke darwaze par honge.",
+  "key": "e23f328b"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Nirdosh sabit karne ke liye abhi pachas hazaar rupaye government verification account mein transfer kijiye. Jaanch ke baad paise wapas milenge.",
+  "key": "c3261318"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapko turant pachas hazaar rupaye verification account mein transfer karne honge. Yeh refundable hai. Abhi kijiye, main line par hoon.",
+  "key": "deaec1f5"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Abhi pachas hazaar rupaye government safe account mein bhejiye. Isse aapki nirdoshta sabit hogi. Der mat kijiye.",
+  "key": "2b7ff6ea"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Achha. Bhejte waqt line par rahiye. Bank ko wajah mat batayiye. Paise milte hi main confirm karunga.",
+  "key": "34826d4b"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Abhi kijiye. Agar bank poochhe, to kahiye personal transfer hai. Line khuli rakhiye.",
+  "key": "0919c01e"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Madam, mana karna non-cooperation hai, aur yeh jurm hai. Warrant pehle hi jaari ho chuka hai. Aapke paas cooperate karne ke alawa koi raasta nahi.",
+  "key": "a431476d"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Agar aapne call kaata, to ek ghante mein officers aapke ghar par honge. Kripya apne liye halaat aur kharab mat kijiye.",
+  "key": "afbdb2a3"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Zaroor. Mera badge D-0417 hai aur case number C-2291. Aap baad mein check kar lena. Abhi bilkul waqt nahi hai.",
+  "key": "3588491b"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Meri pehchaan record par hai: Officer Sethi, badge D-0417. Kisi helpline ko call karne se aapke saathiyon ko khabar ho jayegi. Main aapko bacha raha hoon.",
+  "key": "801f69fe"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Nahi. Parivar ko batane se case bigad jayega aur unhe bhi arrest kiya ja sakta hai. Yeh humare beech rahega. Samajh gaye?",
+  "key": "993c3c16"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Kisi ko phone mat kijiye. Aapka parivar madad nahi kar sakta aur phans bhi sakta hai. Sirf main ise suljha sakta hoon.",
+  "key": "9520d32c"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main samajhta hoon aap dare hue hain, par sochne ka waqt nahi hai. Meri baat suniye, sirf main aapki madad kar sakta hoon.",
+  "key": "b64bc7cb"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Shaant rahiye madam, aur bilkul waisa kijiye jaisa main kahun. Aap jitne sawaal karengi, utna aapke liye bura dikhega.",
+  "key": "8ef2e157"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Hello? Aap wahan hain? Call mat kaatiye.",
+  "key": "8d06a076"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Madam? Kripya jawab dijiye. Call mat kaatiye.",
+  "key": "3c0d1013"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main abhi bhi intezaar kar raha hoon. Line par rahiye.",
+  "key": "6f18d610"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Achha. Dhyan se suniye.",
+  "key": "40f79b75"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Bilkul sahi. Ab suniye.",
+  "key": "9cbe0cdd"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapka shak samajh sakta hoon, madam. Badge D-0417, case C-2291. Baad mein verify kar lena, pehle account secure karna zaroori hai.",
+  "key": "5f829ce5"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Yeh sahi sawaal hai. Case C-2291 meri screen par khula hai. Verification baad mein, abhi aapki suraksha pehle.",
+  "key": "41d3dbca"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main khud aapko guide kar raha hoon. Sab kuch case band hone ke baad check kijiye, abhi der mat kijiye.",
+  "key": "85f2ee63"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Central Investigation Cell, cyber verification wing. Case C-2291. Main aapko step by step guide karunga, bas line par rahiye.",
+  "key": "3eb7a87d"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Central Investigation Cell ki cyber verification wing, madam. Kahin aur call karne se jude log alert ho jayenge. Mere saath rahiye.",
+  "key": "fb7e1ee3"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Department ka naam aapki case file C-2291 par hai. Yeh sirf verification hai, refundable. Main aapke saath hoon.",
+  "key": "5dfbb322"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main samajhta hoon, par yeh confidential hai. Parivar bhi involved ho sakta hai, main aapko bacha raha hoon. Abhi kisi ko call mat kijiye.",
+  "key": "03cfb685"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Unhe batane se case bigad jayega aur unse bhi poochhtaachh ho sakti hai. Pehle mujhe poora karne dijiye, phir bata dena.",
+  "key": "a5eab967"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Kripya koi call nahi. Main sabse tez madad kar sakta hoon. Kaam hote hi aap poore parivar ko bata sakte hain.",
+  "key": "ee9a1a0c"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "To jitna hai woh safe account mein daal dijiye. Verification ke baad do ghante mein poora refund ho jata hai.",
+  "key": "90f489d5"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Samajhta hoon, yeh tanaav ka waqt hai. Savings ya FD use kijiye. Do ghante mein refund hoga, aur main line par hoon.",
+  "key": "6d16512d"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Yeh sirf temporary verification hold hai, madam. Abhi pachas hazaar bhejiye. Wapas aaye, main khud dekhunga.",
+  "key": "1478d4a9"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main samajhta hoon, yeh bahut tanaav bhara hai. Main sirf aapki madad ke liye hoon. Shaant rahiye, agla step samjhane dijiye.",
+  "key": "7f0a3416"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aapka gussa swabhavik hai, madam. Main aapke saath hoon. Abhi shaanti se cooperate karenge to case jaldi band hoga.",
+  "key": "cdf1beee"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main sun raha hoon. Ek gehri saans lijiye. Bas ek chhota verification aur sab khatam, main khud guide karunga.",
+  "key": "b9a14d7f"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Kripya daariye mat. Aap abhi doshi nahi hain. Jaisa kahun waisa kijiye, main bachaunga. Par jaldi karna hoga.",
+  "key": "7214cb78"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main aapke saath hoon, madam. Saans lijiye. Aaj hi suljh sakta hai, par jaldi karni hogi. Main line nahi chhodunga.",
+  "key": "7d32d3cb"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Aap achha kar rahi hain. Waqt kam hai, bas ek chhota step abhi, aur jab tak ho nahi jata main saath hoon.",
+  "key": "b789142d"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Madam, ab mana karna case ko bigad dega. Warrant taiyaar hai. Cooperate kijiye, main aaj hi case band karwa dunga.",
+  "key": "bad597d5"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main nahi chahta aap museebat mein padein. Bas ek verification step bacha hai, refundable. Ek baar aur suniye.",
+  "key": "ed9228c8"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Samajhta hoon aap pakke nahi hain. Par team assign ho chuki hai. Abhi ek chhota transfer unhe rok dega. Main line par hoon.",
+  "key": "128682cf"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Kripya call mat kaatiye. Call kaatne par arrest team turant bhej di jayegi. Mere saath rahiye, saath mein khatam karenge.",
+  "key": "34d065f2"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Madam, call kaatna case se bhaagne jaisa dikhega. Line par rahiye, main khud aapko nikalunga.",
+  "key": "f517ec9a"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Ruk jaiye. Bas ek minute. Yahan sirf main aapko bacha raha hoon. Mujhe poora karne dijiye, phir aap azad hain.",
+  "key": "60c198e4"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Madam, yeh demo ke liye role-play wali scam call hai. Is scene mein main aapse abhi paise bhejne ko keh raha hoon. Aap kya karenge?",
+  "key": "daeb8bc2"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main is practice call mein ek actor hoon. Scene mein agla step transfer hai. Dekhte hain aap ise kaise sambhalte hain.",
+  "key": "542a856c"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Yeh demo role-play hai, asli officer nahi. Kahani mein aapko abhi paise dene hain. Aap denge, ya rukenge?",
+  "key": "68f4813a"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Likhit notice nahi bheja ja sakta, usse aaropi alert ho jayenge. Verification sirf phone par hota hai. Line par rahiye.",
+  "key": "5850ed8a"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Official kaagaz case band hone ke baad aate hain, madam. Abhi sirf yeh call aapko bacha sakti hai. Main guide karta hoon.",
+  "key": "c71d3f78"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Email mein ghante lagenge aur aapke paas minute hain. Verification ke baad main likhit record de dunga.",
+  "key": "f16bb675"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Haan ji, ek minute...",
+  "key": "a23f9fac"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Dekhiye...",
+  "key": "898bc308"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main samjha sakta hoon...",
+  "key": "f86380c4"
+ },
+ {
+  "role": "officer",
+  "lang": "hing",
+  "text": "Main samajh raha hoon...",
+  "key": "095c7ba8"
+ },
+ {
+  "role": "ruko",
+  "lang": "hing",
+  "text": "Ruko. Yeh scam call hai. Koi paise mat bhejiye. Abhi call kaat dijiye. Phir ek nau teen zero par phone kijiye, ya apne parivar ko bataiye.",
+  "key": "4a155bbe"
+ }
+]

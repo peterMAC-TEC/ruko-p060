@@ -80,7 +80,7 @@ const NUDGES: Line[] = [
   { en: "Madam? Please answer me. Do not disconnect.", hing: "Madam? Kripya jawab dijiye. Call mat kaatiye." },
   { en: "I am still waiting. Stay on the line.", hing: "Main abhi bhi intezaar kar raha hoon. Line par rahiye." },
 ];
-const ACKS: Line[] = [
+export const ACK_LINES: Line[] = [
   { en: "Good. Listen carefully.", hing: "Achha. Dhyan se suniye." },
   { en: "That is correct. Now listen.", hing: "Bilkul sahi. Ab suniye." },
 ];
@@ -202,7 +202,7 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
     return { id: "end", text: "", kind: "end", stage: null, reachedPayment: true, state };
   }
   // Out of time: go straight to the money.
-  if (elapsedMs > 55_000 || intent === "will_pay") return speakStage({ ...state, stage: PAYMENT }, lang, intent === "will_pay" ? ACKS[0] : undefined);
+  if (elapsedMs > 55_000 || intent === "will_pay") return speakStage({ ...state, stage: PAYMENT }, lang, intent === "will_pay" ? ACK_LINES[0] : undefined);
 
   if (intent === "silence") {
     if (state.silences < 2) {
@@ -244,7 +244,7 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
   }
 
   // Forward: the person went along, or resisted after the officer had already countered once.
-  const ack = FORWARD.has(intent) && intent !== "other" ? ACKS[(state.seed + state.stage) % ACKS.length] : undefined;
+  const ack = FORWARD.has(intent) && intent !== "other" ? ACK_LINES[(state.seed + state.stage) % ACK_LINES.length] : undefined;
   return speakStage({ ...state, stage: state.stage + 1 }, lang, ack);
 }
 
@@ -273,8 +273,14 @@ export const ALL_OFFICER_LINES: string[] = [
   ...Object.values(STAGE_LINES).flat(),
   ...Object.values(COUNTERS).flat(),
   ...NUDGES,
-  ...ACKS,
+  ...ACK_LINES,
 ].flatMap((l) => [l.en, l.hing]);
+
+/** The same lines split by language, for recording. */
+export const ALL_OFFICER_LINES_BY_LANG: Record<Lang, string[]> = {
+  en: [...Object.values(STAGE_LINES).flat(), ...Object.values(COUNTERS).flat(), ...NUDGES, ...ACK_LINES].map((l) => l.en),
+  hing: [...Object.values(STAGE_LINES).flat(), ...Object.values(COUNTERS).flat(), ...NUDGES, ...ACK_LINES].map((l) => l.hing),
+};
 
 /** Plain-words list of what the officer did, for the result screen. */
 export const tacticsUsed = (state: OfficerState): string[] => state.used.map((t) => TACTIC_LABEL[t] ?? t);
