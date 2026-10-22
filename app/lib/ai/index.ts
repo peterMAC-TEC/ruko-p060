@@ -2,13 +2,19 @@ import "server-only";
 import { z } from "zod";
 import { flags } from "../flags";
 import { geminiProvider } from "./gemini";
+import { openrouterProvider } from "./openrouter";
 import { AiError, DATA_ONLY, type AiMedia, type AiProvider } from "./provider";
 
-export const aiConfigured = () => !flags.OFFLINE && Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_MODEL);
+export const aiConfigured = () =>
+  !flags.OFFLINE &&
+  (process.env.AI_PROVIDER === "openrouter"
+    ? Boolean(process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_MODEL)
+    : Boolean(process.env.GEMINI_API_KEY && process.env.GEMINI_MODEL));
 
 export function getProvider(): AiProvider {
   const name = process.env.AI_PROVIDER ?? "gemini";
   if (name === "gemini") return geminiProvider();
+  if (name === "openrouter") return openrouterProvider();
   throw new AiError("not_configured", `Unknown AI_PROVIDER "${name}"`);
 }
 
