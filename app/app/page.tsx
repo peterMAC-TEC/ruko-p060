@@ -50,6 +50,10 @@ export default function Home() {
               Talk to Ruko
             </Link>
           </div>
+          <Link href="/demo/call" className="mt-5 inline-flex min-h-12 items-center gap-2 text-[20px] font-semibold underline underline-offset-8">
+            Watch a scam call, and how Ruko steps in
+            <ArrowRight className="size-5" strokeWidth={1.8} />
+          </Link>
         </div>
         <div className="flex justify-center sm:justify-end">
           <LiveGuardian className="size-60 sm:size-80" />
@@ -115,6 +119,7 @@ export default function Home() {
       <footer className="mx-auto max-w-6xl px-6 py-8 text-[16px] text-ink-soft">
         <p className="font-semibold text-ink">ForgeX 2.0 · P060 · For the judges and the field test</p>
         <nav className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+          <Link href="/demo/call" className="underline underline-offset-4">Call demo (audio)</Link>
           <Link href="/demo" className="underline underline-offset-4">Live demo</Link>
           <Link href="/lab" className="underline underline-offset-4">Trial lab</Link>
           <Link href="/results" className="underline underline-offset-4">Results</Link>
