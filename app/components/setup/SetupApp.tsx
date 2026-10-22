@@ -96,6 +96,8 @@ export function SetupApp({ elderId, memberId, elderFirst }: { elderId: string; m
   const [testSentAt, setTestSentAt] = useState<number | null>(null);
   const [arrivedIn, setArrivedIn] = useState<number | null>(null);
   const [origin, setOrigin] = useState("");
+  const [pairing, setPairing] = useState<string | null>(null);
+  const [pairingErr, setPairingErr] = useState("");
   const sent = useRef<number | null>(null);
 
   useEffect(() => {
@@ -190,6 +192,35 @@ export function SetupApp({ elderId, memberId, elderFirst }: { elderId: string; m
           <p className={`rounded-[18px] p-4 text-[19px] leading-snug ${data?.memberIsTrusted ? "bg-safe-soft text-safe" : "bg-paper-2"}`}>
             {data ? (data.memberIsTrusted && trustedFirst ? t.trustedYes(elderFirst) : t.trustedNo) : "…"}
           </p>
+          <details className="rounded-[18px] border border-hair p-4">
+            <summary className="min-h-12 cursor-pointer py-2 text-[19px] font-semibold">{lang === "en" ? "Optional: the Ruko Guard Android app" : "Optional: Ruko Guard Android app"}</summary>
+            <p className="mt-2 text-[17px] leading-snug text-ink-soft">
+              {lang === "en"
+                ? "The Android app warns before a risky call rings and tells you. Paste this code into it to pair that phone. Only you can see it. It lets that phone report risky numbers, and nothing else."
+                : "Android app risky call ring hone se pehle warning deta hai aur aapko batata hai. Us phone ko jodne ke liye yeh code app mein paste kijiye. Sirf aap ise dekh sakte hain. Isse woh phone sirf risky number report kar sakta hai, aur kuch nahi."}
+            </p>
+            {pairing ? (
+              <p className="mt-3 break-all rounded-[12px] bg-paper-2 p-3 font-mono text-[14px] select-all">{pairing}</p>
+            ) : (
+              <button
+                onClick={async () => {
+                  setPairingErr("");
+                  try {
+                    const r = await fetch(`/api/setup/pairing?elderId=${elderId}&memberId=${memberId}`, { cache: "no-store" });
+                    const d = await r.json();
+                    if (!r.ok) throw new Error(d.error);
+                    setPairing(d.code);
+                  } catch (e) {
+                    setPairingErr(e instanceof Error ? e.message : "Could not get the code.");
+                  }
+                }}
+                className="mt-3 min-h-[64px] w-full rounded-[18px] border border-ink text-[19px] font-semibold"
+              >
+                {lang === "en" ? "Show the pairing code" : "Pairing code dikhaiye"}
+              </button>
+            )}
+            {pairingErr && <p className="mt-2 text-[16px] text-alarm" role="alert">{pairingErr}</p>}
+          </details>
         </section>
       )}
 
