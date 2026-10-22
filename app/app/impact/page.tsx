@@ -63,7 +63,7 @@ async function Impact({ searchParams }: Pick<PageProps<"/impact">, "searchParams
     <main className="mt-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-[32px] leading-tight font-bold tracking-tight">Ruko&rsquo;s impact</h1>
+          <h1 className="display text-[40px] leading-[1.05]">Ruko&rsquo;s impact</h1>
           <p className="mt-1 text-[17px] text-ink-soft">Anonymous counts only. No names, phone numbers or recordings are kept for these numbers.</p>
         </div>
         <nav className="flex gap-1 rounded-full bg-white p-1 shadow-soft" aria-label="Period">
@@ -80,7 +80,7 @@ async function Impact({ searchParams }: Pick<PageProps<"/impact">, "searchParams
       </div>
 
       {s.includesDemo && (
-        <p className="mt-4 inline-block rounded-full bg-gold-soft px-3 py-1 text-[14px] font-bold text-warn">
+        <p className="mt-4 inline-block rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">
           Includes demo-sandbox and seeded data (DEMO_MODE). Real trial numbers are reported separately.
         </p>
       )}

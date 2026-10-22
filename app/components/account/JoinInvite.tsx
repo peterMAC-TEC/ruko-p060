@@ -47,7 +47,7 @@ export function JoinInvite({ token, signedIn, hasProfile }: { token: string; sig
 
       {info && !info.error && !done && (
         <>
-          <h1 className="text-[30px] font-bold leading-tight tracking-tight">
+          <h1 className="display text-[40px] leading-[1.05]">
             {first} invited you to their Ruko Family
           </h1>
           <section className="space-y-4 rounded-3xl bg-white p-5 shadow-soft">
@@ -102,7 +102,7 @@ export function JoinInvite({ token, signedIn, hasProfile }: { token: string; sig
 
       {done === "accepted" && (
         <section className="rounded-3xl bg-calm-soft p-6">
-          <h1 className="text-[28px] font-bold">You&apos;re in {first}&apos;s Ruko Family</h1>
+          <h1 className="display text-[38px] leading-[1.05]">You&apos;re in {first}&apos;s Ruko Family</h1>
           <p className="mt-2 text-ink-soft">Keep Ruko&apos;s family page open and turn on the alert sound.</p>
           <Link href="/family" className="mt-5 flex min-h-14 items-center justify-center rounded-2xl bg-ink font-bold text-white">
             Open family alerts

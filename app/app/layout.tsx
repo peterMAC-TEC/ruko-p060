@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Atkinson_Hyperlegible, Instrument_Serif, JetBrains_Mono, Noto_Sans_Devanagari } from "next/font/google";
+import { JetBrains_Mono, Newsreader, Noto_Sans_Devanagari, Public_Sans } from "next/font/google";
 import "./globals.css";
 
-// Atkinson Hyperlegible was designed for low-vision readers: the elder screens use it.
-const atkinson = Atkinson_Hyperlegible({ variable: "--font-atkinson", subsets: ["latin"], weight: ["400", "700"] });
+// Ink: Public Sans (clear, neutral, easy to read at large sizes) for the interface, Newsreader for the big, light display words.
+const publicSans = Public_Sans({ variable: "--font-public", subsets: ["latin"], weight: ["400", "600", "800"] });
 const devanagari = Noto_Sans_Devanagari({ variable: "--font-devanagari", subsets: ["devanagari"], weight: ["400", "600"] });
-const serif = Instrument_Serif({ variable: "--font-instrument", subsets: ["latin"], weight: "400" });
+const newsreader = Newsreader({ variable: "--font-newsreader", subsets: ["latin"], style: ["normal", "italic"], axes: ["opsz"] });
 const mono = JetBrains_Mono({ variable: "--font-jetbrains", subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,14 +15,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0f5e5a",
+  themeColor: "#ffffff",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${atkinson.variable} ${devanagari.variable} ${serif.variable} ${mono.variable} h-full antialiased`}
+      className={`${publicSans.variable} ${devanagari.variable} ${newsreader.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

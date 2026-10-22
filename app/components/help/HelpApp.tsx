@@ -74,7 +74,7 @@ export function HelpApp() {
     >
       <div className="flex flex-col gap-5 animate-in fade-in duration-300">
         <div>
-          <h1 className="text-[28px] leading-[1.15] font-bold tracking-tight">{t.helpTitle}</h1>
+          <h1 className="display text-[42px] leading-[1.04]">{t.helpTitle}</h1>
           <p className="mt-2 text-[18px] text-ink-soft">{t.helpSub}</p>
         </div>
 

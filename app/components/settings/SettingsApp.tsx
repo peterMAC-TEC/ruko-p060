@@ -102,7 +102,7 @@ export function SettingsApp({
             </span>
           )}
         </div>
-        {demo && <p className="self-start rounded-full bg-gold-soft px-3 py-1 text-[14px] font-bold text-warn">{t.demoBadge}</p>}
+        {demo && <p className="self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">{t.demoBadge}</p>}
 
         <button onClick={toggle} className="flex min-h-16 items-center gap-4 rounded-3xl bg-white p-5 text-left shadow-soft">
           <Languages className="size-6 text-calm" strokeWidth={2.2} />

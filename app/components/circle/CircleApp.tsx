@@ -145,11 +145,11 @@ export function CircleApp({ elderId, demo = false }: { elderId: string; demo?: b
       {step.kind === "home" && (
         <div className="flex flex-col gap-6 animate-in fade-in duration-300">
           {demo && (
-            <p className="self-start rounded-full bg-gold-soft px-3 py-1 text-[14px] font-bold text-warn">{t.demoBadge}</p>
+            <p className="self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">{t.demoBadge}</p>
           )}
           <section className="emerald-card rounded-[28px] p-6 text-white shadow-lift">
             <ShieldCheck className="size-9" strokeWidth={2} />
-            <h1 className="mt-3 text-[28px] font-bold leading-tight tracking-tight">{t.protectedTitle}</h1>
+            <h1 className="display mt-3 text-[40px] leading-[1.05]">{t.protectedTitle}</h1>
             <p className="mt-1 text-[18px] text-white/80">{t.circleIntro}</p>
             <div className="mt-5 flex flex-wrap gap-2 text-[15px] font-bold">
               <span className="rounded-full bg-white/12 px-3 py-1.5">{t.circleCount(members.length)}</span>

@@ -41,7 +41,7 @@ export function LoginForm({ next, linkError }: { next: string; linkError: boolea
     <div className="flex min-h-[100dvh] flex-col bg-paper px-5 py-6 text-[19px] text-ink">
       <RukoWordmark />
       <div className="mt-10 flex flex-col gap-5">
-        <h1 className="text-[30px] font-bold leading-tight tracking-tight">Sign in to Ruko</h1>
+        <h1 className="display text-[40px] leading-[1.05]">Sign in to Ruko</h1>
 
         {sent ? (
           <div className="rounded-3xl bg-calm-soft p-6">

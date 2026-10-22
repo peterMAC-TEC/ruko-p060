@@ -13,9 +13,8 @@ export function RukoMark({ className = "size-8" }: { className?: string }) {
 
 export function RukoWordmark({ tone = "dark" }: { tone?: "dark" | "light" }) {
   return (
-    <span className={`inline-flex items-center gap-2 ${tone === "dark" ? "text-calm" : "text-white"}`}>
-      <RukoMark className="size-7" />
-      <span className={`text-[22px] font-bold tracking-tight ${tone === "dark" ? "text-ink" : "text-white"}`}>Ruko</span>
+    <span className={`display text-[30px] leading-none italic ${tone === "dark" ? "text-ink" : "text-white"}`} aria-label="Ruko">
+      ruko
     </span>
   );
 }

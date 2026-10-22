@@ -332,7 +332,7 @@ export function SurveyBot({ kind, callId, ctx = {}, initialLang = "en" }: { kind
 
 function Bubble({ children, soft = false }: { children: React.ReactNode; soft?: boolean }) {
   return (
-    <p className={`mt-4 rounded-[24px] p-5 leading-snug ${soft ? "bg-calm-soft font-medium text-ink-soft" : "bg-white font-bold shadow-soft"}`} style={{ fontSize: soft ? 18 : 23 }}>
+    <p className={`mt-5 leading-snug ${soft ? "text-ink-soft" : "display"}`} style={{ fontSize: soft ? 18 : 34, lineHeight: soft ? 1.45 : 1.08 }}>
       {children}
     </p>
   );
@@ -343,7 +343,7 @@ function Big({ children, onClick, disabled, variant = "dark" }: { children: Reac
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`flex min-h-16 w-full items-center justify-center rounded-2xl px-5 text-center text-[20px] font-bold transition active:scale-[0.99] disabled:opacity-40 ${variant === "dark" ? "bg-calm text-white shadow-lift" : "bg-white text-ink shadow-soft"}`}
+      className={`flex min-h-[68px] w-full items-center justify-center rounded-[18px] px-5 text-center text-[20px] font-semibold transition active:scale-[0.99] disabled:opacity-40 ${variant === "dark" ? "bg-ink text-white" : "bg-white text-ink shadow-soft"}`}
     >
       {children}
     </button>

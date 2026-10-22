@@ -1,0 +1,368 @@
+<title>Ruko Design Directions</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Atkinson+Hyperlegible:wght@400;700&family=Archivo:wdth,wght@75..125,400..900&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&family=Public+Sans:wght@400;600;800&display=swap">
+<style>
+/* Layout: one editorial intro, then three directions, each a strip of four real-size phone screens (scaled to fit). */
+:root {
+  --bg: #f4f5f6;
+  --fg: #17202a;
+  --muted: #5b6672;
+  --line: #d9dde1;
+  --accent: #0e6b5e;
+  --chip: #e6eaed;
+  --font-display: "Young Serif", Georgia, serif;
+  --font-body: "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #101418; --fg: #e8ecef; --muted: #98a3ad; --line: #2a323a; --accent: #5fc4b2; --chip: #1b2229; color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #101418; --fg: #e8ecef; --muted: #98a3ad; --line: #2a323a; --accent: #5fc4b2; --chip: #1b2229; color-scheme: dark; }
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font-body); line-height: 1.55; font-size: 17px; padding-block: 48px 80px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 1180px; margin: 0 auto; }
+h1, h2 { font-family: var(--font-display); font-weight: 400; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(38px, 6vw, 68px); line-height: 1.04; letter-spacing: -0.01em; max-width: 14ch; }
+h2 { font-size: clamp(28px, 3.4vw, 40px); line-height: 1.1; }
+p { margin: 0; }
+.lede { max-width: 58ch; color: var(--muted); margin-top: 18px; font-size: 19px; }
+.rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px 28px; margin: 40px 0 8px; padding: 24px 0; border-block: 1px solid var(--line); }
+.rules b { display: block; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; }
+.rules span { font-size: 16px; color: var(--muted); }
+section.dir { margin-top: 72px; }
+.dir header { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 12px 40px; align-items: end; margin-bottom: 26px; }
+@media (max-width: 760px) { .dir header { grid-template-columns: minmax(0, 1fr); } }
+.tag { font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.dir header p { color: var(--muted); max-width: 60ch; }
+.swatches { display: flex; gap: 8px; margin-top: 14px; }
+.swatches i { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line); display: block; }
+.strip { display: flex; gap: 22px; overflow-x: auto; padding-bottom: 14px; scroll-snap-type: x proximity; }
+.cell { flex: 0 0 auto; scroll-snap-align: start; }
+.cell figcaption { font-size: 14px; color: var(--muted); margin-top: 10px; }
+.cell { margin: 0; }
+.frame { width: 276px; height: 566px; border-radius: 34px; border: 1px solid var(--line); overflow: hidden; background: #000; position: relative; }
+.scale { width: 375px; height: 764px; transform: scale(0.736); transform-origin: top left; }
+.s { width: 375px; height: 764px; display: flex; flex-direction: column; padding: 14px 24px 26px; position: relative; }
+.sb { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; height: 22px; align-items: center; opacity: 0.8; }
+.sb em { font-style: normal; letter-spacing: 2px; }
+svg.i { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
+.verdict { margin-top: 56px; padding-top: 28px; border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 20px 40px; }
+@media (max-width: 760px) { .verdict { grid-template-columns: minmax(0, 1fr); } }
+.verdict ul { margin: 0; padding-left: 20px; color: var(--muted); }
+.verdict li { margin-bottom: 6px; }
+
+/* ---------- A. Pause ---------- */
+.A { --bg: #eef2ee; --ink: #11302e; --mute: #587571; --card: #ffffff; --sun: #f0a81e; --sunink: #2b1d00; --calm: #1f6f63; --alarm: #c4342a; --rise: #dfe9e3; font-family: "Atkinson Hyperlegible", system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+.A .serif { font-family: "Young Serif", Georgia, serif; font-weight: 400; }
+.A .top { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+.A .mark { font-family: "Young Serif", serif; font-size: 26px; letter-spacing: -0.01em; }
+.A .lang { display: flex; background: var(--rise); border-radius: 99px; padding: 4px; font-size: 15px; font-weight: 700; }
+.A .lang span { padding: 7px 14px; border-radius: 99px; color: var(--mute); }
+.A .lang span.on { background: var(--card); color: var(--ink); }
+.A .hello { font-size: 40px; line-height: 1.05; margin-top: 30px; }
+.A .safe { display: flex; align-items: center; gap: 9px; font-size: 18px; color: var(--calm); font-weight: 700; margin-top: 10px; }
+.A .safe i { width: 11px; height: 11px; border-radius: 50%; background: var(--calm); display: block; }
+.A .orb { margin: 26px auto 0; width: 214px; height: 214px; border-radius: 50%; background: var(--sun); color: var(--sunink); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; box-shadow: 0 0 0 12px rgba(240,168,30,0.22), 0 0 0 26px rgba(240,168,30,0.10); }
+.A .orb b { font-family: "Young Serif", serif; font-weight: 400; font-size: 34px; line-height: 1.05; }
+.A .orb span { font-size: 16px; margin-top: 8px; opacity: 0.85; max-width: 150px; }
+.A .rows { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.A .row { background: var(--card); border-radius: 22px; min-height: 68px; padding: 0 20px; display: flex; align-items: center; gap: 16px; font-size: 21px; font-weight: 700; }
+.A .row small { display: block; font-size: 15px; font-weight: 400; color: var(--mute); }
+.A .foot { margin-top: 14px; text-align: center; font-size: 15px; color: var(--mute); }
+/* A: stop */
+.A.stop { background: var(--alarm); color: #fff; }
+.A .big { font-family: "Young Serif", serif; font-size: 118px; line-height: 0.95; margin-top: 44px; letter-spacing: -0.02em; }
+.A .kicker { font-size: 16px; letter-spacing: 0.14em; text-transform: uppercase; margin-top: 8px; opacity: 0.9; }
+.A .rule { font-family: "Young Serif", serif; font-size: 31px; line-height: 1.18; margin-top: 22px; }
+.A .btns { margin-top: auto; display: flex; flex-direction: column; gap: 10px; }
+.A .btn { min-height: 66px; border-radius: 22px; display: flex; align-items: center; justify-content: center; gap: 12px; font-size: 22px; font-weight: 700; }
+.A .btn.w { background: #fff; color: var(--alarm); }
+.A .btn.o { border: 2px solid rgba(255,255,255,0.7); color: #fff; }
+.A .btn.g { background: var(--card); color: var(--ink); justify-content: flex-start; padding: 0 22px; }
+.A .btn.sun { background: var(--sun); color: var(--sunink); }
+.A .quiet { text-align: center; font-size: 17px; text-decoration: underline; text-underline-offset: 4px; margin-top: 6px; opacity: 0.9; }
+/* A: companion */
+.A.comp { background: #dbe9e2; }
+.A .who { display: flex; align-items: center; gap: 14px; margin-top: 18px; }
+.A .avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--sun); color: var(--sunink); display: grid; place-items: center; font-family: "Young Serif", serif; font-size: 30px; box-shadow: 0 0 0 7px rgba(240,168,30,0.28); }
+.A .say { font-family: "Young Serif", serif; font-size: 33px; line-height: 1.16; margin-top: 30px; }
+.A .again { display: inline-flex; gap: 8px; align-items: center; background: rgba(17,48,46,0.08); border-radius: 99px; padding: 10px 16px; font-size: 16px; font-weight: 700; margin-top: 16px; align-self: flex-start; }
+/* A: family */
+.A.fam { background: var(--alarm); color: #fff; }
+.A .pill { background: #fff; color: var(--alarm); border-radius: 18px; padding: 14px 18px; font-size: 20px; line-height: 1.25; font-weight: 700; margin-top: 18px; }
+.A .ava { width: 84px; height: 84px; border-radius: 50%; background: rgba(255,255,255,0.18); display: grid; place-items: center; font-family: "Young Serif", serif; font-size: 32px; margin-top: 26px; box-shadow: 0 0 0 8px rgba(255,255,255,0.14); }
+.A.fam h3 { font-family: "Young Serif", serif; font-weight: 400; font-size: 36px; line-height: 1.1; margin: 22px 0 0; }
+.A .more { margin-top: 14px; border-top: 1px solid rgba(255,255,255,0.35); padding-top: 14px; font-size: 18px; display: flex; justify-content: space-between; }
+
+/* ---------- B. Signal ---------- */
+.B { --blue: #1546d8; --yellow: #ffc800; --red: #e5231b; --ink: #101010; --paper: #ffffff; font-family: "Archivo", system-ui, sans-serif; font-stretch: 100%; }
+.B .hd { font-weight: 900; font-stretch: 75%; text-transform: uppercase; letter-spacing: 0.005em; line-height: 0.92; }
+.B.home { background: var(--blue); color: #fff; }
+.B .small { font-size: 16px; font-weight: 600; }
+.B .go { background: var(--yellow); color: var(--ink); margin-top: 22px; padding: 22px 22px 24px; border-radius: 4px; }
+.B .go .hd { font-size: 84px; }
+.B .go p { font-size: 18px; font-weight: 600; margin-top: 10px; }
+.B .list { margin-top: auto; display: flex; flex-direction: column; gap: 8px; }
+.B .li { display: flex; justify-content: space-between; align-items: center; border: 2.5px solid #fff; min-height: 66px; padding: 0 18px; font-weight: 800; font-stretch: 80%; font-size: 26px; letter-spacing: 0.02em; text-transform: uppercase; border-radius: 4px; }
+.B .lines { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; margin-top: 14px; opacity: 0.9; }
+.B.stop { background: var(--red); color: #fff; }
+.B .stopw { font-size: 196px; margin: 18px 0 0 -6px; }
+.B .bar { height: 8px; background: #fff; margin: 14px 0 18px; }
+.B .say2 { font-weight: 800; font-size: 31px; line-height: 1.1; font-stretch: 88%; }
+.B .bt { min-height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; font-weight: 900; font-stretch: 80%; font-size: 28px; text-transform: uppercase; border-radius: 4px; }
+.B .bt.y { background: var(--yellow); color: var(--ink); }
+.B .bt.k { background: var(--ink); color: #fff; }
+.B .bt.l { border: 2.5px solid #fff; color: #fff; }
+.B.comp { background: #fff; color: var(--ink); }
+.B .band { background: var(--ink); color: #fff; margin: 0 -24px; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; font-weight: 800; font-stretch: 80%; text-transform: uppercase; letter-spacing: 0.04em; font-size: 22px; }
+.B .band i { background: var(--yellow); width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+.B .talk { font-weight: 900; font-stretch: 80%; font-size: 56px; line-height: 0.98; margin-top: 28px; text-transform: uppercase; }
+.B .talk em { font-style: normal; color: var(--blue); }
+.B.fam { background: var(--ink); color: #fff; }
+.B .name { color: var(--yellow); font-size: 92px; margin-top: 24px; }
+.B .status { border-left: 8px solid var(--yellow); padding: 6px 0 6px 16px; margin-top: 22px; font-size: 24px; font-weight: 700; line-height: 1.2; }
+.B .bt.r { background: var(--red); color: #fff; }
+
+/* ---------- C. Ink ---------- */
+.C { --ink: #0a0a0a; --grey: #6b6b6b; --hair: #e4e4e4; --red: #d6291f; background: #fff; color: var(--ink); font-family: "Public Sans", system-ui, sans-serif; }
+.C .np { font-family: "Newsreader", Georgia, serif; font-optical-sizing: auto; }
+.C .wm { font-family: "Newsreader", serif; font-style: italic; font-size: 27px; margin-top: 12px; letter-spacing: -0.01em; }
+.C .hello { font-family: "Newsreader", serif; font-weight: 300; font-size: 76px; line-height: 0.95; margin-top: 42px; letter-spacing: -0.025em; }
+.C .state { display: flex; align-items: center; gap: 9px; font-size: 16px; color: var(--grey); margin-top: 16px; }
+.C .state i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink); display: block; }
+.C .cta { margin-top: 34px; background: var(--ink); color: #fff; border-radius: 18px; min-height: 96px; display: flex; align-items: center; justify-content: space-between; padding: 0 26px; }
+.C .cta b { font-family: "Newsreader", serif; font-style: italic; font-weight: 400; font-size: 36px; letter-spacing: -0.01em; }
+.C .items { margin-top: auto; border-top: 1px solid var(--hair); }
+.C .it { min-height: 70px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); font-size: 22px; font-weight: 600; }
+.C .it small { color: var(--grey); font-weight: 400; font-size: 16px; }
+.C .stopw { font-family: "Newsreader", serif; font-weight: 300; font-size: 148px; line-height: 0.88; color: var(--red); margin-top: 40px; letter-spacing: -0.04em; }
+.C .redrule { height: 2px; background: var(--red); margin: 22px 0 22px; }
+.C .fact { font-family: "Newsreader", serif; font-weight: 400; font-size: 36px; line-height: 1.14; letter-spacing: -0.01em; }
+.C .b1 { background: var(--ink); color: #fff; min-height: 68px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 600; }
+.C .b2 { min-height: 62px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--hair); font-size: 21px; font-weight: 600; }
+.C .btnbox { margin-top: auto; display: flex; flex-direction: column; }
+.C .ruko { display: flex; align-items: center; gap: 10px; font-size: 16px; color: var(--grey); margin-top: 26px; }
+.C .ruko i { width: 10px; height: 10px; border-radius: 50%; background: var(--ink); display: block; box-shadow: 0 0 0 5px rgba(10,10,10,0.1); }
+.C .line { font-family: "Newsreader", serif; font-weight: 300; font-size: 50px; line-height: 1.03; margin-top: 20px; letter-spacing: -0.02em; }
+.C .alertdot { width: 14px; height: 14px; border-radius: 50%; background: var(--red); display: block; margin-top: 34px; box-shadow: 0 0 0 7px rgba(214,41,31,0.15); }
+.C .fline { font-family: "Newsreader", serif; font-weight: 300; font-size: 54px; line-height: 1; margin-top: 20px; letter-spacing: -0.025em; }
+.C .fline em { color: var(--red); font-style: italic; }
+.C .sub { font-size: 20px; color: var(--grey); margin-top: 18px; line-height: 1.35; }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="ph" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="ch" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.6-.8L3 21l1.9-5.3A8.4 8.4 0 1 1 21 11.5z"/></symbol>
+  <symbol id="sh" viewBox="0 0 24 24"><path d="M12 22s8-3.6 8-10V5l-8-3-8 3v7c0 6.4 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="vo" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></symbol>
+  <symbol id="ar" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+<div class="wrap">
+  <p class="tag">Ruko · design directions</p>
+  <h1>Calm until it matters</h1>
+  <p class="lede">Three ways Ruko could look and feel, shown on the four screens people see most: the elder's home, the STOP screen, the Companion, and the family's alert. They share one idea. Everyday screens stay quiet. The whole screen changes only when someone may be in danger.</p>
+
+  <div class="rules">
+    <div><b>One thing per screen</b><span>One main action, always in the same place, big enough for a shaking thumb.</span></div>
+    <div><b>Words, not icons</b><span>Every button says what it does, in English or Hinglish. Icons only help.</span></div>
+    <div><b>Loud only in danger</b><span>Red and full-screen colour are kept for STOP and the family alert, so they read at once.</span></div>
+    <div><b>Easy to read</b><span>Body text 20px or more, buttons 64px or taller, strong contrast in daylight.</span></div>
+  </div>
+
+  <!-- A -->
+  <section class="dir" id="a">
+    <header>
+      <div>
+        <p class="tag">Direction A</p>
+        <h2>Pause</h2>
+        <div class="swatches" aria-label="Palette"><i style="background:#eef2ee"></i><i style="background:#11302e"></i><i style="background:#f0a81e"></i><i style="background:#1f6f63"></i><i style="background:#c4342a"></i></div>
+      </div>
+      <p>Soft, warm and human. One saffron circle is the whole home screen, a pause button you press when something feels off. A friendly serif for the words that matter, a typeface made for low vision for everything else. Red takes over only for STOP and the family alert.</p>
+    </header>
+    <div class="strip">
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s A">
+        <div class="sb"><span>9:41</span><em>●●●</em></div>
+        <div class="top"><span class="mark">ruko</span><span class="lang"><span class="on">English</span><span>Hinglish</span></span></div>
+        <div class="hello serif">Namaste,<br>Kamala</div>
+        <div class="safe"><i></i>You are protected</div>
+        <div class="orb"><b>Is this<br>a scam?</b><span>Tap during or after a call</span></div>
+        <div class="rows">
+          <div class="row"><svg class="i" style="color:var(--calm)"><use href="#ph"/></svg><span>Call Priya</span></div>
+          <div class="row"><svg class="i" style="color:var(--calm)"><use href="#ch"/></svg><span>Talk to Ruko<small>Stays with you</small></span></div>
+        </div>
+        <div class="foot">Cyber fraud helpline 1930</div>
+      </div></div></div><figcaption>Elder home</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s A stop">
+        <div class="sb"><span>9:42</span><em>●●●</em></div>
+        <div class="big">Stop</div>
+        <div class="kicker">This is a scam: digital arrest</div>
+        <div class="rule">Police never arrest anyone, or ask for money, on a video call.</div>
+        <div class="btns">
+          <div class="btn w"><svg class="i"><use href="#x"/></svg>Hang up</div>
+          <div class="btn o"><svg class="i"><use href="#ph"/></svg>Call Priya</div>
+          <div class="btn o"><svg class="i"><use href="#ch"/></svg>WhatsApp Priya</div>
+          <div class="quiet">I'm not sure</div>
+        </div>
+      </div></div></div><figcaption>STOP</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s A comp">
+        <div class="sb"><span>9:43</span><em>●●●</em></div>
+        <div class="top"><span class="lang"><span class="on">English</span><span>Hinglish</span></span><svg class="i"><use href="#vo"/></svg></div>
+        <div class="who"><div class="avatar">R</div><div><b style="font-size:24px">Ruko</b><div style="color:var(--mute);font-size:16px">With you</div></div></div>
+        <div class="say">I'm here with you. You are safe. Is the caller still on the line?</div>
+        <div class="again"><svg class="i" style="width:20px;height:20px"><use href="#vo"/></svg>Say it again</div>
+        <div class="btns">
+          <div class="btn g">Yes, still on</div>
+          <div class="btn g">No, I hung up</div>
+        </div>
+      </div></div></div><figcaption>Companion</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s A fam">
+        <div class="sb"><span>9:42</span><em>●●●</em></div>
+        <div class="ava">KI</div>
+        <h3>Kamala may be on a scam call</h3>
+        <div class="pill">Kamala says the caller has hung up</div>
+        <div class="btns">
+          <div class="btn w"><svg class="i"><use href="#ph"/></svg>Call Kamala now</div>
+          <div class="btn o">It's fine, I've checked</div>
+          <div class="more"><span>Why Ruko thinks so</span><span>3</span></div>
+        </div>
+      </div></div></div><figcaption>Family alert</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="dir" id="b">
+    <header>
+      <div>
+        <p class="tag">Direction B</p>
+        <h2>Signal</h2>
+        <div class="swatches" aria-label="Palette"><i style="background:#1546d8"></i><i style="background:#ffc800"></i><i style="background:#101010"></i><i style="background:#e5231b"></i><i style="background:#ffffff"></i></div>
+      </div>
+      <p>Bold and impossible to miss, like public signage: whole-screen colour, heavy condensed capitals, no decoration. It reads from across a room and in bright sun. The most distinctive of the three, and the loudest, so it asks the most of the family screens to feel gentle.</p>
+    </header>
+    <div class="strip">
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s B home">
+        <div class="sb"><span>9:41</span><em>●●●</em></div>
+        <div class="small" style="margin-top:14px">Namaste, Kamala · You are protected</div>
+        <div class="go"><div class="hd">Is this a scam?</div><p>Tap during or after a call</p></div>
+        <div class="list">
+          <div class="li"><span>Call Priya</span><svg class="i"><use href="#ph"/></svg></div>
+          <div class="li"><span>Talk to Ruko</span><svg class="i"><use href="#ch"/></svg></div>
+          <div class="li"><span>Tell my family</span><svg class="i"><use href="#sh"/></svg></div>
+        </div>
+        <div class="lines"><span>English · Hinglish</span><span>Helpline 1930</span></div>
+      </div></div></div><figcaption>Elder home</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s B stop">
+        <div class="sb"><span>9:42</span><em>●●●</em></div>
+        <div class="hd stopw">Stop</div>
+        <div class="bar"></div>
+        <div class="say2">Digital arrest does not exist. Police never ask for money on a video call.</div>
+        <div class="btns" style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+          <div class="bt y"><span>Hang up</span><svg class="i"><use href="#x"/></svg></div>
+          <div class="bt k"><span>Call Priya</span><svg class="i"><use href="#ph"/></svg></div>
+          <div class="bt l"><span>WhatsApp Priya</span><svg class="i"><use href="#ar"/></svg></div>
+        </div>
+      </div></div></div><figcaption>STOP</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s B comp">
+        <div class="sb"><span>9:43</span><em>●●●</em></div>
+        <div class="band"><span><i></i>Ruko is with you</span><span style="display:flex;gap:14px"><svg class="i"><use href="#vo"/></svg></span></div>
+        <div class="talk">You are safe. Is the caller <em>still on the line?</em></div>
+        <div class="btns" style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+          <div class="bt k"><span>Yes, still on</span><svg class="i"><use href="#ar"/></svg></div>
+          <div class="bt y"><span>No, I hung up</span><svg class="i"><use href="#ar"/></svg></div>
+        </div>
+      </div></div></div><figcaption>Companion</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s B fam">
+        <div class="sb"><span>9:42</span><em>●●●</em></div>
+        <div class="small" style="margin-top:20px;letter-spacing:.14em;text-transform:uppercase">Scam alert · just now</div>
+        <div class="hd name">Kamala</div>
+        <div class="say2" style="margin-top:6px">may be on a scam call</div>
+        <div class="status">Kamala says the caller has hung up</div>
+        <div class="btns" style="margin-top:auto;display:flex;flex-direction:column;gap:8px">
+          <div class="bt r"><span>Call Kamala now</span><svg class="i"><use href="#ph"/></svg></div>
+          <div class="bt l"><span>It's fine</span></div>
+        </div>
+      </div></div></div><figcaption>Family alert</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="dir" id="c">
+    <header>
+      <div>
+        <p class="tag">Direction C</p>
+        <h2>Ink</h2>
+        <div class="swatches" aria-label="Palette"><i style="background:#ffffff"></i><i style="background:#0a0a0a"></i><i style="background:#6b6b6b"></i><i style="background:#e4e4e4"></i><i style="background:#d6291f"></i></div>
+      </div>
+      <p>Quiet and refined, like a good book. Black on white, large light type and almost no boxes. Red appears only for danger, as ink on white, so a red word on a white page is the loudest thing Ruko ever does. The most elegant and the least obviously friendly, so it depends on very large type to stay easy to read.</p>
+    </header>
+    <div class="strip">
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s C">
+        <div class="sb"><span>9:41</span><em>●●●</em></div>
+        <div class="wm">ruko</div>
+        <div class="hello">Namaste,<br>Kamala.</div>
+        <div class="state"><i></i>You are protected</div>
+        <div class="cta"><b>Is this a scam?</b><svg class="i" style="width:32px;height:32px"><use href="#ar"/></svg></div>
+        <div class="items">
+          <div class="it"><span>Call Priya</span><svg class="i"><use href="#ph"/></svg></div>
+          <div class="it"><span>Talk to Ruko <small>stays with you</small></span><svg class="i"><use href="#ch"/></svg></div>
+          <div class="it"><span>Tell my family</span><svg class="i"><use href="#sh"/></svg></div>
+        </div>
+      </div></div></div><figcaption>Elder home</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s C">
+        <div class="sb"><span>9:42</span><em>●●●</em></div>
+        <div class="stopw">Stop.</div>
+        <div class="redrule"></div>
+        <div class="fact">Digital arrest does not exist. Police never arrest anyone, or ask for money, on a video call.</div>
+        <div class="btnbox">
+          <div class="b1" style="margin-bottom:6px">Hang up</div>
+          <div class="b2"><span>Call Priya</span><svg class="i"><use href="#ph"/></svg></div>
+          <div class="b2"><span>WhatsApp Priya</span><svg class="i"><use href="#ar"/></svg></div>
+        </div>
+      </div></div></div><figcaption>STOP</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s C">
+        <div class="sb"><span>9:43</span><em>●●●</em></div>
+        <div class="ruko"><i></i>Ruko is with you</div>
+        <div class="line">You are safe. Is the caller still on the line?</div>
+        <div class="btnbox">
+          <div class="b2"><span>Yes, still on</span><svg class="i"><use href="#ar"/></svg></div>
+          <div class="b2"><span>No, I hung up</span><svg class="i"><use href="#ar"/></svg></div>
+          <div class="b2" style="color:var(--grey);font-weight:400;border-bottom:0"><span>Say it again</span><svg class="i"><use href="#vo"/></svg></div>
+        </div>
+      </div></div></div><figcaption>Companion</figcaption></figure>
+
+      <figure class="cell"><div class="frame"><div class="scale"><div class="s C">
+        <div class="sb"><span>9:42</span><em>●●●</em></div>
+        <i class="alertdot"></i>
+        <div class="fline"><em>Kamala</em> may be on a scam call.</div>
+        <div class="sub">She says the caller has hung up. It's worth a call.</div>
+        <div class="btnbox">
+          <div class="b1" style="margin-bottom:6px;background:var(--red)">Call Kamala now</div>
+          <div class="b2"><span>It's fine, I've checked</span></div>
+          <div class="b2" style="color:var(--grey);font-weight:400;border-bottom:0"><span>Why Ruko thinks so</span><svg class="i"><use href="#ar"/></svg></div>
+        </div>
+      </div></div></div><figcaption>Family alert</figcaption></figure>
+    </div>
+  </section>
+
+  <div class="verdict">
+    <div>
+      <p class="tag">Recommendation</p>
+      <h2>A for every day, B's loudness for STOP</h2>
+    </div>
+    <ul>
+      <li>Use Pause (A) for the elder's home and the Companion. The saffron circle is a single, memorable shape that is also the product's idea: pause, then check.</li>
+      <li>Borrow Signal's full-screen red and giant capitals for STOP and the family alert, so danger looks nothing like the rest of the app.</li>
+      <li>Keep Ink (C) for the family and research screens that adults use sitting down, where a quieter, text-led look reads as trustworthy.</li>
+      <li>Before building: choose one, or mix as above. It changes colours, type and layout on every screen, not what Ruko does.</li>
+    </ul>
+  </div>
+</div>

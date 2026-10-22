@@ -186,3 +186,11 @@ The user asked for: a scammer bot that role-plays calls with consented people; a
 - **The simulator found real weaknesses, fixed in the product** (pattern library v2; the database upgrades itself when the app ships a newer library). One common word (KYC, parcel) is only half a sign and never warns alone; reassurance sentences ("we never ask for your OTP") are ignored; Hindi letters with a dot match; new phrases for cyber-desk, safe-custody, "read me the code on your screen", Aadhaar misuse and power-cut-tonight scripts. STOP before the money request in the simulator: 9 → 24 of 30; false alarms on genuine calls: 5 → 1 of 24.
 - **Honesty about the simulator:** it tests Ruko's rules and the defender's safety (it must never agree to pay or share). It is **not** evidence that real older adults would stop. The results page labels it "Simulated" and keeps it apart from the trial's north star.
 - **Not built:** a bot on real calls; phoning the elder or family (paid); a live cloned voice; Devanagari Hindi in Companion and surveys (the MVP is English and Hinglish).
+
+## The Ink look (22 Oct)
+The user chose direction **C, "Ink"** from three samples (`design/ruko-design-directions.html`) for the whole app. Written up in [DESIGN.md](DESIGN.md).
+- **Done by changing the foundation:** the colour tokens, fonts and shared components (`app/globals.css`, `app/layout.tsx`, `components/elder/ui.tsx`, the wordmark, the helpline bar), so every screen follows the look. Then hand-restyled: the elder home, STOP, the Companion, the family alert, the survey bot, and the headings of the check, help, circle, sign-in and impact pages.
+- **STOP on white:** the STOP screen is a white page with a 150px red "Stop." and a red top edge, the same idea as in the sample. It relies on size, not a red background. If the trial shows people don't notice it, the fallback is the full red screen of direction B.
+- **Kept dark on purpose:** the demo page, the fraud console and the landing page.
+- **Fonts:** Public Sans and Newsreader replace Atkinson Hyperlegible and Instrument Serif. Public Sans stays clear at large sizes; the larger risk is the thin display type, so it is only used at 34px or more.
+- **Screens saved** in `design/screens/` (home, STOP, Companion, family alert).

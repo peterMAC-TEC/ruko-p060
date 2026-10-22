@@ -12,7 +12,7 @@ export function SharePoster() {
   }, []);
   return (
     <main className="mx-auto flex min-h-[100dvh] max-w-md flex-col items-center justify-center gap-6 bg-white px-6 py-10 text-center text-ink">
-      <h1 className="text-[34px] leading-tight font-bold">Has a scam call ever come to your family?</h1>
+      <h1 className="display text-[44px] leading-[1.04]">Has a scam call ever come to your family?</h1>
       <p className="text-[21px]">Scan to answer 3 quick questions. It is anonymous, and it helps protect other families.</p>
       {url ? <QrCode payload={url} label="QR code for the survey" /> : <div className="aspect-square w-64 animate-pulse rounded-2xl bg-ink/5" />}
       <p className="text-[18px] font-bold break-all">{url.replace(/^https?:\/\//, "")}</p>

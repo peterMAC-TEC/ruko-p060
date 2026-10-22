@@ -360,7 +360,7 @@ export function CheckApp({
 
   return (
     <ElderShell t={t} brand={<RukoWordmark />} onToggleLang={toggle} action={action}>
-      {demo && <p className="mb-3 self-start rounded-full bg-gold-soft px-3 py-1 text-[14px] font-bold text-warn">{t.demoBadge}</p>}
+      {demo && <p className="mb-3 self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">{t.demoBadge}</p>}
 
       {step.kind === "who" && (
         <div className="flex flex-col gap-5 animate-in fade-in duration-300">
@@ -419,7 +419,7 @@ export function CheckApp({
                 {t.noBankCall}
               </p>
             ))}
-          <h1 className="text-[28px] leading-[1.2] font-bold tracking-tight animate-in fade-in slide-in-from-bottom-1 duration-300">
+          <h1 className="display text-[40px] leading-[1.06] animate-in fade-in slide-in-from-bottom-1 duration-300">
             {t.radarQuestions[RADAR_QUESTIONS[step.i]]}
           </h1>
           <div className="flex flex-wrap gap-3">
@@ -531,7 +531,7 @@ export function CheckApp({
         <div className="flex flex-col gap-5 animate-in fade-in duration-300">
           {step.r.level !== "stop" && (
             <section className={`rounded-[28px] p-6 ${step.r.level === "caution" ? "bg-warn-soft" : "bg-calm-soft"}`}>
-              <h1 className="text-[28px] leading-tight font-bold tracking-tight">
+              <h1 className="display text-[38px] leading-[1.06]">
                 {step.r.level === "caution" ? t.cautionTitle : t.clearTitle}
               </h1>
               <p className="mt-2 text-[19px]">
@@ -545,7 +545,7 @@ export function CheckApp({
           {step.r.level === "stop" && !stopOpen && (
             <section className="rounded-[28px] bg-alarm-soft p-6">
               <p className="text-[15px] font-bold tracking-wide text-alarm uppercase">{t.stopIntro}</p>
-              <h1 className="mt-1 text-[26px] leading-tight font-bold">{step.r.pattern?.name[lang] ?? t.verdictHigh}</h1>
+              <h1 className="display mt-1 text-[34px] leading-[1.05]">{step.r.pattern?.name[lang] ?? t.verdictHigh}</h1>
               <p className="mt-2 text-[18px]">{step.r.pattern?.rule[lang] ?? t.factLine}</p>
               {familyAlerted && <p className="mt-3 font-bold text-calm">✓ {t.familyTold}</p>}
             </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, MessageCircleHeart, Mic, Phone, Send, Volume2, VolumeX } from "lucide-react";
+import { ArrowRight, Check, Mic, Phone, Send, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -159,14 +159,11 @@ export function CompanionApp({
   if (!started) {
     return (
       <Shell lang={lang} onLang={pickLang} voice={voice} onVoice={() => setVoice((v) => !v)} speaking={false}>
-        <p className="text-[30px] leading-tight font-bold">{lang === "en" ? "Ruko is here to help." : "Ruko madad ke liye yahan hai."}</p>
+        <p className="display mt-10 text-[56px] leading-[1.0]">{lang === "en" ? "Ruko is here to help." : "Ruko madad ke liye yahan hai."}</p>
         <div className="mt-auto pt-8">
-          <button
-            onClick={() => setStarted(true)}
-            className="flex min-h-20 w-full items-center justify-center gap-3 rounded-[28px] bg-white text-[24px] font-bold text-calm shadow-lift"
-          >
-            <MessageCircleHeart className="size-8" strokeWidth={2.2} />
-            {lang === "en" ? "Talk to Ruko" : "Ruko se baat karein"}
+          <button onClick={() => setStarted(true)} className="flex min-h-[76px] w-full items-center justify-between rounded-[18px] bg-ink px-6 text-white">
+            <span className="display text-[32px] italic">{lang === "en" ? "Talk to Ruko" : "Ruko se baat karein"}</span>
+            <ArrowRight className="size-7" strokeWidth={1.6} />
           </button>
         </div>
       </Shell>
@@ -175,13 +172,22 @@ export function CompanionApp({
 
   const actions = (step === "free" ? extra : []) as Action[];
   return (
-    <Shell lang={lang} onLang={pickLang} voice={voice} onVoice={() => { setVoice((v) => !v); hush(); }} speaking={speaking}>
-      <p className="text-[29px] leading-snug font-bold" aria-live="polite">
+    <Shell
+      lang={lang}
+      onLang={pickLang}
+      voice={voice}
+      onVoice={() => {
+        setVoice((v) => !v);
+        hush();
+      }}
+      speaking={speaking}
+    >
+      <p className="display mt-6 text-[46px] leading-[1.04]" aria-live="polite">
         {thinking ? (lang === "en" ? "One moment…" : "Ek minute…") : line}
       </p>
       {voice && (
-        <button onClick={() => speak(line)} className="mt-3 flex min-h-12 items-center gap-2 self-start rounded-full bg-white/15 px-4 text-[17px] font-bold">
-          <Volume2 className="size-5" />
+        <button onClick={() => speak(line)} className="mt-4 flex min-h-12 items-center gap-2 self-start text-[17px] font-semibold text-ink-soft">
+          <Volume2 className="size-5" strokeWidth={1.8} />
           {lang === "en" ? "Say it again" : "Phir se boliye"}
         </button>
       )}
@@ -189,16 +195,15 @@ export function CompanionApp({
       {step === "free" && log.length > 1 && (
         <ul className="mt-5 flex flex-col gap-2 text-[18px]">
           {log.slice(-5, -1).map((m, i) => (
-            <li key={i} className={`rounded-2xl px-4 py-3 ${m.from === "me" ? "self-end bg-white/20" : "self-start bg-white/10"}`}>
+            <li key={i} className={m.from === "me" ? "self-end text-right text-ink-soft" : "self-start"}>
               {m.text}
             </li>
           ))}
         </ul>
       )}
 
-      <div className="mt-auto flex flex-col gap-3 pt-8">
-        {step !== "free" &&
-          current.options.map((o) => <OptionButton key={o.id} o={o} lang={lang} trusted={trusted} onChoose={choose} onClose={onClose} />)}
+      <div className="mt-auto flex flex-col pt-8">
+        {step !== "free" && current.options.map((o) => <OptionButton key={o.id} o={o} lang={lang} trusted={trusted} onChoose={choose} onClose={onClose} />)}
 
         {step === "free" && (
           <>
@@ -209,12 +214,10 @@ export function CompanionApp({
               <button
                 onClick={() => (listening ? mic.stop() : void mic.start())}
                 aria-pressed={listening}
-                className={`flex min-h-20 items-center justify-center gap-3 rounded-[28px] text-[22px] font-bold shadow-lift transition ${
-                  listening ? "scale-[1.02] bg-white text-calm" : "bg-white/15 text-white"
-                }`}
+                className={`flex min-h-[68px] items-center justify-between gap-3 border-b border-hair text-left text-[22px] font-semibold ${listening ? "text-alarm" : ""}`}
               >
-                <Mic className={`size-7 ${listening ? "animate-pulse" : ""}`} />
-                {listening ? mic.interim || (lang === "en" ? "Listening… tap when done" : "Sun raha hoon… ho jaye to dabaiye") : lang === "en" ? "Tap and speak" : "Dabaiye aur boliye"}
+                <span>{listening ? mic.interim || (lang === "en" ? "Listening… tap when done" : "Sun raha hoon… ho jaye to dabaiye") : lang === "en" ? "Tap and speak" : "Dabaiye aur boliye"}</span>
+                <Mic className={`size-6 shrink-0 ${listening ? "animate-pulse" : ""}`} strokeWidth={1.8} />
               </button>
             )}
             <form
@@ -222,26 +225,29 @@ export function CompanionApp({
                 e.preventDefault();
                 void ask(text);
               }}
-              className="flex gap-2"
+              className="mt-3 flex gap-2"
             >
               <input
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder={lang === "en" ? "Or type here" : "Ya yahan likhiye"}
-                className="min-h-16 min-w-0 flex-1 rounded-2xl bg-white px-4 text-[20px] text-ink outline-none"
+                className="min-h-16 min-w-0 flex-1 rounded-[18px] bg-paper-2 px-4 text-[20px] text-ink outline-none focus:ring-2 focus:ring-ink"
               />
-              <button type="submit" disabled={!text.trim() || thinking} aria-label="Send" className="grid size-16 shrink-0 place-items-center rounded-2xl bg-white text-calm disabled:opacity-40">
-                <Send className="size-6" />
+              <button type="submit" disabled={!text.trim() || thinking} aria-label="Send" className="grid size-16 shrink-0 place-items-center rounded-[18px] bg-ink text-white disabled:opacity-30">
+                <Send className="size-6" strokeWidth={1.8} />
               </button>
             </form>
             <OptionButton o={{ id: "report", label: ACTION_LABEL.report, action: "report" }} lang={lang} trusted={trusted} onChoose={choose} onClose={onClose} />
-            {mic.error && <p className="text-[16px] font-bold text-white/90">{lang === "en" ? "I didn't catch that. Try again or type." : "Samajh nahi aaya. Phir se bolein ya likhein."}</p>}
+            {mic.error && <p className="mt-2 text-[16px] text-ink-soft">{lang === "en" ? "I didn't catch that. Try again or type." : "Samajh nahi aaya. Phir se bolein ya likhein."}</p>}
           </>
         )}
       </div>
     </Shell>
   );
 }
+
+const row = "flex min-h-[68px] w-full items-center justify-between gap-3 border-b border-hair text-left text-[22px] font-semibold";
+const solid = "mb-2 flex min-h-[72px] w-full items-center justify-center gap-3 rounded-[18px] bg-ink px-5 text-[22px] font-semibold text-white active:scale-[0.99]";
 
 function OptionButton({
   o,
@@ -256,48 +262,48 @@ function OptionButton({
   onChoose: (o: Option) => void;
   onClose: () => void;
 }) {
-  const cls =
-    "flex min-h-[68px] w-full items-center justify-center gap-3 rounded-[24px] px-5 text-center text-[22px] leading-tight font-bold shadow-lift active:scale-[0.99]";
-  const primary = `${cls} bg-white text-calm`;
   const label = o.label[lang];
   if (o.action === "call_family") {
     const first = trusted?.name.split(" ")[0];
     return (
-      <a href={trusted ? call(trusted.phone) : "tel:1930"} className={primary} onClick={() => onChoose(o)}>
-        <Phone className="size-6" strokeWidth={2.4} />
+      <a href={trusted ? call(trusted.phone) : "tel:1930"} className={solid} onClick={() => onChoose(o)}>
+        <Phone className="size-6" strokeWidth={2} />
         {first ? (lang === "en" ? `Call ${first}` : `${first} ko phone karo`) : label}
       </a>
     );
   }
   if (o.action === "call_1930")
     return (
-      <a href="tel:1930" className={primary} onClick={() => onChoose(o)}>
-        <Phone className="size-6" strokeWidth={2.4} />
+      <a href="tel:1930" className={solid} onClick={() => onChoose(o)}>
+        <Phone className="size-6" strokeWidth={2} />
         {label}
       </a>
     );
   if (o.action === "help")
     return (
-      <Link href="/help" className={primary}>
-        {label}
+      <Link href="/help" className={row}>
+        <span>{label}</span>
+        <ArrowRight className="size-6 shrink-0" strokeWidth={1.6} />
       </Link>
     );
   if (o.action === "report")
     return (
-      <Link href={`/survey/incident?lang=${lang}`} className={`${cls} border-2 border-white/40 bg-transparent text-white`}>
-        {label}
+      <Link href={`/survey/incident?lang=${lang}`} className={`${row} text-ink-soft`}>
+        <span>{label}</span>
+        <ArrowRight className="size-6 shrink-0" strokeWidth={1.6} />
       </Link>
     );
   if (o.action === "close")
     return (
-      <button onClick={onClose} className={`${cls} border-2 border-white/40 bg-transparent text-white`}>
-        <Check className="size-6" strokeWidth={2.6} />
-        {label}
+      <button onClick={onClose} className={`${row} text-ink-soft`}>
+        <span>{label}</span>
+        <Check className="size-6 shrink-0" strokeWidth={1.8} />
       </button>
     );
   return (
-    <button onClick={() => onChoose(o)} className={primary}>
-      {label}
+    <button onClick={() => onChoose(o)} className={row}>
+      <span>{label}</span>
+      <ArrowRight className="size-6 shrink-0" strokeWidth={1.6} />
     </button>
   );
 }
@@ -318,41 +324,28 @@ function Shell({
   speaking: boolean;
 }) {
   return (
-    <div
-      className="fixed inset-0 z-[60] overflow-y-auto text-white animate-in fade-in duration-300"
-      style={{ background: "linear-gradient(170deg, #0f4c43 0%, #0b6b5b 55%, #0e7c66 100%)" }}
-      role="dialog"
-      aria-label="Ruko"
-    >
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-white text-ink animate-in fade-in duration-300" role="dialog" aria-label="Ruko">
       <div className="mx-auto flex min-h-full max-w-md flex-col px-6 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center justify-between gap-3">
-          <div className="flex rounded-full bg-white/15 p-1 text-[15px] font-bold">
+          <div className="flex rounded-full p-1 text-[15px] font-semibold shadow-soft">
             {(["en", "hing"] as const).map((l) => (
-              <button key={l} onClick={() => onLang(l)} aria-pressed={lang === l} className={`min-h-10 rounded-full px-4 ${lang === l ? "bg-white text-calm" : "text-white/80"}`}>
+              <button key={l} onClick={() => onLang(l)} aria-pressed={lang === l} className={`min-h-10 rounded-full px-4 ${lang === l ? "bg-ink text-white" : "text-ink-soft"}`}>
                 {TOKEN[l]}
               </button>
             ))}
           </div>
-          <button
-            onClick={onVoice}
-            aria-pressed={voice}
-            aria-label={voice ? "Turn the voice off" : "Turn the voice on"}
-            className="grid size-12 place-items-center rounded-full bg-white/15"
-          >
-            {voice ? <Volume2 className="size-6" /> : <VolumeX className="size-6" />}
+          <button onClick={onVoice} aria-pressed={voice} aria-label={voice ? "Turn the voice off" : "Turn the voice on"} className="grid size-12 place-items-center rounded-full shadow-soft">
+            {voice ? <Volume2 className="size-6" strokeWidth={1.8} /> : <VolumeX className="size-6" strokeWidth={1.8} />}
           </button>
         </div>
 
-        <div className="mt-8 mb-6 flex items-center gap-4">
-          <span className="relative grid size-20 shrink-0 place-items-center rounded-full bg-white text-[34px] font-bold text-calm">
-            {speaking && <span className="absolute -inset-2 animate-ping rounded-full bg-white/30" />}
-            <span className="relative">R</span>
+        <p className="mt-8 flex items-center gap-3 text-[17px] text-ink-soft">
+          <span className="relative grid size-3 place-items-center">
+            {speaking && <span className="absolute size-5 animate-ping rounded-full bg-ink/20" />}
+            <span className="size-2.5 rounded-full bg-ink" />
           </span>
-          <span>
-            <span className="block text-[26px] leading-none font-bold">Ruko</span>
-            <span className="mt-1 block text-[16px] text-white/80">{lang === "en" ? "With you" : "Aapke saath"}</span>
-          </span>
-        </div>
+          {lang === "en" ? "Ruko is with you" : "Ruko aapke saath hai"}
+        </p>
         {children}
       </div>
     </div>

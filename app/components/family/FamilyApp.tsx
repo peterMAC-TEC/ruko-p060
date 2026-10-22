@@ -3,7 +3,6 @@
 import { Bell, BellRing, Check, MessageSquareQuote, Phone, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
-import { Avatar } from "@/components/elder/ui";
 import { FAMILY_LINE, type ElderStatus } from "@/lib/companion";
 import type { AlertStatus } from "@/lib/types";
 
@@ -185,71 +184,60 @@ export function FamilyApp({
   const earlier = rows?.filter((a) => a.status !== "sent") ?? [];
 
   return (
-    <div className={`flex min-h-[100dvh] flex-col text-[18px] text-ink transition-colors ${open ? "bg-alarm-2" : "bg-paper"}`}>
-      <header className="flex items-center justify-between px-5 pt-4 pb-3">
-        <RukoWordmark tone={open ? "light" : "dark"} />
+    <div className="flex min-h-[100dvh] flex-col bg-paper text-[18px] text-ink">
+      <header className="flex items-center justify-between px-6 pt-4 pb-3">
+        <RukoWordmark />
         <button
           onClick={arm}
-          className={`flex min-h-10 items-center gap-1.5 rounded-full px-4 text-[14px] font-bold ${
-            armed ? (open ? "bg-white/15 text-white" : "bg-calm-soft text-calm") : "bg-ink text-white"
-          }`}
+          className={`flex min-h-10 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold ${armed ? "text-ink-soft shadow-soft" : "bg-ink text-white"}`}
         >
           {armed ? <Check className="size-4" strokeWidth={3} /> : <Bell className="size-4" strokeWidth={2.4} />}
           {armed ? "Sound on" : "Turn on sound"}
         </button>
       </header>
 
-      <main className="flex flex-1 flex-col gap-6 px-5 pt-2 pb-8">
-        {rows === null && <div className="h-48 animate-pulse rounded-[28px] bg-white/60" />}
+      <main className="flex flex-1 flex-col gap-6 px-6 pt-2 pb-8">
+        {rows === null && <div className="h-48 animate-pulse rounded-[20px] bg-paper-2" />}
 
         {open && (
-          <section className="flex flex-1 flex-col text-white animate-in fade-in zoom-in-95 duration-300" role="alert">
-            <div className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-[0.16em] text-white/80">
-              <BellRing className="size-4" strokeWidth={2.6} />
+          <section className="flex flex-1 flex-col animate-in fade-in duration-300" role="alert">
+            <p className="flex items-center gap-2 text-[14px] font-semibold tracking-[0.16em] text-alarm uppercase">
+              <BellRing className="size-4" strokeWidth={2.2} />
               Scam alert · {ago(open.ts, now)}
-            </div>
+            </p>
+            <span className="mt-8 block size-4 animate-pulse rounded-full bg-alarm ring-[8px] ring-alarm/15" />
 
-            <div className="mt-8 flex flex-col items-center text-center">
-              <span className="relative">
-                <span className="absolute -inset-3 animate-ping rounded-full bg-white/20" />
-                <span className="relative block rounded-full ring-4 ring-white/30">
-                  <Avatar name={open.elder_name ?? "?"} size="size-24" />
-                </span>
-              </span>
-              <p className="mt-7 text-[27px] font-bold leading-snug">{open.message}</p>
-              {open.elder_status && FAMILY_LINE[open.elder_status] && (
-                <p
-                  className={`mt-4 rounded-2xl px-4 py-3 text-[19px] leading-snug font-bold ${
-                    open.elder_status === "needs_help" || open.elder_status === "paid" ? "bg-white text-alarm" : "bg-white/15"
-                  }`}
-                  role="status"
-                >
-                  {open.elder_name?.split(" ")[0] ?? "They"} {FAMILY_LINE[open.elder_status]}
-                </p>
-              )}
-            </div>
+            <h1 className="display mt-6 text-[40px] leading-[1.05]">{open.message}</h1>
+            {open.elder_status && FAMILY_LINE[open.elder_status] && (
+              <p className={`mt-5 text-[22px] leading-snug ${open.elder_status === "needs_help" || open.elder_status === "paid" ? "font-semibold text-alarm" : "text-ink-soft"}`} role="status">
+                {open.elder_name?.split(" ")[0] ?? "They"} {FAMILY_LINE[open.elder_status]}
+              </p>
+            )}
 
-            <div className="mt-6 flex flex-col gap-3">
+            <div className="mt-auto flex flex-col pt-8">
               <a
                 href={!embed && open.elder_phone ? `tel:${open.elder_phone.replace(/\s/g, "")}` : undefined}
                 onClick={() => ack(open.id, "ack_calling")}
-                className="flex min-h-[72px] cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white text-[23px] font-bold text-alarm shadow-lift"
+                className="flex min-h-[76px] cursor-pointer items-center justify-center gap-3 rounded-[18px] bg-alarm text-[23px] font-semibold text-white"
               >
-                <Phone className="size-7" strokeWidth={2.4} />
+                <Phone className="size-6" strokeWidth={2} />
                 Call {open.elder_name?.split(" ")[0] ?? "them"} now
               </a>
-              <button onClick={() => ack(open.id, "ack_fine")} className="min-h-14 rounded-2xl border-2 border-white/30 text-[18px] font-bold">
+              <button onClick={() => ack(open.id, "ack_fine")} className="mt-3 flex min-h-[64px] items-center justify-between border-b border-hair text-left text-[21px] font-semibold">
                 It&apos;s fine, I&apos;ve checked
               </button>
             </div>
 
             {open.reasons.length > 0 && (
-              <details className="mt-5 rounded-2xl bg-white/10 p-4 text-[16px] text-white/90">
-                <summary className="cursor-pointer list-none text-[17px] font-bold">Why Ruko thinks so ({open.reasons.length})</summary>
-                <ul className="mt-3 space-y-2">
+              <details className="group border-b border-hair">
+                <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between text-[19px] text-ink-soft">
+                  Why Ruko thinks so ({open.reasons.length})
+                  <span className="text-[22px] transition group-open:rotate-90">›</span>
+                </summary>
+                <ul className="space-y-2 pb-4 text-[17px]">
                   {open.reasons.map((r) => (
-                    <li key={r} className="flex gap-2">
-                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
+                    <li key={r} className="flex gap-3">
+                      <span className="mt-2.5 size-1.5 shrink-0 rounded-full bg-ink" />
                       {r}
                     </li>
                   ))}
@@ -257,12 +245,12 @@ export function FamilyApp({
               </details>
             )}
 
-            <section className="mt-6 rounded-2xl bg-white/10 p-4">
-              <h2 className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-[0.14em] text-white/80">
+            <section className="mt-6">
+              <h2 className="flex items-center gap-2 text-[14px] font-semibold tracking-[0.14em] text-ink-soft uppercase">
                 <MessageSquareQuote className="size-4" />
                 What to say
               </h2>
-              <ol className="mt-3 space-y-2 text-[17px]">
+              <ol className="display mt-3 space-y-3 text-[24px] leading-[1.2]">
                 {SCRIPT.map((line) => (
                   <li key={line}>&ldquo;{line}&rdquo;</li>
                 ))}
@@ -274,7 +262,7 @@ export function FamilyApp({
         {rows && !open && (
           <>
             {demo && (
-              <p className="self-start rounded-full bg-gold-soft px-3 py-1 text-[14px] font-bold text-warn">Demo: Priya&apos;s phone</p>
+              <p className="self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">Demo: Priya&apos;s phone</p>
             )}
             {approvals
               .filter((a) => (a.status === "pending" && a.transfer?.status === "held") || decided[a.id])
@@ -296,11 +284,11 @@ export function FamilyApp({
                 </button>
               </section>
             )}
-            <section className="rounded-[28px] bg-white p-6 shadow-soft animate-in fade-in duration-300">
-              <span className="flex size-14 items-center justify-center rounded-full bg-calm-soft text-calm">
-                <ShieldCheck className="size-7" strokeWidth={2.2} />
+            <section className="animate-in fade-in duration-300">
+              <span className="flex size-14 items-center justify-center rounded-full shadow-soft">
+                <ShieldCheck className="size-7" strokeWidth={1.8} />
               </span>
-              <h1 className="mt-4 text-[26px] font-bold tracking-tight">All quiet{memberFirst ? `, ${memberFirst}` : ""}</h1>
+              <h1 className="display mt-5 text-[46px] leading-none">All quiet{memberFirst ? `, ${memberFirst}` : ""}</h1>
               <p className="mt-1 text-ink-soft">
                 If Ruko thinks your family member may be on a scam call, you&apos;ll get an alert here with one button to call
                 them.
