@@ -27,44 +27,69 @@ const doors = [
 export default function Home() {
   return (
     <div className="min-h-[100dvh] bg-white text-ink">
+
+      <section className="relative overflow-hidden bg-ink text-white">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <RukoWordmark />
-        <a href="tel:1930" className="flex min-h-12 items-center rounded-full border border-hair px-5 text-[17px] font-semibold">
+        <RukoWordmark tone="light" />
+        <a href="tel:1930" className="flex min-h-12 items-center rounded-full border border-white/30 px-5 text-[17px] font-semibold">
           Help: 1930
         </a>
       </header>
-
-      <section className="mx-auto grid max-w-6xl items-center gap-10 px-6 pt-8 pb-16 sm:grid-cols-[1.4fr_1fr] sm:pt-16 sm:pb-28">
-        <div className="m-rise">
-          <h1 className="display text-[56px] leading-[0.98] sm:text-[104px]">
-            When someone pressures you, Ruko helps you <em className="italic">pause.</em>
-          </h1>
-          <p className="mt-7 max-w-xl text-[22px] leading-relaxed text-ink-soft">
-            Some callers pretend to be the police or a bank. They scare you, rush you and ask for money. Ruko helps you stop, check, and bring in someone you trust.
+        <div className="mx-auto max-w-6xl px-6 pt-6 pb-14 sm:pt-10 sm:pb-16">
+          <p className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-1.5 text-[15px] font-semibold tracking-[0.12em] text-white/80 uppercase">
+            <span className="size-2 rounded-full bg-white/70" aria-hidden /> Demo mode
           </p>
-          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-            <Link href="/check" className="press flex min-h-[72px] items-center justify-center gap-3 rounded-[18px] bg-ink px-8 text-[24px] font-semibold text-white">
-              Help me check a call
-              <ArrowRight className="size-6" strokeWidth={1.8} />
+          <h1 className="display m-rise mt-6 max-w-4xl text-[48px] leading-[0.98] sm:text-[84px]">
+            Hear the call. <em className="italic">Then stop it.</em>
+          </h1>
+          <p className="mt-6 max-w-2xl text-[22px] leading-relaxed text-white/80 sm:text-[26px]">
+            A realistic AI scammer will try to convince you to pay. See what Ruko does.
+          </p>
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <Link
+              href="/demo/live"
+              className="press group flex min-h-[88px] items-center justify-center gap-4 rounded-[22px] bg-white px-10 text-[28px] font-semibold text-ink shadow-[0_18px_60px_rgba(255,255,255,0.12)] transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:min-h-[104px] sm:text-[34px]"
+            >
+              Take a live scam call
+              <ArrowRight className="size-8 transition group-hover:translate-x-1" strokeWidth={1.8} />
             </Link>
-            <Link href="/companion" className="flex min-h-[72px] items-center justify-center rounded-[18px] border border-hair px-8 text-[22px] font-semibold">
-              Talk to Ruko
-            </Link>
+            <p className="max-w-[16rem] text-[17px] leading-snug text-white/65">About three minutes. You play the older person; use your voice. Nothing is recorded.</p>
           </div>
-          <Link href="/demo/call" className="mt-5 inline-flex min-h-12 items-center gap-2 text-[20px] font-semibold underline underline-offset-8">
-            Watch a scam call, and how Ruko steps in
-            <ArrowRight className="size-5" strokeWidth={1.8} />
-          </Link>
-        </div>
-        <div className="flex justify-center sm:justify-end">
-          <LiveGuardian className="size-60 sm:size-80" />
+          <nav className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-[19px]" aria-label="More">
+            {[
+              ["/check", "Is this a scam?"],
+              ["/circle", "Family Circle"],
+              ["/line", "Ruko Line"],
+              ["/results", "Results"],
+            ].map(([href, label]) => (
+              <Link key={href} href={href} className="min-h-12 py-2 text-white/85 underline underline-offset-8 hover:text-white">
+                {label}
+              </Link>
+            ))}
+          </nav>
         </div>
       </section>
 
       <section className="bg-cream">
-        <div className="mx-auto max-w-6xl px-6 py-14 sm:py-20">
-          <p className="display max-w-3xl text-[38px] leading-[1.08] sm:text-[60px]">You do not need to understand technology to use Ruko.</p>
-          <p className="mt-5 max-w-xl text-[21px] leading-relaxed">Big buttons. One question at a time. English or Hinglish. If you can answer yes or no, you can use Ruko.</p>
+        <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-14 sm:grid-cols-[1.4fr_1fr] sm:py-20">
+          <div>
+            <h2 className="display text-[40px] leading-tight sm:text-[64px]">When someone pressures you, Ruko helps you <em className="italic">pause.</em></h2>
+            <p className="mt-5 max-w-xl text-[21px] leading-relaxed text-ink-soft">
+              Some callers pretend to be the police or a bank. They scare you, rush you and ask for money. Ruko helps you stop, check, and bring in someone you trust.
+            </p>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Link href="/check" className="press flex min-h-[72px] items-center justify-center gap-3 rounded-[18px] bg-ink px-8 text-[22px] font-semibold text-white">
+                Help me check a call
+                <ArrowRight className="size-6" strokeWidth={1.8} />
+              </Link>
+              <Link href="/companion" className="flex min-h-[72px] items-center justify-center rounded-[18px] border border-hair bg-white px-8 text-[22px] font-semibold">
+                Talk to Ruko
+              </Link>
+            </div>
+          </div>
+          <div className="flex justify-center sm:justify-end">
+            <LiveGuardian className="size-52 sm:size-72" />
+          </div>
         </div>
       </section>
 

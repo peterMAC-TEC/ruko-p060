@@ -78,6 +78,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [muted, setMuted] = useState(false);
   const [showType, setShowType] = useState(false);
   const [canListen, setCanListen] = useState(true);
+  const urgencyRef = useRef(0);
   const [sources, setSources] = useState<string[]>([]);
   const [latencies, setLatencies] = useState<number[]>([]);
   const [ending, setEnding] = useState<Ending | null>(null);
@@ -273,7 +274,8 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       const v = chooseVoice(role);
       if (v) u.voice = v;
       u.pitch = role === "officer" ? 0.75 : 1;
-      u.rate = role === "officer" ? 1.04 : 0.92;
+      // The officer starts calm and slow and speeds up a little as the call goes on (rising urgency); Ruko stays slow and even.
+      u.rate = role === "officer" ? Math.min(1.14, 0.96 + urgencyRef.current * 0.03) : 0.92;
       u.onend = () => finish("done");
       u.onerror = () => finish("done");
       window.speechSynthesis.speak(u);
@@ -384,6 +386,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     // The conversation lives in memory for this call only. The last six turns go (without digits) to the wording AI.
     const convo: { who: "officer" | "person"; text: string }[] = [{ who: "officer", text: turn.text }];
     let aiFails = 0;
+    urgencyRef.current = 0;
     setSources([]);
     let carry = false;
     let outcome = await say(turn.text, "officer", id);
@@ -400,6 +403,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       setStatus("thinking");
       const intent = classify(reply);
       if (intent === "agree_secret") setAgreedSecret(true);
+      urgencyRef.current = Math.max(0, state.stage);
       if (reply) convo.push({ who: "person", text: reply });
       turn = officerNext(state, reply, Date.now() - callStart.current, lang);
       state = turn.state;
@@ -414,7 +418,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           filler = say(f[lang], "officer", id);
         }, 700);
         const ctrl = new AbortController();
-        const abortTimer = setTimeout(() => ctrl.abort(), 2500);
+        const abortTimer = setTimeout(() => ctrl.abort(), 3200);
         try {
           const res = await fetch("/api/demo/officer", {
             method: "POST",
@@ -548,13 +552,14 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const moved = tx ? ["completed", "released"].includes(tx.status) : false;
 
   return (
-    <main className="mx-auto flex min-h-[100dvh] max-w-md flex-col px-6 pt-4 pb-8 text-ink">
+    <div className={live ? "fixed inset-0 z-30 overflow-y-auto bg-[#0b0b10]" : "contents"}>
+    <main className={live ? "mx-auto flex min-h-[100dvh] max-w-md flex-col px-6 pt-4 pb-8 text-white" : "mx-auto flex min-h-[100dvh] max-w-md flex-col px-6 pt-4 pb-8 text-ink"}>
       <div className="flex items-center justify-between gap-2">
-        <Link href="/demo" onClick={stopEverything} className="min-h-12 content-center text-[16px] text-ink-soft underline underline-offset-4">
+        <Link href="/demo" onClick={stopEverything} className={`min-h-12 content-center text-[16px] underline underline-offset-4 ${live ? "text-white/70" : "text-ink-soft"}`}>
           All scenes
         </Link>
         {phase !== "consent" && (
-          <button onClick={endDemo} className="min-h-12 rounded-full border border-hair px-4 text-[16px] font-semibold">
+          <button onClick={endDemo} className={`min-h-12 rounded-full border px-4 text-[16px] font-semibold ${live ? "border-white/30 text-white" : "border-hair"}`}>
             End demo
           </button>
         )}
@@ -625,54 +630,57 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
       {live && (
         <section className="flex flex-1 flex-col">
+          <p className="mt-2 self-start rounded-full border border-white/25 px-3 py-1 text-[13px] font-semibold tracking-[0.12em] text-white/80 uppercase">{en ? "Role-played scam call" : "Role-play scam call"}</p>
           <div className="mt-2 flex items-center justify-between">
             <div>
-              <p className="text-[16px] text-ink-soft">{en ? "On the call" : "Call par"}</p>
+              <p className="text-[16px] text-white/60">{en ? "On the call" : "Call par"}</p>
               <p className="text-[22px] font-semibold tabular">
                 {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")}
               </p>
             </div>
-            <Guardian mood="checking" className="size-12" />
+            
           </div>
 
           {/* The caller: a circle that glows while he speaks, his name, and what he is saying (captions, always on). */}
-          <div className="mt-4 flex items-center gap-4">
-            <span className={`grid size-20 shrink-0 place-items-center rounded-full bg-ink text-[34px] text-white ${status === "speaking" ? "ring-[10px] ring-ink/15 motion-safe:animate-pulse" : ""}`} aria-hidden>
-              S
+          <div className="mt-4 flex items-center gap-5">
+            <span className="relative grid size-24 shrink-0 place-items-center" aria-hidden>
+              <span className={`absolute inset-0 rounded-full border border-white/30 transition-transform duration-150 ${status === "speaking" ? "motion-safe:animate-ping" : ""}`} style={{ transform: `scale(${status === "listening" && !muted ? 1 + level * 0.45 : 1})` }} />
+              <span className={`absolute inset-2 rounded-full border border-white/40 ${status === "speaking" ? "motion-safe:animate-pulse" : ""}`} />
+              <span className="relative grid size-16 place-items-center rounded-full bg-white/15 text-[30px] text-white">S</span>
             </span>
             <div>
-              <p className="text-[22px] font-semibold">Officer Sethi</p>
-              <p className="text-[15px] text-ink-soft">
+              <p className="text-[24px] font-semibold">Officer Sethi</p>
+              <p className="text-[15px] text-white/60">
                 {DEMO_NUMBER} · actor{status === "speaking" ? (en ? " · speaking" : " · bol raha hai") : ""}
               </p>
             </div>
           </div>
-          <div className="mt-3 rounded-[18px] bg-paper-2 p-5" aria-live="polite">
+          <div className="mt-3 rounded-[18px] bg-white/10 p-5" aria-live="polite">
             <p className="display text-[26px] leading-snug">&ldquo;{officerLine}&rdquo;</p>
           </div>
 
           {/* You: a level bar that moves as you talk, and the words Ruko heard. */}
-          <div className="mt-3 rounded-[18px] border border-hair p-5">
-            <p className="flex items-center gap-2 text-[14px] font-semibold tracking-[0.12em] text-ink-soft uppercase">
-              <Mic className={`size-4 ${status === "listening" && micOk && !muted ? "text-ink" : ""}`} />
+          <div className="mt-3 rounded-[18px] border border-white/15 p-5">
+            <p className="flex items-center gap-2 text-[14px] font-semibold tracking-[0.12em] text-white/60 uppercase">
+              <Mic className={`size-4 ${status === "listening" && micOk && !muted ? "text-white" : ""}`} />
               {en ? "You" : "Aap"}
               {muted ? (en ? " · mic muted" : " · mic band") : status === "listening" ? (en ? " · your turn, speak now" : " · aapki baari, boliye") : ""}
             </p>
             {micTest === "ok" && !muted && (
-              <div className="mt-3 h-3 overflow-hidden rounded-full bg-paper-2" role="meter" aria-label="Microphone level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}>
-                <div className="h-full rounded-full bg-ink transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
+              <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/10" role="meter" aria-label="Microphone level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}>
+                <div className="h-full rounded-full bg-white transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
               </div>
             )}
             <p className="mt-3 text-[22px] leading-snug">
-              {you || <span className="text-ink-soft">{micOk && !muted ? (en ? "Talk to him, like a real call…" : "Usse baat kijiye, asli call ki tarah…") : en ? "Type your reply below." : "Neeche jawab likhiye."}</span>}
+              {you || <span className="text-white/60">{micOk && !muted ? (en ? "Talk to him, like a real call…" : "Usse baat kijiye, asli call ki tarah…") : en ? "Type your reply below." : "Neeche jawab likhiye."}</span>}
             </p>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
-            <button onClick={toggleMute} aria-pressed={muted} disabled={micTest !== "ok" && !canListen} className="min-h-[64px] rounded-[18px] border border-hair text-[19px] font-semibold disabled:opacity-40">
+            <button onClick={toggleMute} aria-pressed={muted} disabled={micTest !== "ok" && !canListen} className="min-h-[64px] rounded-[18px] border border-white/15 text-[19px] font-semibold disabled:opacity-40">
               {muted ? (en ? "Unmute" : "Mic chalu kijiye") : en ? "Mute mic" : "Mic band kijiye"}
             </button>
-            <button onClick={() => setShowType((v) => !v)} aria-expanded={showType || !micOk || muted} className="min-h-[64px] rounded-[18px] border border-hair text-[19px] font-semibold">
+            <button onClick={() => setShowType((v) => !v)} aria-expanded={showType || !micOk || muted} className="min-h-[64px] rounded-[18px] border border-white/15 text-[19px] font-semibold">
               {en ? "Type instead" : "Likhkar bhejiye"}
             </button>
           </div>
@@ -689,23 +697,23 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
                 onChange={(e) => setTyped(e.target.value)}
                 placeholder={en ? "Type your reply" : "Yahan likhiye"}
                 aria-label={en ? "Type your reply" : "Jawab likhiye"}
-                className="min-h-16 min-w-0 flex-1 rounded-[18px] border border-hair px-4 text-[20px]"
+                className="min-h-16 min-w-0 flex-1 rounded-[18px] border border-white/15 px-4 text-[20px]"
               />
               <button type="submit" disabled={!typed.trim()} className="min-h-16 rounded-[18px] bg-ink px-6 text-[20px] font-semibold text-white disabled:opacity-30">
                 {en ? "Send" : "Bhejo"}
               </button>
             </form>
           )}
-          {!micOk && <p className="mt-2 text-[16px] text-ink-soft">{en ? "The microphone is not available, so type your replies. Allow the microphone in the browser to talk." : "Microphone available nahi hai, isliye jawab likhiye. Baat karne ke liye browser mein microphone allow kijiye."}</p>}
+          {!micOk && <p className="mt-2 text-[16px] text-white/60">{en ? "The microphone is not available, so type your replies. Allow the microphone in the browser to talk." : "Microphone available nahi hai, isliye jawab likhiye. Baat karne ke liye browser mein microphone allow kijiye."}</p>}
 
-          <div className="mt-auto pt-6">
+          <div className="sticky bottom-0 mt-auto bg-[#0b0b10] pt-4 pb-2">
             <button onClick={bigStop} className="flex min-h-[80px] w-full items-center justify-center gap-3 rounded-[18px] bg-alarm text-[26px] font-semibold text-white">
               <PhoneOff className="size-7" />
               {en ? "End call (or say RUKO)" : "Call khatam (ya RUKO boliye)"}
             </button>
           </div>
 
-          <details className="mt-4 text-[14px] text-ink-soft">
+          <details className="mt-4 text-[14px] text-white/60">
             <summary className="min-h-10 cursor-pointer py-2">Debug: latency</summary>
             <p>
               Wording: {sources.length ? sources.join(", ") : "none yet"}. Reply to officer speech: {latencies.length ? latencies.map((l) => `${l} ms`).join(", ") : "no turns yet"}. Voice out: {typeof window !== "undefined" && "speechSynthesis" in window ? "browser speech" : "none (captions only)"}. Voice in:{" "}
@@ -716,18 +724,18 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       )}
 
       {phase === "stop" && (
-        <section className="m-fade fixed inset-0 z-50 overflow-y-auto border-t-[10px] border-alarm bg-white" role="alertdialog" aria-labelledby="live-stop">
+        <section className="m-fade fixed inset-0 z-50 overflow-y-auto bg-alarm text-white" role="alertdialog" aria-labelledby="live-stop">
           <div className="mx-auto flex min-h-full max-w-md flex-col px-6 pt-6 pb-8">
             <div className="flex items-center justify-between">
-              <p className="text-[15px] font-semibold tracking-[0.16em] text-alarm uppercase">{en ? "This is a scam" : "Yeh scam hai"}</p>
-              <Guardian mood="danger" className="size-14" />
+              <p className="text-[15px] font-semibold tracking-[0.16em] text-white/85 uppercase">{en ? "This is a scam" : "Yeh scam hai"}</p>
+              
             </div>
-            <h1 id="live-stop" className="display mt-4 text-[140px] leading-[0.86] text-alarm">
+            <h1 id="live-stop" className="display mt-4 text-[150px] leading-[0.86] text-white">
               Stop.
             </h1>
-            <div className="my-4 h-[3px] bg-alarm" />
-            <p className="border-l-4 border-alarm pl-4 text-[26px] leading-snug font-semibold">{en ? "Do not transfer money. Hang up and verify independently." : "Paise transfer mat kijiye. Call kaatiye aur khud alag se pata kijiye."}</p>
-            <p className="mt-4 text-[19px] text-ink-soft">
+            <div className="my-4 h-[3px] bg-white/70" />
+            <p className="border-l-4 border-white pl-4 text-[26px] leading-snug font-semibold">{en ? "Do not transfer money. Hang up and verify independently." : "Paise transfer mat kijiye. Call kaatiye aur khud alag se pata kijiye."}</p>
+            <p className="mt-4 text-[19px] text-white/85">
               {familyAlerted === true ? (en ? "✓ Your family has been alerted in Ruko." : "✓ Ruko mein aapke parivar ko soochna bhej di gayi hai.") : familyAlerted === false ? (en ? "Your family could not be reached by Ruko just now. Please call them." : "Ruko abhi parivar tak nahi pahunch paya. Kripya unhe phone kijiye.") : en ? "Telling your family…" : "Parivar ko bata rahe hain…"}
             </p>
             <div className="mt-auto flex flex-col gap-3 pt-8">
@@ -737,7 +745,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
                   setEnding("A");
                   setPhase("endA");
                 }}
-                className="press min-h-[76px] rounded-[18px] bg-ink text-[24px] font-semibold text-white"
+                className="press min-h-[76px] rounded-[18px] bg-white text-[24px] font-semibold text-alarm shadow-[0_10px_40px_rgba(0,0,0,0.25)]"
               >
                 {en ? "Hang up and use Ruko" : "Call kaatiye aur Ruko ka istemaal kijiye"}
               </button>
@@ -748,12 +756,12 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
                   setEnding("B");
                   setPhase("endB");
                 }}
-                className="min-h-[64px] rounded-[18px] border border-hair text-[20px] font-semibold"
+                className="min-h-[64px] rounded-[18px] border border-white/60 text-[20px] font-semibold"
               >
                 {en ? "I still want to pay" : "Main phir bhi paise bhejna chahta hoon"}
               </button>
-              <p className="mt-2 flex items-center justify-between gap-3 border-t border-hair pt-3 text-[16px] text-ink-soft">
-                <a href="tel:1930" className="flex min-h-12 items-center gap-2 text-ink">
+              <p className="mt-2 flex items-center justify-between gap-3 border-t border-white/30 pt-3 text-[16px] text-white/85">
+                <a href="tel:1930" className="flex min-h-12 items-center gap-2 text-white">
                   <span className="text-[22px] font-semibold tabular">1930</span> helpline
                 </a>
                 <a href="https://cybercrime.gov.in" target="_blank" rel="noreferrer" className="flex min-h-12 items-center underline underline-offset-4">
@@ -817,14 +825,14 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
       {phase === "result" && (
         <section className="m-rise flex flex-1 flex-col">
-          <p className="mt-4 inline-block self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">{en ? "Demo data. Not a measured result." : "Demo data. Maapa hua result nahi."}</p>
+          <p className="mt-4 inline-block self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">{en ? "Demo data. Not real trial data." : "Demo data. Asli trial data nahi."}</p>
           <h1 className="display mt-3 text-[46px] leading-[1.04]">{ending === "A" ? (en ? "You stopped before paying." : "Aap paise bhejne se pehle ruk gaye.") : tx && ["blocked", "cancelled"].includes(tx.status) ? (en ? "The payment was held and blocked." : "Payment ruka aur block hua.") : en ? "The payment was held." : "Payment ruka hua hai."}</h1>
           <p className="mt-3 text-[21px] leading-snug">
             {ending === "A"
               ? en ? "You hung up when Ruko said STOP. No money was asked to move on the bank screen." : "Ruko ke STOP kehne par aapne call kaat di. Bank screen par koi paisa nahi gaya."
               : en ? "You chose to pay anyway. Money Lock paused the payment and asked a trusted person. In this practice bank, no money moved." : "Aapne phir bhi pay karna chaha. Money Lock ne payment roka aur parivar se poochha. Is practice bank mein paisa nahi gaya."}
           </p>
-          <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-5 gap-y-2 text-[19px]">
+          <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-5 gap-y-3 rounded-[22px] border border-hair bg-white p-5 text-[19px] shadow-[0_8px_30px_rgba(0,0,0,0.06)]">
             <dt className="text-ink-soft">{en ? "Furthest step" : "Sabse door ka kadam"}</dt>
             <dd className="font-semibold">{furthest} of 7 · {SCALE[furthest].short}</dd>
             <dt className="text-ink-soft">{en ? "Stopped before pay" : "Pay se pehle ruke"}</dt>
@@ -865,5 +873,6 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         </section>
       )}
     </main>
+    </div>
   );
 }
