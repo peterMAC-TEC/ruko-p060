@@ -48,7 +48,7 @@ type Rec = {
   interimResults: boolean;
   onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal: boolean }> }) => void) | null;
   onend: (() => void) | null;
-  onerror: (() => void) | null;
+  onerror: ((e: { error?: string }) => void) | null;
   start: () => void;
   stop: () => void;
   abort: () => void;
@@ -70,6 +70,13 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [status, setStatus] = useState<"speaking" | "listening" | "thinking" | "">("");
   const [seconds, setSeconds] = useState(0);
   const [micOk, setMicOk] = useState(true);
+  // Voice first: the mic is tested before the call, the level is shown during it, and typing is only a fallback.
+  const [micTest, setMicTest] = useState<"idle" | "asking" | "ok" | "blocked" | "none">("idle");
+  const [level, setLevel] = useState(0);
+  const [heardYou, setHeardYou] = useState(false);
+  const [muted, setMuted] = useState(false);
+  const [showType, setShowType] = useState(false);
+  const [canListen, setCanListen] = useState(true);
   const [latencies, setLatencies] = useState<number[]>([]);
   const [ending, setEnding] = useState<Ending | null>(null);
   const [familyAlerted, setFamilyAlerted] = useState<boolean | null>(null);
@@ -89,6 +96,13 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const bankOpenedAt = useRef(0);
   const speaking = useRef("");
   const offline = useRef(false);
+  const stream = useRef<MediaStream | null>(null);
+  const audioCtx = useRef<AudioContext | null>(null);
+  const meterTimer = useRef<ReturnType<typeof setInterval> | null>(null);
+  // Continuous recognition keeps every result since it started. Each turn only reads what came AFTER the turn began.
+  const lastLen = useRef(0);
+  const heardBase = useRef(0);
+  const mutedRef = useRef(false);
 
   // ---- helpers ----
   const stopEverything = useCallback(() => {
@@ -103,8 +117,57 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     }
     rec.current = null;
     typedResolver.current = null;
+    if (meterTimer.current) clearInterval(meterTimer.current);
+    meterTimer.current = null;
+    stream.current?.getTracks().forEach((t) => t.stop());
+    stream.current = null;
+    audioCtx.current?.close().catch(() => {});
+    audioCtx.current = null;
   }, []);
   useEffect(() => stopEverything, [stopEverything]);
+
+  // Can this browser listen at all? (Chrome and Edge can; some others cannot.)
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCanListen(Boolean(getRecognition()));
+  }, []);
+
+  /** Ask for the microphone now (before the call), and show a live level so the person can see it works. */
+  const testMic = useCallback(async () => {
+    setMicTest("asking");
+    try {
+      const s = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+      stream.current?.getTracks().forEach((t) => t.stop());
+      stream.current = s;
+      const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (AC) {
+        audioCtx.current?.close().catch(() => {});
+        const ctx = new AC();
+        audioCtx.current = ctx;
+        const an = ctx.createAnalyser();
+        an.fftSize = 512;
+        ctx.createMediaStreamSource(s).connect(an);
+        const buf = new Uint8Array(an.fftSize);
+        if (meterTimer.current) clearInterval(meterTimer.current);
+        meterTimer.current = setInterval(() => {
+          an.getByteTimeDomainData(buf);
+          let sum = 0;
+          for (const v of buf) {
+            const d = (v - 128) / 128;
+            sum += d * d;
+          }
+          const l = Math.min(1, Math.sqrt(sum / buf.length) * 6);
+          setLevel(l);
+          if (l > 0.18) setHeardYou(true);
+        }, 100);
+      }
+      setMicTest("ok");
+      setMicOk(true);
+    } catch (e) {
+      setMicTest((e as DOMException)?.name === "NotFoundError" ? "none" : "blocked");
+      setMicOk(false);
+    }
+  }, []);
 
   // Clock on the call screen.
   useEffect(() => {
@@ -125,13 +188,17 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     r.interimResults = true;
     r.onresult = (e) => {
       const list = Array.from(e.results);
-      const text = list.map((x) => x[0]?.transcript ?? "").join(" ").trim();
+      lastLen.current = list.length;
+      // Only what was said since this turn began (the session keeps older results too).
+      const text = list.slice(Math.min(heardBase.current, list.length)).map((x) => x[0]?.transcript ?? "").join(" ").trim();
       heard.current = { text, final: Boolean(list[list.length - 1]?.isFinal), at: Date.now() };
       setYou(text);
     };
     r.onend = () => {
       // Chrome ends continuous recognition now and then: start it again for as long as the call runs.
-      if (rec.current === r) {
+      if (rec.current === r && !mutedRef.current) {
+        lastLen.current = 0;
+        heardBase.current = 0;
         try {
           r.start();
         } catch {
@@ -139,7 +206,15 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         }
       }
     };
-    r.onerror = () => setMicOk(false);
+    r.onerror = (ev) => {
+      // A moment of silence ("no-speech") or a short break ("aborted", "network") is normal: keep listening. Only a real
+      // permission or device problem means the microphone is not available.
+      const code = ev?.error;
+      if (code === "not-allowed" || code === "service-not-allowed" || code === "audio-capture") {
+        setMicOk(false);
+        setMicTest(code === "audio-capture" ? "none" : "blocked");
+      }
+    };
     rec.current = r;
     try {
       r.start();
@@ -154,7 +229,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       speaking.current = text;
       hush();
       heard.current = { text: "", final: false, at: 0 };
-      setYou("");
+      heardBase.current = lastLen.current;
       setStatus("speaking");
       let finished = false;
       const finish = (r: "done" | "stop" | "barged") => {
@@ -206,7 +281,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   /** The person's reply: by voice, or typed. "" means silence; the stop word comes back as the stop word. */
   const listen = useCallback((id: number, carry: boolean): Promise<string> => {
     return new Promise((resolve) => {
-      if (!carry) heard.current = { text: "", final: false, at: 0 };
+      if (!carry) {
+        heard.current = { text: "", final: false, at: 0 };
+        heardBase.current = lastLen.current;
+        setYou(""); // your last words stay on screen while he answers, and clear when it is your turn again
+      }
       setStatus("listening");
       const t0 = Date.now();
       let done = false;
@@ -223,7 +302,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         const h = heard.current;
         if (STOP_WORD.test(h.text)) return finish(h.text);
         // Done talking: a final result, or the words stopped changing for 1.4 s.
-        if (h.text && (h.final || Date.now() - h.at > 1400)) return finish(h.text);
+        if (h.text && (h.final || Date.now() - h.at > 1100)) return finish(h.text);
         if (!h.text && Date.now() - t0 > 4000) return finish("");
         if (Date.now() - t0 > 16_000) return finish(h.text);
       }, 100);
@@ -235,6 +314,19 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     (by: "stop_word" | "payment", state: OfficerState) => {
       hush();
       setStatus("");
+      try {
+        rec.current?.abort();
+      } catch {
+        // Not running.
+      }
+      rec.current = null;
+      if (meterTimer.current) clearInterval(meterTimer.current);
+      meterTimer.current = null;
+      stream.current?.getTracks().forEach((t) => t.stop());
+      stream.current = null;
+      audioCtx.current?.close().catch(() => {});
+      audioCtx.current = null;
+      setLevel(0);
       setTactics(tacticsUsed(state));
       setEndedBy(by);
       if (by === "stop_word") {
@@ -329,16 +421,40 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   };
   const decline = () => {
     stopEverything();
+    setMicTest("idle");
+    setLevel(0);
     setPhase("consent");
   };
   const endDemo = () => {
     stopEverything();
+    setMicTest("idle");
+    setLevel(0);
+    setMuted(false);
+    mutedRef.current = false;
     // A fresh start: clear the held payment, the alerts and the lock from the last run (demo sandbox only).
     if (demo) fetch("/api/demo/reset", { method: "POST" }).catch(() => {});
     setPhase("consent");
     setEnding(null);
     setTx(null);
     setFamilyAlerted(null);
+  };
+  const toggleMute = () => {
+    const next = !muted;
+    setMuted(next);
+    mutedRef.current = next;
+    if (next) {
+      try {
+        rec.current?.abort();
+      } catch {
+        // Not running.
+      }
+      stream.current?.getAudioTracks().forEach((t) => (t.enabled = false));
+      setShowType(true);
+    } else {
+      stream.current?.getAudioTracks().forEach((t) => (t.enabled = true));
+      rec.current = null;
+      startRecognition();
+    }
   };
   const submitTyped = () => {
     const t = typed.trim();
@@ -415,9 +531,28 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
               </button>
             ))}
           </div>
-          <p className="mt-4 text-[17px] text-ink-soft">
-            {en ? "You play the older person: answer him by voice, or type if your mic does not work. Use Chrome or Edge, with the volume up." : "Aap buzurg ka role karenge: awaaz se jawab dijiye, ya mic na chale to likhiye. Chrome ya Edge mein, awaaz badhakar."}
+          <p className="mt-4 text-[19px] leading-snug">
+            {en ? "You play the older person. You will talk to him, out loud, like a real call. Use Chrome or Edge, with the volume up." : "Aap buzurg ka role karenge. Aap usse zor se baat karenge, bilkul asli call ki tarah. Chrome ya Edge mein, awaaz badhakar."}
           </p>
+          <div className="mt-4 rounded-[18px] border border-hair p-4">
+            <p className="text-[19px] font-semibold">{en ? "Your microphone" : "Aapka microphone"}</p>
+            {!canListen && <p className="mt-1 text-[17px] text-ink-soft">{en ? "This browser cannot listen. Open this page in Chrome or Edge to talk. You can still type your replies." : "Yeh browser sun nahi sakta. Baat karne ke liye Chrome ya Edge mein kholiye. Aap jawab likh bhi sakte hain."}</p>}
+            {micTest === "ok" ? (
+              <>
+                <div className="mt-3 h-4 overflow-hidden rounded-full bg-paper-2" role="meter" aria-label="Microphone level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}>
+                  <div className="h-full rounded-full bg-ink transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
+                </div>
+                <p className={`mt-3 text-[19px] font-semibold ${heardYou ? "text-safe" : ""}`}>{heardYou ? (en ? "✓ I can hear you." : "✓ Main aapko sun sakta hoon.") : en ? "Say hello. The bar should move." : "Hello boliye. Bar hilna chahiye."}</p>
+              </>
+            ) : (
+              <button onClick={() => void testMic()} disabled={micTest === "asking"} className="mt-3 min-h-[64px] w-full rounded-[18px] border border-ink text-[20px] font-semibold disabled:opacity-40">
+                {micTest === "asking" ? (en ? "Waiting for permission…" : "Permission ka intezaar…") : en ? "Test my microphone" : "Mera microphone test kijiye"}
+              </button>
+            )}
+            {micTest === "blocked" && <p className="mt-3 text-[17px] leading-snug text-alarm" role="alert">{en ? "The browser blocked the microphone. Tap the lock icon next to the web address, allow the microphone, and press the test again. Or just type your replies." : "Browser ne microphone roka hai. Web address ke paas lock icon dabaiye, microphone allow kijiye, aur phir test dabaiye. Ya jawab likhiye."}</p>}
+            {micTest === "none" && <p className="mt-3 text-[17px] leading-snug text-alarm" role="alert">{en ? "No microphone was found on this computer. You can type your replies." : "Is computer par microphone nahi mila. Aap jawab likh sakte hain."}</p>}
+            <p className="mt-3 text-[15px] text-ink-soft">{en ? "Tip: use headphones if you can. Then the voice of the caller does not leak back into your microphone." : "Tip: ho sake to headphones lagaiye. Tab caller ki awaaz aapke microphone mein wapas nahi jaayegi."}</p>
+          </div>
           <button onClick={consent} className="press mt-auto min-h-[72px] rounded-[18px] bg-ink text-[22px] font-semibold text-white">
             {en ? "I understand" : "Main samajh gaya"}
           </button>
@@ -446,64 +581,91 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
       {live && (
         <section className="flex flex-1 flex-col">
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-2 flex items-center justify-between">
             <div>
               <p className="text-[16px] text-ink-soft">{en ? "On the call" : "Call par"}</p>
               <p className="text-[22px] font-semibold tabular">
-                {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")} · {DEMO_NUMBER}
+                {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")}
               </p>
             </div>
             <Guardian mood="checking" className="size-12" />
           </div>
 
-          <div className="mt-6 rounded-[18px] bg-paper-2 p-5" aria-live="polite">
-            <p className="text-[14px] font-semibold tracking-[0.12em] text-ink-soft uppercase">
-              {en ? "The caller (actor)" : "Caller (actor)"}
-              {status === "speaking" ? (en ? " · speaking" : " · bol raha hai") : ""}
-            </p>
-            <p className="display mt-2 text-[28px] leading-snug">&ldquo;{officerLine}&rdquo;</p>
+          {/* The caller: a circle that glows while he speaks, his name, and what he is saying (captions, always on). */}
+          <div className="mt-4 flex items-center gap-4">
+            <span className={`grid size-20 shrink-0 place-items-center rounded-full bg-ink text-[34px] text-white ${status === "speaking" ? "ring-[10px] ring-ink/15 motion-safe:animate-pulse" : ""}`} aria-hidden>
+              S
+            </span>
+            <div>
+              <p className="text-[22px] font-semibold">Officer Sethi</p>
+              <p className="text-[15px] text-ink-soft">
+                {DEMO_NUMBER} · actor{status === "speaking" ? (en ? " · speaking" : " · bol raha hai") : ""}
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 rounded-[18px] bg-paper-2 p-5" aria-live="polite">
+            <p className="display text-[26px] leading-snug">&ldquo;{officerLine}&rdquo;</p>
           </div>
 
-          <div className="mt-4 min-h-[88px] rounded-[18px] border border-hair p-5">
+          {/* You: a level bar that moves as you talk, and the words Ruko heard. */}
+          <div className="mt-3 rounded-[18px] border border-hair p-5">
             <p className="flex items-center gap-2 text-[14px] font-semibold tracking-[0.12em] text-ink-soft uppercase">
-              <Mic className={`size-4 ${status === "listening" && micOk ? "text-ink" : ""}`} />
+              <Mic className={`size-4 ${status === "listening" && micOk && !muted ? "text-ink" : ""}`} />
               {en ? "You" : "Aap"}
-              {status === "listening" ? (en ? " · your turn, speak now" : " · aapki baari, boliye") : ""}
+              {muted ? (en ? " · mic muted" : " · mic band") : status === "listening" ? (en ? " · your turn, speak now" : " · aapki baari, boliye") : ""}
             </p>
-            <p className="mt-2 text-[22px] leading-snug">{you || <span className="text-ink-soft">{micOk ? (en ? "Say what you would really say…" : "Jo sach mein kahenge, woh boliye…") : en ? "Type your reply below." : "Neeche jawab likhiye."}</span>}</p>
+            {micTest === "ok" && !muted && (
+              <div className="mt-3 h-3 overflow-hidden rounded-full bg-paper-2" role="meter" aria-label="Microphone level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}>
+                <div className="h-full rounded-full bg-ink transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
+              </div>
+            )}
+            <p className="mt-3 text-[22px] leading-snug">
+              {you || <span className="text-ink-soft">{micOk && !muted ? (en ? "Talk to him, like a real call…" : "Usse baat kijiye, asli call ki tarah…") : en ? "Type your reply below." : "Neeche jawab likhiye."}</span>}
+            </p>
           </div>
 
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              submitTyped();
-            }}
-            className="mt-3 flex gap-2"
-          >
-            <input
-              value={typed}
-              onChange={(e) => setTyped(e.target.value)}
-              placeholder={en ? "Or type your reply" : "Ya yahan likhiye"}
-              aria-label={en ? "Type your reply" : "Jawab likhiye"}
-              className="min-h-16 min-w-0 flex-1 rounded-[18px] border border-hair px-4 text-[20px]"
-            />
-            <button type="submit" disabled={!typed.trim()} className="min-h-16 rounded-[18px] bg-ink px-6 text-[20px] font-semibold text-white disabled:opacity-30">
-              {en ? "Send" : "Bhejo"}
+          <div className="mt-3 grid grid-cols-2 gap-3">
+            <button onClick={toggleMute} aria-pressed={muted} disabled={micTest !== "ok" && !canListen} className="min-h-[64px] rounded-[18px] border border-hair text-[19px] font-semibold disabled:opacity-40">
+              {muted ? (en ? "Unmute" : "Mic chalu kijiye") : en ? "Mute mic" : "Mic band kijiye"}
             </button>
-          </form>
-          {!micOk && <p className="mt-2 text-[16px] text-ink-soft">{en ? "The microphone is not available here, so type your replies." : "Yahan mic available nahi hai, isliye jawab likhiye."}</p>}
+            <button onClick={() => setShowType((v) => !v)} aria-expanded={showType || !micOk || muted} className="min-h-[64px] rounded-[18px] border border-hair text-[19px] font-semibold">
+              {en ? "Type instead" : "Likhkar bhejiye"}
+            </button>
+          </div>
+          {(showType || !micOk || muted) && (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                submitTyped();
+              }}
+              className="mt-3 flex gap-2"
+            >
+              <input
+                value={typed}
+                onChange={(e) => setTyped(e.target.value)}
+                placeholder={en ? "Type your reply" : "Yahan likhiye"}
+                aria-label={en ? "Type your reply" : "Jawab likhiye"}
+                className="min-h-16 min-w-0 flex-1 rounded-[18px] border border-hair px-4 text-[20px]"
+              />
+              <button type="submit" disabled={!typed.trim()} className="min-h-16 rounded-[18px] bg-ink px-6 text-[20px] font-semibold text-white disabled:opacity-30">
+                {en ? "Send" : "Bhejo"}
+              </button>
+            </form>
+          )}
+          {!micOk && <p className="mt-2 text-[16px] text-ink-soft">{en ? "The microphone is not available, so type your replies. Allow the microphone in the browser to talk." : "Microphone available nahi hai, isliye jawab likhiye. Baat karne ke liye browser mein microphone allow kijiye."}</p>}
 
-          <div className="mt-auto pt-8">
-            <button onClick={bigStop} className="flex min-h-[80px] w-full items-center justify-center rounded-[18px] bg-alarm text-[28px] font-semibold text-white">
-              {en ? "STOP (or say RUKO)" : "STOP (ya RUKO boliye)"}
+          <div className="mt-auto pt-6">
+            <button onClick={bigStop} className="flex min-h-[80px] w-full items-center justify-center gap-3 rounded-[18px] bg-alarm text-[26px] font-semibold text-white">
+              <PhoneOff className="size-7" />
+              {en ? "End call (or say RUKO)" : "Call khatam (ya RUKO boliye)"}
             </button>
           </div>
 
           <details className="mt-4 text-[14px] text-ink-soft">
-            <summary className="min-h-10 cursor-pointer py-2">{en ? "Debug: latency" : "Debug: latency"}</summary>
+            <summary className="min-h-10 cursor-pointer py-2">Debug: latency</summary>
             <p>
-              Reply to officer speech: {latencies.length ? latencies.map((l) => `${l} ms`).join(", ") : "no turns yet"}. Voice: {typeof window !== "undefined" && "speechSynthesis" in window ? "browser speech" : "none (captions only)"}.
-              Mode: {offline.current ? "offline (scripts only)" : "scripts, AI wording off"}.
+              Reply to officer speech: {latencies.length ? latencies.map((l) => `${l} ms`).join(", ") : "no turns yet"}. Voice out: {typeof window !== "undefined" && "speechSynthesis" in window ? "browser speech" : "none (captions only)"}. Voice in:{" "}
+              {canListen ? "browser speech recognition" : "not available here"}. Mode: {offline.current ? "offline (scripts only)" : "scripts, AI wording off"}.
             </p>
           </details>
         </section>
