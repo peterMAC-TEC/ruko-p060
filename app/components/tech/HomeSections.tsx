@@ -115,10 +115,10 @@ export function ProofPoints() {
     <section aria-labelledby="proof-h">
       <p className="font-mono text-[13px] tracking-[0.14em] text-[#38e1ff] uppercase">Why it matters</p>
       <h2 id="proof-h" className="mt-1 text-[30px] font-bold tracking-tight sm:text-[40px]">Published figures, with their sources</h2>
-      <dl className="mt-5 grid gap-4 sm:grid-cols-3">
+      <div className="mt-5 grid gap-4 sm:grid-cols-3">
         {shown.slice(0, 3).map((f) => (
           <Reveal key={f.big}>
-            <div className="h-full rounded-[20px] border border-white/10 bg-white/[0.035] p-5">
+            <dl className="h-full rounded-[20px] border border-white/10 bg-white/[0.035] p-5">
               <dt className="text-[34px] leading-none font-bold tracking-tight text-white">{COUNTS[f.big] ? <CountUp to={COUNTS[f.big].to} prefix={COUNTS[f.big].prefix} suffix={COUNTS[f.big].suffix} /> : f.big}</dt>
               <dd className="mt-3 text-[16px] leading-snug text-white/75">{f.text}</dd>
               <dd className="mt-2 text-[13px] text-white/50">
@@ -127,10 +127,10 @@ export function ProofPoints() {
                   {f.source}
                 </a>
               </dd>
-            </div>
+            </dl>
           </Reveal>
         ))}
-      </dl>
+      </div>
       <p className="mt-3 text-[14px] text-white/45">Not Ruko&rsquo;s results. No field-trial results exist yet.</p>
     </section>
   );
