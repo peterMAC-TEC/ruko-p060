@@ -1,7 +1,25 @@
 "use client";
 
 import { Guardian } from "@/components/brand/Guardian";
+import { enqueue, flush, type Store } from "@/lib/alert-queue";
 import { ruleCard } from "@/lib/rule-card";
+
+const HOME_QUEUE: Store = {
+  get: () => {
+    try {
+      return localStorage.getItem("ruko:tell-family-queue");
+    } catch {
+      return null;
+    }
+  },
+  set: (v) => {
+    try {
+      localStorage.setItem("ruko:tell-family-queue", v);
+    } catch {
+      // Storage blocked.
+    }
+  },
+};
 import { ArrowRight, Check, ChevronRight, Headphones, Landmark, LifeBuoy, MessageCircleHeart, Phone, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -70,14 +88,24 @@ export function ElderHome({
     return () => clearInterval(id);
   }, [elderId]);
 
+  useEffect(() => {
+    const retry = () => void flush(HOME_QUEUE, async (b) => (await fetch("/api/alerts", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(b) })).ok, Date.now());
+    retry();
+    window.addEventListener("online", retry);
+    return () => window.removeEventListener("online", retry);
+  }, []);
+
   const tellFamily = async () => {
     if (sent) return;
     setSent(true);
-    await fetch("/api/alerts", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ elderId }),
-    }).catch(() => {});
+    const body = { elderId };
+    const go = async (b: Record<string, unknown>) => (await fetch("/api/alerts", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(b) })).ok;
+    try {
+      if (!(await go(body))) throw new Error("not sent");
+    } catch {
+      // Offline or failing: keep it and send as soon as the connection is back (codes only; there is nothing else in it).
+      enqueue(HOME_QUEUE, body, Date.now());
+    }
   };
 
   const warningLabel = (w: Warning) => {
@@ -92,7 +120,9 @@ export function ElderHome({
           : w.level === "stop"
             ? t.warningStop
             : t.warningCaution;
-    return pattern ? `${kind}: ${pattern}` : kind;
+    const label = pattern ? `${kind}: ${pattern}` : kind;
+    // Whenever the family is told about a call, the person is told too.
+    return w.source === "signal" ? `${label} · ${lang === "en" ? "Ruko told your family" : "Ruko ne parivar ko bataya"}` : label;
   };
 
   const first = name.split(" ")[0];

@@ -22,5 +22,6 @@ export async function GET(request: Request) {
       { tactic: "RT01", source: "number", lr: risk.level === "high" ? 8 : 3, evidence: `${risk.level}: ${risk.reasons.join(", ")}` },
     ]);
   }
-  return Response.json(risk);
+  // The hash lets the web app send the family alert (a separate, CSRF-protected POST) without ever sending the number again.
+  return Response.json({ ...risk, hash: hashNumber(n) });
 }

@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
 import { FAMILY_LINE, type ElderStatus } from "@/lib/companion";
 import type { AlertStatus } from "@/lib/types";
+import { waLink } from "@/lib/utils";
 
 // The family member's phone. When an alert lands it should be impossible to
 // miss: red screen, alarm tone, vibration, and one obvious thing to do.
@@ -232,8 +233,19 @@ export function FamilyApp({
                 <Phone className="size-6" strokeWidth={2} />
                 Call {open.elder_name?.split(" ")[0] ?? "them"} now
               </a>
-              <button onClick={() => ack(open.id, "ack_fine")} className="mt-3 flex min-h-[64px] items-center justify-between border-b border-hair text-left text-[21px] font-semibold">
+              {!embed && open.elder_phone && (
+                <a
+                  href={waLink(open.elder_phone, "Hi, are you on a call with someone asking for money? Please hang up. I am calling you now.")}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 flex min-h-[64px] items-center justify-between border-b border-hair text-left text-[21px] font-semibold"
+                >
+                  Message {open.elder_name?.split(" ")[0] ?? "them"} on WhatsApp
+                </a>
+              )}
+              <button onClick={() => ack(open.id, "ack_fine")} className="mt-3 flex min-h-[64px] flex-col justify-center border-b border-hair text-left text-[21px] font-semibold">
                 It&apos;s fine, I&apos;ve checked
+                <span className="text-[15px] font-normal text-ink-soft">A false alarm. This helps Ruko get it right.</span>
               </button>
             </div>
 
