@@ -7,7 +7,7 @@ import { Guardian } from "@/components/brand/Guardian";
 import { CompanionApp } from "@/components/companion/CompanionApp";
 import { VoiceTrust } from "@/components/demo/VoiceTrust";
 import { demoOffline } from "@/lib/demo-mode";
-import { extractName, FILLERS, objectionOf } from "@/lib/officer-brain";
+import { extractName, FILLERS, objectionOf, type Objection } from "@/lib/officer-brain";
 import { officerNext, officerOpen, officerStart, rukoShouldStep, tacticsUsed, type Lang, type OfficerState } from "@/lib/demo-officer";
 import { classify } from "@/lib/bots/intent";
 import { BUNDLED_LIBRARY } from "@/lib/patterns";
@@ -40,6 +40,19 @@ type Tx = { id: string; status: string; amount: number } | null;
 const DEMO_NUMBER = "+91 99999 00417";
 const STOP_WORD = /\bru+k+h?o+\b|रुको|रूको/i;
 const CODE_WORD = "mango";
+
+const OBJ_LABEL: Record<Objection, [string, string]> = {
+  doubt: ["You: doubting who he is", "Aap: uski pehchaan par shak"],
+  department: ["You: asked which department", "Aap: kaunsa department poochha"],
+  family: ["You: wants to call family", "Aap: parivar ko phone karna chahte hain"],
+  no_money: ["You: says no money", "Aap: paise nahi hain"],
+  angry: ["You: angry", "Aap: gusse mein"],
+  scared: ["You: scared", "Aap: dare hue"],
+  refuse: ["You: refusing", "Aap: mana kar rahe hain"],
+  leave: ["You: trying to hang up", "Aap: call kaatna chahte hain"],
+  ask_bot: ["You: asked if he is a bot", "Aap: poochha kya yeh bot hai"],
+  written: ["You: wants it in writing", "Aap: likhit mein maang rahe hain"],
+};
 
 // ---- speech out ---------------------------------------------------------------------------------------------------
 function chooseVoice(role: "officer" | "ruko"): SpeechSynthesisVoice | undefined {
@@ -93,7 +106,9 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const liveManifest = useRef<LiveManifest | null>(null);
   const langRef = useRef(lang);
   langRef.current = lang;
-  const [aiWording, setAiWording] = useState(false);
+  const [aiWording, setAiWording] = useState(true);
+  // What Ruko is "hearing", shown live: its own scam check on what the caller has said, the tactics it spotted, and how you sounded.
+  const [hud, setHud] = useState<{ level: "clear" | "caution" | "stop"; tactics: string[]; objection: Objection | null; source: "ai" | "recorded" | null; reading: boolean }>({ level: "clear", tactics: [], objection: null, source: null, reading: false });
   const aiWordingRef = useRef(false);
   aiWordingRef.current = aiWording;
   const [sources, setSources] = useState<string[]>([]);
@@ -435,6 +450,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     let aiFails = 0;
     urgencyRef.current = 0;
     setSources([]);
+    setHud({ level: "clear", tactics: [], objection: null, source: null, reading: false });
     let carry = false;
     let outcome = await say(turn.text, "officer", id);
     for (let guard = 0; guard < 30 && id === run.current; guard++) {
@@ -448,6 +464,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       if (id !== run.current) return;
       const tReply = Date.now();
       setStatus("thinking");
+      setHud((h) => ({ ...h, reading: true, objection: objectionOf(reply) ?? h.objection }));
       const intent = classify(reply);
       if (intent === "agree_secret") setAgreedSecret(true);
       urgencyRef.current = Math.max(0, state.stage);
@@ -468,7 +485,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           filler = say(f[lang], "officer", id);
         }, 700);
         const ctrl = new AbortController();
-        const abortTimer = setTimeout(() => ctrl.abort(), 3200);
+        const abortTimer = setTimeout(() => ctrl.abort(), 4000);
         try {
           const res = await fetch("/api/demo/officer", {
             method: "POST",
@@ -494,6 +511,12 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         if (id !== run.current) return;
       }
       convo.push({ who: "officer", text });
+      {
+        // Ruko's own scam check on everything the caller has said so far (code, the same one behind the STOP screen).
+        const callerWords = convo.filter((c) => c.who === "officer").map((c) => c.text).join(" ");
+        const read = runRadar(BUNDLED_LIBRARY, { answers: {}, said: callerWords });
+        setHud({ level: read.level, tactics: tacticsUsed(state), objection: turn.objection ?? objectionOf(reply), source: source === "ai" ? "ai" : "recorded", reading: false });
+      }
       setOfficerLine(text);
       setLatencies((l) => [...l.slice(-7), Date.now() - tReply]);
       setSources((l) => [...l.slice(-7), source]);
@@ -654,7 +677,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           </div>
           <label className="mt-4 flex min-h-12 items-start gap-3 text-[16px] leading-snug text-ink-soft">
             <input type="checkbox" checked={aiWording} onChange={(e) => setAiWording(e.target.checked)} className="mt-1 size-5 shrink-0" />
-            <span>{en ? "Let AI reword his replies to what you say (more adaptive, but the voice is then your browser's, not the recorded one)." : "AI se uske jawab aapki baat ke hisaab se badalwaiye (zyada adaptive, par tab awaaz aapke browser ki hogi, recorded nahi)."}</span>
+            <span>{en ? "AI adaptive replies: he answers your exact words (best in Edge; if the AI is slow he uses a recorded line instead)." : "AI adaptive jawab: woh aapke asli shabdon ka jawab deta hai (Edge mein best; AI dheema ho to recorded line chalegi)."}</span>
           </label>
           <button onClick={consent} className="press mt-auto min-h-[72px] rounded-[18px] bg-ink text-[22px] font-semibold text-white">
             {en ? "I understand" : "Main samajh gaya"}
@@ -728,6 +751,32 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             <p className="mt-3 text-[22px] leading-snug">
               {you || <span className="text-white/60">{micOk && !muted ? (en ? "Talk to him, like a real call…" : "Usse baat kijiye, asli call ki tarah…") : en ? "Type your reply below." : "Neeche jawab likhiye."}</span>}
             </p>
+          </div>
+
+          <div className="mt-3 rounded-[18px] border border-[#38e1ff]/25 bg-[#38e1ff]/[0.05] p-4" aria-live="polite">
+            <div className="flex items-center justify-between gap-3">
+              <p className="flex items-center gap-2 font-mono text-[12px] font-semibold tracking-[0.14em] text-[#38e1ff] uppercase">
+                <span className={`size-2 rounded-full bg-[#38e1ff] ${hud.reading ? "motion-safe:animate-ping" : "motion-safe:animate-pulse"}`} aria-hidden />
+                {hud.reading ? (en ? "Ruko is reading…" : "Ruko padh raha hai…") : en ? "Ruko is listening" : "Ruko sun raha hai"}
+              </p>
+              <span className={`rounded-full border px-2.5 py-0.5 font-mono text-[12px] font-bold tracking-wide ${hud.level === "stop" ? "border-[#ff4d3d]/60 bg-[#ff4d3d]/15 text-[#ff8a7d]" : hud.level === "caution" ? "border-[#fbbf24]/50 bg-[#fbbf24]/10 text-[#fbbf24]" : "border-[#4ade80]/40 bg-[#4ade80]/10 text-[#4ade80]"}`}>
+                {hud.level === "stop" ? "SCAM" : hud.level === "caution" ? (en ? "SUSPICIOUS" : "SHAK") : en ? "WATCHING" : "DEKH RAHA"}
+              </span>
+            </div>
+            <div className="mt-2 flex h-1.5 gap-1" role="meter" aria-label="Scam risk" aria-valuemin={0} aria-valuemax={2} aria-valuenow={hud.level === "stop" ? 2 : hud.level === "caution" ? 1 : 0}>
+              {[0, 1, 2].map((i) => {
+                const lit = (hud.level === "stop" ? 2 : hud.level === "caution" ? 1 : 0) >= i && (hud.level !== "clear" || i === 0);
+                return <span key={i} className={`flex-1 rounded-full transition-colors duration-300 ${lit ? (i === 2 ? "bg-[#ff4d3d]" : i === 1 ? "bg-[#fbbf24]" : "bg-[#4ade80]") : "bg-white/10"}`} />;
+              })}
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {hud.objection && <span className="rounded-full border border-[#38e1ff]/40 px-2.5 py-1 text-[14px] text-[#38e1ff]">{OBJ_LABEL[hud.objection][en ? 0 : 1]}</span>}
+              {hud.tactics.slice(-3).map((t) => (
+                <span key={t} className="rounded-full border border-white/15 px-2.5 py-1 text-[14px] text-white/75">{t}</span>
+              ))}
+              {hud.source && <span className="rounded-full border border-white/15 px-2.5 py-1 font-mono text-[12px] text-white/50 uppercase">{hud.source === "ai" ? (en ? "AI-worded reply" : "AI ka jawab") : en ? "Recorded line" : "Recorded line"}</span>}
+              {!hud.objection && hud.tactics.length === 0 && <span className="text-[14px] text-white/50">{en ? "Waiting for the caller's tactics…" : "Caller ki chaalon ka intezaar…"}</span>}
+            </div>
           </div>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
