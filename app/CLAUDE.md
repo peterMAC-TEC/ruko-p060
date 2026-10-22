@@ -72,6 +72,7 @@ Ruko ("stop" in Hindi) stops digital-arrest scams before money moves.
   - `lib/survey.ts` + `components/survey/*` + `/survey*` + `/api/survey` + `/api/lab/surveys` (`scripts/check-survey.ts`); kinds participant, family, open, incident. Results: `components/lab/SurveyPanel.tsx`, `SimPanel.tsx`.
   - Pattern library v2 (`data/scam-patterns.json`; `lib/patterns.ts` weights common words half, ignores reassurance sentences, folds Hindi nukta); the database upgrades itself (`loadPatternLibrary`).
   - Migrations 0009 to 0011 applied.
+- [x] **Ruko Line (22 Oct)**, see ../docs/LINE.md: `lib/line.ts` (grade + screening bot + decisions), `lib/line-demo.ts`, `/line`, `/api/line/screen`, `hasReportedScam` in the store, `scripts/check-line.ts`. Real call answering is not built (needs a phone line or native app).
 - [ ] Step 6: trials, Expo app, polish, backup video
 
 Dev server: port 3200 (`npm run dev -- -p 3200`).

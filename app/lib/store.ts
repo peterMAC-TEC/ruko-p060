@@ -725,6 +725,14 @@ export async function upsertNumberReport(r: NumberReportRow) {
   ok(await sb().from("number_reports").upsert({ ...r, created_at: now() }, { onConflict: "number_hash,reporter_hash" }));
 }
 
+/** Has this person (by hashed reporter id) marked this number as a scam? That is their personal block list. */
+export async function hasReportedScam(numberHash: string, reporterHash: string): Promise<boolean> {
+  if (!hasSupabase) return memReports().some((r) => r.number_hash === numberHash && r.reporter_hash === reporterHash && r.verdict === "scam");
+  await ready();
+  const rows = must(await sb().from("number_reports").select("verdict").eq("number_hash", numberHash).eq("reporter_hash", reporterHash).limit(1));
+  return rows[0]?.verdict === "scam";
+}
+
 export async function summarizeNumberReports(numberHash: string, includeDemo: boolean) {
   let rows: Array<{ verdict: string; pattern_id: string | null }>;
   if (!hasSupabase) {

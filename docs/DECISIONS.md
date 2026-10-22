@@ -194,3 +194,10 @@ The user chose direction **C, "Ink"** from three samples (`design/ruko-design-di
 - **Kept dark on purpose:** the demo page, the fraud console and the landing page.
 - **Fonts:** Public Sans and Newsreader replace Atkinson Hyperlegible and Instrument Serif. Public Sans stays clear at large sizes; the larger risk is the thin display type, so it is only used at 34px or more.
 - **Screens saved** in `design/screens/` (home, STOP, Companion, family alert).
+
+## Ruko Line: the call gatekeeper (22 Oct)
+
+- **Request:** an "extension" scam-call bot for experiments (already the trial lab) and Ruko as the fighting app: grade an incoming call green/yellow/orange/red, have a bot verify the caller, put genuine calls through, block scams, alert the family.
+- **Decision:** build the decision engine now, free, as `lib/line.ts` + `/api/line/screen` + the `/line` demo. It is pure rules (no AI), replayed on the server, tested against the drill scripts. See [LINE.md](LINE.md).
+- **Not built:** answering real calls (needs a paid phone line or a native Android app; the card also forbids interception without consent) and scraping caller data (against third-party terms). Both wait for the user's go-ahead.
+- **Judgement calls:** a number is never "green" unless it is a saved contact; a risky number is never put through even if the caller sounds calm (a message is taken instead); a block also writes the number to the person's own block list and tells the family, and turns on Money Lock only if money or a code was asked, to keep false alarms down.

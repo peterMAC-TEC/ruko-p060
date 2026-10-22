@@ -59,3 +59,5 @@ Two phones: **Kamala's** (elder, `/app`) and **Priya's** (family, `/family`, wit
 | 1:55 | — | "Ruko. One button between a scared parent and their savings." |
 
 **If something fails on stage:** keep going on the same phone. Every step works offline in presenter mode. If the AI is slow, Ruko says "Still checking…" and answers from the phone's own phrase check within 30 seconds.
+
+**Ruko Line** (`/line`): grades an unknown caller, screens them, then puts through, takes a message or blocks, and tells the family. See [docs/LINE.md](docs/LINE.md).
