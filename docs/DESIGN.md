@@ -54,3 +54,26 @@ Same Ink foundation; this adds a character, a motion language and two supporting
 - **STOP:** the huge red word, the scam's name and rule, then "Do not transfer money. Hang up and verify independently." and one button, "I have hung up".
 - **After stopping:** the Companion opens with "You have paused. That was a good step." on a green panel, then asks one question at a time. In the free step the person can pick one of four situations (fixed, reviewed guidance, no AI) or open **What can I say?** (three lines to read aloud or copy).
 - **Honest states:** the family alert says "alerted in Ruko" (not "will call you"); a failed alert says nobody has been told and offers 1930; the Circle explains what family can see; the practice bank says no real money moves or is frozen.
+
+## Motion layer (23 Oct)
+
+**Principle:** motion guides attention or shows state; it never hides information or delays anyone. Two levels. **Stage screens** (home hero, control room, live call, results) may be expressive. **Elder screens** (STOP, Companion, family alert, mock bank, check) stay calm: no moving text while it is being read, nothing flashing, one gentle entrance at most.
+
+**Tokens** (`app/globals.css`, `:root`): `--m-ease` (cubic-bezier 0.22, 1, 0.36, 1), `--m-fast` 160 ms (taps, hovers), `--m-base` 320 ms (transitions), `--m-slow` 700 ms (text reveals), `--m-stagger` 70 ms. Only `transform` and `opacity` are animated. Keyframes: `ruko-word`, `ruko-ring`, `ruko-buzz`, `ruko-shimmer`, `ruko-line`, `ruko-stop-in`, `ruko-pop`.
+
+**Reduced motion:** the system setting or the in-app **Reduce motion** switch (footer on every page, top bar of the call) turns every animation and transition off. The choice is remembered (`localStorage: ruko-motion`). The components below then show their final state at once, so nothing is lost.
+
+| Component (`components/motion/`) | Use | Do / don't |
+|---|---|---|
+| `WordByWord` | Big headlines: words rise in one by one; the `accent` word settles letter by letter. | Do use once per page. Don't use on elder screens or on text people must read while it moves. Screen readers get one still sentence. |
+| `RotatingWords` | A short phrase cycling (hero). | Do give `staticSentence`. Don't use more than one. Static first phrase when motion is off. |
+| `Reveal` | A section fades up once when scrolled into view. | Never replays. Visible at once when reduced. |
+| `CountUp` | Numbers (impact figures) count up in view. | The real value is in the page from the start. |
+| `Waveform` | Circular bars that follow the caller's voice (Web Audio analyser on the playing clip), your voice while listening, or a gentle simulated wave for the browser voice. | Decorative (`aria-hidden`). Still ring when reduced. |
+| `KaraokeCaption` | Caller's words lit one by one in step with the audio, previous line faded above. | The whole line is always readable; only colour changes. |
+| `TensionMeter` | "Pressure rising", 7 steps, stage view only. | Words and a number say the same thing. |
+| `TacticChip` | A tactic the engine spotted; tap for one plain line. | |
+| `CallTimeline` | The call as a line that draws itself, furthest step lit. | |
+| `MotionToggle` | The Reduce motion switch. | Keep it easy to find. |
+
+CSS helpers: `.m-word`, `.m-ring` (ringing pulse), `.m-buzz` (answer button), `.m-stop-in` (the one entrance for STOP), `.m-lift`, `.m-tap`, `.m-route` (soft fade between pages, `app/template.tsx`). The palette is unchanged; motion comes from timing, scale and opacity.
