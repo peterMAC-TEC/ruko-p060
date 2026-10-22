@@ -36,6 +36,8 @@ export async function GET(request: Request) {
         source: risk?.source,
         score: risk?.score,
         reasons: risk?.reasons.map((r) => r.label) ?? [],
+        elder_status: risk?.elder_status ?? null,
+        elder_status_at: risk?.elder_status_at ?? null,
       };
     }),
   );

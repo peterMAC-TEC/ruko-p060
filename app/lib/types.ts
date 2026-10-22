@@ -78,6 +78,9 @@ export interface RiskEvent {
   score: number;
   reasons: Reason[];
   created_at: string;
+  /** What the elder told Ruko Companion (a code), and when. */
+  elder_status?: string | null;
+  elder_status_at?: string | null;
 }
 
 export type TransferStatus = "held" | "released" | "blocked" | "completed" | "cancelled";

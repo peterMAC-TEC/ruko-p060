@@ -4,6 +4,7 @@ import { Bell, BellRing, Check, MessageSquareQuote, Phone, ShieldAlert, ShieldCh
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
 import { Avatar } from "@/components/elder/ui";
+import { FAMILY_LINE, type ElderStatus } from "@/lib/companion";
 import type { AlertStatus } from "@/lib/types";
 
 // The family member's phone. When an alert lands it should be impossible to
@@ -18,6 +19,8 @@ type Row = {
   elder_name?: string;
   elder_phone?: string;
   reasons: string[];
+  /** What the elder told Ruko Companion (a code). */
+  elder_status?: ElderStatus | null;
 };
 
 const POLL_MS = 2000;
@@ -214,35 +217,45 @@ export function FamilyApp({
                 </span>
               </span>
               <p className="mt-7 text-[27px] font-bold leading-snug">{open.message}</p>
+              {open.elder_status && FAMILY_LINE[open.elder_status] && (
+                <p
+                  className={`mt-4 rounded-2xl px-4 py-3 text-[19px] leading-snug font-bold ${
+                    open.elder_status === "needs_help" || open.elder_status === "paid" ? "bg-white text-alarm" : "bg-white/15"
+                  }`}
+                  role="status"
+                >
+                  {open.elder_name?.split(" ")[0] ?? "They"} {FAMILY_LINE[open.elder_status]}
+                </p>
+              )}
             </div>
 
-            {open.reasons.length > 0 && (
-              <ul className="mt-6 space-y-2 rounded-2xl bg-white/10 p-4 text-[16px] text-white/90">
-                {open.reasons.map((r) => (
-                  <li key={r} className="flex gap-2">
-                    <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            )}
-
-            <div className="mt-auto flex flex-col gap-3 pt-8">
+            <div className="mt-6 flex flex-col gap-3">
               <a
                 href={!embed && open.elder_phone ? `tel:${open.elder_phone.replace(/\s/g, "")}` : undefined}
                 onClick={() => ack(open.id, "ack_calling")}
-                className="flex min-h-16 cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white text-[21px] font-bold text-alarm shadow-lift"
+                className="flex min-h-[72px] cursor-pointer items-center justify-center gap-3 rounded-2xl bg-white text-[23px] font-bold text-alarm shadow-lift"
               >
-                <Phone className="size-6" strokeWidth={2.4} />
+                <Phone className="size-7" strokeWidth={2.4} />
                 Call {open.elder_name?.split(" ")[0] ?? "them"} now
               </a>
-              <button
-                onClick={() => ack(open.id, "ack_fine")}
-                className="min-h-14 rounded-2xl border-2 border-white/30 text-[18px] font-bold"
-              >
+              <button onClick={() => ack(open.id, "ack_fine")} className="min-h-14 rounded-2xl border-2 border-white/30 text-[18px] font-bold">
                 It&apos;s fine, I&apos;ve checked
               </button>
             </div>
+
+            {open.reasons.length > 0 && (
+              <details className="mt-5 rounded-2xl bg-white/10 p-4 text-[16px] text-white/90">
+                <summary className="cursor-pointer list-none text-[17px] font-bold">Why Ruko thinks so ({open.reasons.length})</summary>
+                <ul className="mt-3 space-y-2">
+                  {open.reasons.map((r) => (
+                    <li key={r} className="flex gap-2">
+                      <span className="mt-2 size-1.5 shrink-0 rounded-full bg-white/70" />
+                      {r}
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            )}
 
             <section className="mt-6 rounded-2xl bg-white/10 p-4">
               <h2 className="flex items-center gap-2 text-[14px] font-bold uppercase tracking-[0.14em] text-white/80">

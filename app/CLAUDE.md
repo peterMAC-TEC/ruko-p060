@@ -66,6 +66,7 @@ Ruko ("stop" in Hindi) stops digital-arrest scams before money moves.
   - **Presenter mode** `npm run demo:offline` (port 3300, `RUKO_OFFLINE=1`: in-memory data, no AI).
   - **Tests:** `npm test` (all `scripts/check-*.ts`; `check-signs.ts` is new). Live AI cases: `npm run check:ai`.
   - **Docs:** `../docs/FIELD-TEST.md` (the 10-elder protocol) and `../README.md` (the 2-minute demo script).
+- [x] **Ruko Companion (22 Oct)**, see the last section of ../docs/DECISIONS.md: `lib/companion.ts` (script, safeReply, offline answers; `scripts/check-companion.ts`), `components/companion/*`, `/companion`, `/api/companion/{ask,status}`, `lib/ai/companion.ts`, migration 0009 (`risk_events.elder_status`). Opens from STOP → Hang up and from the home screen. The family screen shows the elder's status. Home simplified ("More" fold).
 - [ ] Step 6: trials, Expo app, polish, backup video
 
 Dev server: port 3200 (`npm run dev -- -p 3200`).

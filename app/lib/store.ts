@@ -230,6 +230,27 @@ export async function addRiskEvent(e: Omit<RiskEvent, "id" | "created_at">): Pro
   return must(await sb().from("risk_events").insert(e).select().single());
 }
 
+/** Ruko Companion: record what the elder just told Ruko on their latest alert (last 2 hours). A code, never words. */
+export async function setElderStatus(elderId: string, status: string): Promise<RiskEvent | undefined> {
+  const at = now();
+  const since = new Date(Date.now() - 120 * 60_000).toISOString();
+  if (!hasSupabase) {
+    const latest = mem()
+      .risk.filter((r) => r.elder_id === elderId && r.created_at >= since)
+      .sort((a, b) => b.created_at.localeCompare(a.created_at))[0];
+    if (!latest) return undefined;
+    latest.elder_status = status;
+    latest.elder_status_at = at;
+    return latest;
+  }
+  await ready();
+  const rows = must(
+    await sb().from("risk_events").select("id").eq("elder_id", elderId).gte("created_at", since).order("created_at", { ascending: false }).limit(1),
+  );
+  if (!rows[0]) return undefined;
+  return maybe(await sb().from("risk_events").update({ elder_status: status, elder_status_at: at }).eq("id", rows[0].id).select().maybeSingle()) ?? undefined;
+}
+
 /** The highest agent/signal risk score for this elder in the last `minutes`. */
 export async function recentRisk(elderId: string, minutes = 60): Promise<RiskEvent | undefined> {
   const since = new Date(Date.now() - minutes * 60_000).toISOString();

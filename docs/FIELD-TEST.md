@@ -38,7 +38,8 @@ Read it in the person's language. The Hindi lines for the safety rules are below
 >    - Every practice call ends with "This was a Ruko practice drill", and I will call you within 5 minutes.
 > 6. Please name one family member. They will know the dates, not the times, and their phone may get practice alerts marked DRILL.
 > 7. **What we record:** the steps you reached, times, and button taps. **No audio, no video, no transcripts, no real bank details.** You are a code (P01–P10). The paper list linking your name to your code is destroyed by 30 Nov 2026.
-> 8. **About Ruko's AI check:** in the with-Ruko calls you may press "Tell me what they said" or "Show me a photo". The words, the voice clip or the picture go to Google's Gemini AI to be read, and Ruko itself keeps none of them. Please don't show real documents during practice.
+> 8. **About Ruko's helper:** in the with-Ruko calls, Ruko may talk to you in a chat on your phone to keep you calm. It never joins or listens to the call. What you say or type to it is not kept.
+> 8b. **About Ruko's AI check:** in the with-Ruko calls you may press "Tell me what they said" or "Show me a photo". The words, the voice clip or the picture go to Google's Gemini AI to be read, and Ruko itself keeps none of them. Please don't show real documents during practice.
 > 9. Taking part is voluntary. You can stop at any time, and ask us to delete your results until 26 Oct. Results are shown only as group numbers.
 > 10. Separate yes/no boxes: (a) one real phone call to your own phone; (b) practice alerts to my family member; (c) photos or video for the demo (default **no**); (d) contact me for future studies.
 

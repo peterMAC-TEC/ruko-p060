@@ -25,6 +25,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
 import { BackLink, BigButton, ElderShell, StepDots, Title } from "@/components/elder/ui";
+import { CompanionApp } from "@/components/companion/CompanionApp";
 import { PostCall } from "@/components/radar/PostCall";
 import { StopScreen } from "@/components/radar/StopScreen";
 import { useVerifiedCalls } from "@/components/radar/VerifiedCall";
@@ -115,6 +116,8 @@ export function CheckApp({
   const [listening, setListening] = useState(false);
   const [micMissing, setMicMissing] = useState(false);
   const [stopOpen, setStopOpen] = useState(false);
+  /** After "Hang up" on the STOP screen, Ruko stays with the person. */
+  const [companion, setCompanion] = useState(false);
   const [familyAlerted, setFamilyAlerted] = useState(false);
   const [signs, setSigns] = useState<Sign[] | null>(null);
   /** Who answered: the AI, the phone's own phrase check, or nobody (couldn't check). */
@@ -603,9 +606,14 @@ export function CheckApp({
           trusted={trusted}
           familyAlerted={familyAlerted}
           elderName={elderName}
-          onHungUp={() => setTimeout(() => setStopOpen(false), 2500)}
+          onHungUp={() => {
+            setStopOpen(false);
+            setCompanion(true);
+          }}
         />
       )}
+
+      {companion && <CompanionApp elderId={elderId} trusted={trusted} onClose={() => setCompanion(false)} />}
     </ElderShell>
   );
 }

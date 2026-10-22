@@ -12,8 +12,9 @@
 | Who | Screen | What happens |
 |---|---|---|
 | Elder | `/app` → **Is this a scam?** (`/check`) | Tap who is calling, answer yes/no (read aloud, Hindi or English). **Or tell Ruko what they said** (tap and speak, or type), **or show a photo** of the "warrant", ID card or message. The AI lists the warning signs and **quotes the exact words** behind each; plain code decides the verdict. A full-screen **STOP** names the trick and the one rule being broken, then offers: hang up, **call Priya**, **WhatsApp Priya**, or call **1930**. |
+| Elder | after **Hang up**, or `/app` → **Talk to Ruko** | **Ruko Companion**: a calm voice and text chat in English or Hinglish. It asks if the caller is still on the line, helps them end the call, asks if money or an OTP already went (then points to 1930), and stays with them until family arrives. Free questions are answered by fixed lines for risky topics and by the AI for the rest, all safety-checked. It talks to the person on their own phone; it never joins the call. |
 | Elder | `/app` → **Tell my family** | A silent alert: nothing a scammer on video would notice. |
-| Family | `/family` | Red alert with sound and vibration ("Ruko's call check says Kamala is probably on a scam call"), the reasons in plain words, **Call Kamala now**, and a "What to say" script. |
+| Family | `/family` | Red alert with sound and vibration ("Ruko's call check says Kamala is probably on a scam call"), a one-line live status from the Companion ("Kamala says the caller has hung up"), **Call Kamala now** right under it, the reasons in plain words, and a "What to say" script. |
 | Bank | `/bank`, `/console` | A practice bank: a payment to a "safe account" during a live threat gets a 30-second pause, then a hold; the family is alerted and the fraud desk sees why. |
 | Research | `/lab`, `/results` | Consent-gated role-play scam calls and the **north star: the share of role-played scam calls where the person stops before transferring**, with vs without Ruko, plus false alarms. |
 
@@ -47,6 +48,7 @@ Two phones: **Kamala's** (elder, `/app`) and **Priya's** (family, `/family`, wit
 | 0:15 | Tap **Is this a scam?** → **Police, CBI, customs or a court**. | "Ruko is one big button. No typing. It reads every question aloud, in Hindi or English." |
 | 0:25 | Answer **Yes** ("stay on the call or on camera?"), **Yes** ("pay to avoid arrest or trouble?"). | "Two yeses is enough. We never make a frightened person finish a form." |
 | 0:35 | The **STOP** screen fills the phone. Read out the rule. | "It names the trick and the one rule being broken: *police never arrest anyone or ask for money on a video call.* And it never blames her." |
+| 0:40 | On Kamala's STOP screen tap **Hang up**. Ruko's Companion opens and speaks. Tap **No, I hung up**. | "Ruko doesn't leave her alone with the fear. It asks one simple question at a time, out loud, in English or Hinglish." |
 | 0:45 | Priya's phone rings and flashes red. Hold it up. | "At the same moment her daughter's phone rings with the reasons in plain words, a one-tap call and what to say. The scammer's power is isolation. Ruko breaks it." |
 | 1:00 | Kamala's phone: **Call Priya** / **Also send Priya a WhatsApp**. | "If the app alert is missed, WhatsApp always gets through. Indian SMS needs business registration, so we don't depend on it." |
 | 1:10 | Back, **Tell me what they said** → tap **Tap and speak** and say *"He said he is from CBI, I am under digital arrest, don't tell my son, transfer to the RBI safe account."* → **Check this**. | "Or she can just tell Ruko, in her own words. With the AI on, it lists each warning sign **with her exact words as evidence**. The AI only reads; plain code decides. Offline, the phone's own phrase check answers." |
