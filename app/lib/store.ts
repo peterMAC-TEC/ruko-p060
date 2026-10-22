@@ -6,6 +6,7 @@ import { hashPin } from "./pin";
 import { familyIdFor, type Participant, type TrialCall } from "./trial";
 import { chainHash, GENESIS, verifyChain } from "./integrity";
 import { BUNDLED_LIBRARY, type PatternLibrary, type ScamPattern } from "./patterns";
+import type { Answers, SurveyKind } from "./survey";
 import type {
   Alert,
   AlertChannel,
@@ -661,6 +662,42 @@ export async function loadPatternLibrary(): Promise<PatternLibrary> {
   };
 }
 
+// ---------- Survey bot ----------
+
+export interface SurveyRecord {
+  id: string;
+  kind: SurveyKind;
+  call_id: string | null;
+  participant_id: string | null;
+  arm: "baseline" | "ruko" | "control" | null;
+  is_scam: boolean | null;
+  lang: "en" | "hing";
+  answers: Answers;
+  created_at: string;
+}
+
+const g3 = globalThis as unknown as { __rukoSurveys?: SurveyRecord[] };
+const memSurveys = () => (g3.__rukoSurveys ??= []);
+
+/** Keep one answer set per survey: the open link may be answered many times, a call's survey replaces the earlier one. */
+export async function addSurveyResponse(r: Omit<SurveyRecord, "id" | "created_at">): Promise<SurveyRecord> {
+  if (!hasSupabase) {
+    const row: SurveyRecord = { ...r, id: crypto.randomUUID(), created_at: now() };
+    if (r.call_id) g3.__rukoSurveys = memSurveys().filter((x) => !(x.call_id === r.call_id && x.kind === r.kind));
+    memSurveys().push(row);
+    return row;
+  }
+  await ready();
+  if (r.call_id) ok(await sb().from("survey_responses").delete().eq("call_id", r.call_id).eq("kind", r.kind));
+  return must(await sb().from("survey_responses").insert(r).select().single());
+}
+
+export async function listSurveyResponses(): Promise<SurveyRecord[]> {
+  if (!hasSupabase) return [...memSurveys()].sort((a, b) => b.created_at.localeCompare(a.created_at));
+  await ready();
+  return must(await sb().from("survey_responses").select("*").order("created_at", { ascending: false }).limit(5000));
+}
+
 // ---------- Scam Radar: community number reports ----------
 
 export interface NumberReportRow {
@@ -846,6 +883,7 @@ export async function deleteParticipant(id: string) {
   if (!hasSupabase) {
     tmem().participants = tmem().participants.filter((x) => x.id !== id);
     tmem().calls = tmem().calls.filter((c) => c.participant_id !== id);
+    g3.__rukoSurveys = memSurveys().filter((r) => r.participant_id !== id);
   } else {
     ok(await sb().from("participants").delete().eq("id", id));
   }

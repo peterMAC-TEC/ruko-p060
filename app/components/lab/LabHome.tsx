@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3, Check, ClipboardCopy, FlaskConical, Phone, Play, ShieldCheck, Trash2, UserMinus, UserPlus } from "lucide-react";
+import { BarChart3, Check, ClipboardCopy, FlaskConical, Phone, Play, ShieldCheck, Trash2, UserMinus, UserPlus, QrCode } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
@@ -108,6 +108,9 @@ export function LabHome({ titles }: { titles: Record<string, string> }) {
             <span className="rounded-full bg-ink px-3 py-1 text-[13px] font-bold tracking-wide text-white uppercase">Trial lab</span>
           </div>
           <nav className="flex gap-2">
+            <Link href="/survey/share" target="ruko-survey-qr" className="flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-[15px] font-bold shadow-soft">
+              <QrCode className="size-4 text-calm" /> Survey QR
+            </Link>
             <Link href="/results" className="flex min-h-11 items-center gap-2 rounded-full bg-white px-4 text-[15px] font-bold shadow-soft">
               <BarChart3 className="size-4 text-calm" /> Results
             </Link>

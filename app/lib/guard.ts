@@ -35,6 +35,8 @@ const RULES: Rule[] = [
   { name: "payment", test: (p, m) => p === "/api/transfers" && m === "POST", limit: 20 },
   { name: "report", test: (p, m) => p.startsWith("/api/number/report") && m === "POST", limit: 10 },
   { name: "invite", test: (p, m) => p.startsWith("/api/invites") && m === "POST", limit: 10 },
+  // Anonymous surveys from a shared link: modest, so the link cannot be used to flood the data.
+  { name: "survey", test: (p, m) => p === "/api/survey" && m === "POST", limit: 12 },
   { name: "check", test: (p, m) => p === "/api/check" && m === "POST", limit: 20 },
   // Each one is an AI call (Gemini free tier): keep it modest.
   { name: "ai", test: (p, m) => (p === "/api/check/read" || p === "/api/companion/ask") && m === "POST", limit: 20 },

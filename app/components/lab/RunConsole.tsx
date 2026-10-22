@@ -277,6 +277,21 @@ export function RunConsole({ callId, script, nextCallId }: { callId: string; scr
             </section>
           )}
 
+          {done && (
+            <section className="rounded-[24px] bg-white p-4 shadow-soft">
+              <h2 className="text-[16px] font-bold">Survey bot</h2>
+              <p className="mt-1 text-[14px] text-ink-soft">After the debrief, let Ruko ask a few quick questions. Answers are linked to {participant.code}, never a name.</p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a href={`/survey/participant?call=${call.id}`} target="ruko-survey" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-calm px-4 text-[15px] font-bold text-white">
+                  Ask {participant.code} <ExternalLink className="size-4" />
+                </a>
+                <a href={`/survey/family?call=${call.id}`} target="ruko-survey" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-paper px-4 text-[15px] font-bold">
+                  Ask their family member <ExternalLink className="size-4" />
+                </a>
+              </div>
+            </section>
+          )}
+
           {done && call.events.length > 0 && (
             <section className="rounded-[24px] bg-white p-4 text-[14px] shadow-soft">
               <h2 className="text-[16px] font-bold">Event log</h2>

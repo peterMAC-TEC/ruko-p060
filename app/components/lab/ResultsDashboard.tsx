@@ -4,6 +4,7 @@ import { ArrowLeft, Download, FlaskConical } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
+import { SurveyPanel } from "./SurveyPanel";
 import { CONTROL_LABEL, SCALE, STOPPED_BY_LABEL, type Rate, type StoppedBy, type TrialSummary } from "@/lib/trial";
 
 // The pilot's results (method: docs/research/06 §4.3). The primary outcome is
@@ -242,6 +243,8 @@ export function ResultsDashboard({ initial }: { initial: "real" | "seeded" }) {
             </p>
           </>
         ) : null}
+
+        {!seeded && <SurveyPanel />}
       </div>
     </div>
   );
