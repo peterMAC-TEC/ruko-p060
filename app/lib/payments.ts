@@ -3,6 +3,7 @@ import { isDemoId } from "./auth";
 import { alertCircle } from "./circle";
 import { recordEvent } from "./metrics";
 import { classifyPin, LOCK_MINUTES, MAX_TRIES } from "./pin";
+import { assessGuard, ageBandOf } from "./guard-assess";
 import { hashAccount } from "./privacy";
 import { ageFrom, COOLING_OFF_MINUTES, evaluateTransfer } from "./rules";
 import { REASON_TACTIC, type ThreatSource } from "./threat";
@@ -102,6 +103,30 @@ export async function submitPayment(
   ]);
   const payeeHash = input.channel === "cash" || input.channel === "fd_break" ? null : hashAccount(input.payeeAccount);
   const behaviour = behaviourAllowed ? (input.behaviour ?? null) : null;
+  const digital = ["upi", "imps", "neft", "rtgs"].includes(input.channel);
+
+  // The customer's kill switch: every digital payment is blocked until the family code word resumes them.
+  if (digital && protection.payments_paused) {
+    const transfer = await createTransfer({
+      elder_id: elderId,
+      amount: input.amount,
+      payee: input.payee,
+      payee_account: input.payeeAccount,
+      channel: input.channel,
+      flagged: true,
+      score: 0,
+      reasons: [
+        { code: "guard_kill_switch_on", label: "Ruko Guard (the customer's own choice): all digital payments are paused. The family code word resumes them.", points: 0, hard: true },
+        { code: "guard_decision_block", label: "Ruko Guard decision: block", points: 0, hard: false },
+      ],
+      needs_approval: false,
+      status: "blocked",
+      hold_until: null,
+      payee_hash: payeeHash,
+      behaviour,
+    });
+    return { transfer, riskEventId: undefined };
+  }
 
   // A trial's baseline call: the practice account behaves like a bank without Ruko.
   if (elder?.ruko_enabled === false) {
@@ -153,18 +178,43 @@ export async function submitPayment(
     recentHeld,
   });
 
+  // Ruko Guard: the same decision a real bank would ask for over POST /api/guard/assess (lib/guard-assess.ts).
+  // The mock bank merges it with its own rules: whichever is stricter wins.
+  const guard = digital
+    ? assessGuard({
+        customerAgeBand: ageBandOf(ageFrom(elder?.birth_year)),
+        amountInr: input.amount,
+        newPayee: result.reasons.some((r) => r.code === "new_payee"),
+        rukoFlag: protection.active,
+        payeeRisk: intel ? { reports: intel.reports, victims: intel.victims } : undefined,
+        hasTrustedPerson: trusted.length > 0,
+        paymentsPaused: false,
+      })
+    : null;
+  const guardReasons = guard
+    ? [
+        ...guard.reasons.map((r) => ({ code: `guard_${r.code}`, label: `Ruko Guard (${r.basis.replace("_", " ")}): ${r.label}`, points: 0, hard: false })),
+        { code: `guard_decision_${guard.decision}`, label: `Ruko Guard decision: ${guard.decision.replace(/_/g, " ")}`, points: 0, hard: false },
+      ]
+    : [];
+  const guardHolds = Boolean(guard && guard.decision !== "allow");
+  const guardBlocks = guard?.decision === "block";
+  const flagged = result.flagged || guardHolds;
+  const needsApproval = result.needsApproval || guard?.decision === "require_trusted_person";
+  const holdMinutes = Math.max(COOLING_OFF_MINUTES, guard?.delaySeconds ? guard.delaySeconds / 60 : 0);
+
   const transfer = await createTransfer({
     elder_id: elderId,
     amount: input.amount,
     payee: input.payee,
     payee_account: input.payeeAccount,
     channel: input.channel,
-    flagged: result.flagged,
+    flagged,
     score: result.score,
-    reasons: result.reasons,
-    needs_approval: result.needsApproval,
-    status: result.flagged ? "held" : "completed",
-    hold_until: result.flagged ? new Date(Date.now() + COOLING_OFF_MINUTES * 60_000).toISOString() : null,
+    reasons: [...result.reasons, ...guardReasons],
+    needs_approval: needsApproval,
+    status: guardBlocks ? "blocked" : flagged ? "held" : "completed",
+    hold_until: flagged && !guardBlocks ? new Date(Date.now() + holdMinutes * 60_000).toISOString() : null,
     payee_hash: payeeHash,
     behaviour,
   });
@@ -178,7 +228,7 @@ export async function submitPayment(
     observations.push({ tactic, source: r.code.startsWith("mule") ? "mule" : TACTIC_SOURCE[r.code] ?? "bank", lr, evidence: r.code });
   }
 
-  if (!result.flagged) {
+  if (!flagged) {
     if (input.channel !== "cash" && input.channel !== "fd_break") {
       await addPayee({ elder_id: elderId, name: input.payee, account: input.payeeAccount, first_paid_at: transfer.created_at });
     }
@@ -187,7 +237,7 @@ export async function submitPayment(
     return { transfer, riskEventId: undefined };
   }
 
-  if (result.needsApproval) await createApprovals(transfer.id, trusted.map((m) => m.id));
+  if (needsApproval && !guardBlocks) await createApprovals(transfer.id, trusted.map((m) => m.id));
 
   let riskEventId: string | undefined;
   if (result.scam) {

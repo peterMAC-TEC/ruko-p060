@@ -6,6 +6,7 @@ import { RukoMark } from "@/components/brand/RukoMark";
 import { FamilyStatus } from "@/components/elder/FamilyStatus";
 import { Avatar, BackLink, BigButton, ElderShell, Field, StepDots, Title } from "@/components/elder/ui";
 import { inr, useLang } from "@/lib/i18n";
+import { KillSwitch } from "@/components/bank/KillSwitch";
 import { practiceEvent } from "@/lib/client";
 import type { Channel, Payee, PaymentBehaviour, Transfer } from "@/lib/types";
 
@@ -86,7 +87,7 @@ export function BankApp({
   /** Guided demo: opens straight on the confirm screen with these details. */
   prefill?: Prefill;
 }) {
-  const { t, toggle } = useLang();
+  const { t, toggle, lang } = useLang();
   const [step, setStep] = useState<Step>(prefill ? { kind: "confirm" } : { kind: "home" });
   const [payees, setPayees] = useState<Payee[]>([]);
   const [history, setHistory] = useState<Transfer[]>([]);
@@ -227,6 +228,7 @@ export function BankApp({
     <ElderShell t={t} brand={brand} onToggleLang={toggle} action={action}>
       {step.kind === "home" && (
         <div className="flex flex-col gap-6 animate-in fade-in duration-300">
+          <p className="rounded-[12px] bg-ink px-4 py-3 text-center text-[15px] font-semibold tracking-[0.1em] text-white uppercase">MOCK BANK · practice only · no real money</p>
           <section className="emerald-card relative overflow-hidden rounded-[28px] p-6 text-white shadow-lift">
             <div className="text-[16px] text-white/75">{t.account}</div>
             <div className="mt-4 text-[16px] text-white/75">{t.balance}</div>
@@ -242,6 +244,8 @@ export function BankApp({
           <BigButton icon={Send} onClick={() => setStep({ kind: "pick" })}>
             {t.sendMoney}
           </BigButton>
+
+          <KillSwitch elderId={elderId} by="elder" lang={lang === "en" ? "en" : "hing"} />
 
           <div className="grid grid-cols-2 gap-3">
             <button

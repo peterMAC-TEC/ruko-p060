@@ -590,6 +590,8 @@ export async function decideApproval(approvalId: string, status: Exclude<Approva
 
 const noProtection = (elderId: string): Protection => ({
   elder_id: elderId,
+  payments_paused: false,
+  paused_at: null,
   active: false,
   since: null,
   reason: null,

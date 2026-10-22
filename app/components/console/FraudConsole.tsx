@@ -112,6 +112,8 @@ export function FraudConsole() {
           <MuleWatch />
         </div>
 
+        <GuardLog rows={rows} />
+
         {decided.length > 0 && (
           <>
             <h2 className="mt-12 font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">Decided</h2>
@@ -247,4 +249,42 @@ function StatusPill({ status }: { status: Transfer["status"] }) {
         : "bg-signal/15 text-signal";
   const label = status === "cancelled" ? "cancelled by customer" : status;
   return <span className={`rounded px-2 py-0.5 font-mono text-[12px] uppercase tracking-wider ${look}`}>{label}</span>;
+}
+
+/** What Ruko Guard decided for each payment: the same answer a real bank gets from POST /api/guard/assess. Demo data. */
+function GuardLog({ rows }: { rows: Row[] }) {
+  const guarded = rows.filter((r) => r.reasons.some((x) => x.code.startsWith("guard_decision_"))).slice(0, 10);
+  return (
+    <section className="mt-12" aria-labelledby="guard-log">
+      <h2 id="guard-log" className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">
+        Ruko Guard · decisions the bank asked for <span className="ml-2 rounded bg-white/10 px-1.5 text-white/60">Demo data, practice bank</span>
+      </h2>
+      {guarded.length === 0 ? (
+        <p className="mt-3 text-[15px] text-white/50">No payments yet. Every payment the practice bank takes is checked by Ruko Guard first.</p>
+      ) : (
+        <ul className="mt-3 divide-y divide-white/10 rounded-2xl border border-white/10">
+          {guarded.map((r) => {
+            const decision = r.reasons.find((x) => x.code.startsWith("guard_decision_"))!.code.replace("guard_decision_", "");
+            const codes = r.reasons.filter((x) => x.code.startsWith("guard_") && !x.code.startsWith("guard_decision_")).map((x) => x.code.replace("guard_", ""));
+            return (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-[15px]">
+                <span>
+                  <span className="font-mono">{inr(r.amount)}</span> → {r.payee}
+                  <span className="ml-2 text-white/40">{r.elder_name}</span>
+                </span>
+                <span className="flex flex-wrap items-center gap-2 font-mono text-[12px]">
+                  <span className={`rounded border px-1.5 py-0.5 uppercase ${decision === "allow" ? "border-white/20 text-white/70" : decision === "block" ? "border-signal text-signal" : "border-mint/50 text-mint"}`}>{decision.replace(/_/g, " ")}</span>
+                  {codes.map((c) => (
+                    <span key={c} className="rounded bg-white/10 px-1.5 py-0.5 text-white/60">
+                      {c}
+                    </span>
+                  ))}
+                </span>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </section>
+  );
 }

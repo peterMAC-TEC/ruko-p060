@@ -3,6 +3,7 @@
 import { Bell, BellRing, Check, MessageSquareQuote, Phone, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
+import { KillSwitch } from "@/components/bank/KillSwitch";
 import { FAMILY_LINE, type ElderStatus } from "@/lib/companion";
 import type { AlertStatus } from "@/lib/types";
 import { waLink } from "@/lib/utils";
@@ -298,6 +299,7 @@ export function FamilyApp({
               .map((a) => (
                 <ApprovalCard key={a.id} a={a} result={decided[a.id]} error={decided[`${a.id}:err`]} onDecide={decide} embed={embed} />
               ))}
+            {elderId && <KillSwitch elderId={elderId} by="family" />}
             {protection?.active && (
               <section className="rounded-[28px] bg-warn-soft p-6">
                 <h2 className="flex items-center gap-2 text-[20px] font-bold text-warn">

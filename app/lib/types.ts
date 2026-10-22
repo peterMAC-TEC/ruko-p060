@@ -201,6 +201,9 @@ export interface Approval {
 
 export interface Protection {
   elder_id: string;
+  /** The customer's kill switch: every payment is blocked until the family code word resumes them. */
+  payments_paused?: boolean;
+  paused_at?: string | null;
   active: boolean;
   since: string | null;
   reason: string | null;

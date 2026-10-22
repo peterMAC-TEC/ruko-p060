@@ -8,11 +8,12 @@ import { getCircleCodeWordHash, getProtection } from "./store";
 // changes (the existing approval flow stands), so this can only make a flagged payment harder to release.
 
 /** Everything the approval route needs to know, in one lookup. */
-export async function codeWordGate(elderId: string, decision: "approved" | "declined", supplied?: string) {
+export async function codeWordGate(elderId: string, decision: "approved" | "declined", supplied?: string, opts: { force?: boolean } = {}) {
   const [protection, hash] = await Promise.all([getProtection(elderId), getCircleCodeWordHash(elderId)]);
   return approvalGate({
     decision,
-    protectionActive: protection.active,
+    // Resuming payments always needs the word (force); approving a payment needs it after a flagged call.
+    protectionActive: opts.force ? true : protection.active,
     codeWordSet: Boolean(hash),
     supplied,
     matches: Boolean(hash && supplied && hashCodeWord(elderId, supplied) === hash),
