@@ -77,3 +77,19 @@ Same Ink foundation; this adds a character, a motion language and two supporting
 | `MotionToggle` | The Reduce motion switch. | Keep it easy to find. |
 
 CSS helpers: `.m-word`, `.m-ring` (ringing pulse), `.m-buzz` (answer button), `.m-stop-in` (the one entrance for STOP), `.m-lift`, `.m-tap`, `.m-route` (soft fade between pages, `app/template.tsx`). The palette is unchanged; motion comes from timing, scale and opacity.
+
+### The animated scam caller (23 Oct)
+
+`components/character/CallerFace.tsx`. The face is the **existing** illustrated caller of the trial lab (`components/lab/CallerAvatar.tsx`: same head, hair, eyes, nose, ears, mouth, shirt, colours). On top: a generic grey cartoon peaked cap with a **blank** shield, and a plain collar. No text, no real agency name, emblem, rank, badge or colour scheme. It is always labelled "Scam caller (role-play)".
+
+| What | How it is driven |
+|---|---|
+| Mouth | The loudness of the recorded voice (Web Audio analyser), else a gentle simulated wave. |
+| Idle life | Blinking, a slight head sway and a breath in the shoulders (CSS, transform only). Tempo rises with urgency. |
+| Expression | `lib/caller-expression.ts`, by code: friendly (contact, fear), stern (isolation, authority), urgent (urgency, payment, closing), sympathetic (when answering fear, money worries or anger), frustrated (when answering pushback). |
+| Ring and answer | A dark silhouette while ringing, the full face once answered. |
+| Unmasking | On the STOP screen the cap and collar drop away (about 0.6 s), "Fake officer" appears, and at 1.2 s the face fades to a silhouette. Reduced motion: the plain face with the tag, at once. |
+| Ending A | The silhouette fades and the calm Ruko shield takes its place (`SilhouetteToShield`). |
+| Ending B | The caller freezes (no animation), with "Payment paused" on it. |
+
+Also new: `Marquee` (scam facts strip, with Pause; still wrapped list when reduced), `Sticker` (pop-in badge, words only), `Confetti` (once, only for "Stopped before pay").

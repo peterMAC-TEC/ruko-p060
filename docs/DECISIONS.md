@@ -340,3 +340,11 @@ Built on a branch, **not merged and not deployed to the live address**, so the v
 ## 23 Oct: results page taken off the site
 
 - Owner asked to remove results from the site. The `/results` page now redirects to `/demo`, and its links are gone (control-room bar, the card grid, the trial lab's header). The earlier page is in git history. The call's own end screen ("You stopped before paying", labelled demo data) is unchanged: that is part of the live call, not the results dashboard. No field-trial results exist yet.
+
+## 23 Oct: animated caller character and the poppy pass
+
+- **The face is kept as it was.** The only existing face is the trial lab's `CallerAvatar` (Ruko's own mascot is the Guardian shield, a different thing). The new `CallerFace` reuses its exact shapes and colours and adds a cap, a collar and animation. The earlier rule in `CallerAvatar` ("no uniform, badge, emblem or logo") is superseded by the owner's new brief, which asks for a generic caricature cap and collar. It stays safe: blank shield, no text or insignia, no real force's colours, always labelled "Scam caller (role-play)".
+- **Accent colour:** I did not add a second accent (yellow or blue). The owner already chose the dark cyber look with cyan as its one accent, and a second accent would fight it. Cyan (#38e1ff, AA on the dark backgrounds) is the single "pop" colour on stage screens. Red stays for danger and STOP only.
+- **Expression is code, not AI** (`lib/caller-expression.ts`), from the stage and the tactic in use.
+- **Skipped today:** the 3D-feeling shared-element transition from the hero button to the call, View Transitions API, skeleton loaders, sound, a per-route polish pass beyond what the sweep found (no overflow or console errors on 17 routes at 390 and 1280 wide), and a hand-drawn arrow to the main button.
+- **Measured:** Lighthouse mobile, same machine, baseline = `main` before this work, then the new build: / 80 and 79, now 76 (home grew: animated face, facts strip, more sections); /demo/call 79, now 79; /bank 80 and 76, now 80 and 74. Accessibility 100 on all after fixing a list-markup error on the new home. Whole static bundle 2,965 KB to 2,988 KB (+23 KB). Offline presenter mode contacts only localhost and both endings pass.
