@@ -69,7 +69,8 @@ ok("an ordinary call with no signs → clear (worded as 'nothing found', never '
 // Fewer false alarms: a lone keyword the AI read in context and found nothing in is not a warning.
 const delivery = verdict([], "The delivery boy said my Amazon parcel will come tomorrow.");
 ok("real delivery update: the word 'parcel' alone, AI found nothing → clear", delivery.level === "clear", delivery.level);
-ok("…but without the AI, the phone's own phrase check still says 'check first'", runRadar(lib, { answers: {}, said: "my Amazon parcel will come tomorrow" }).level === "caution");
+ok("…and the phone's own phrase check, without the AI, no longer warns on a lone 'parcel' either", runRadar(lib, { answers: {}, said: "my Amazon parcel will come tomorrow" }).level === "clear");
+ok("…but it still warns when the parcel comes with drugs and a case", runRadar(lib, { answers: {}, said: "a parcel in my name had drugs and a case is registered" }).level !== "clear");
 const phraseStop = verdict([], "digital arrest, CBI warrant, stay on the video");
 ok("a phrase STOP is never lowered, even if the AI found nothing", phraseStop.level === "stop", phraseStop.level);
 

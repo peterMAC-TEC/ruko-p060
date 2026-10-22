@@ -8,7 +8,7 @@ import { ALL_DEFENDER_LINES, assess, defend, defenderStart } from "../lib/bots/d
 import { checkCallerLine } from "../lib/bots/guard";
 import { runAll, summarize } from "../lib/bots/harness";
 import { classify } from "../lib/bots/intent";
-import { initialState, nextTurn, openingTurn, spine } from "../lib/bots/scammer";
+import { nextTurn, openingTurn, spine } from "../lib/bots/scammer";
 import type { DrillLibrary } from "../lib/drill";
 import { foldDevanagari, phraseHits, BUNDLED_LIBRARY } from "../lib/patterns";
 
