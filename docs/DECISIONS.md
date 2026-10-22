@@ -239,3 +239,11 @@ Found by running the live app against the three MVP tests:
 - **Realism:** natural fillers and hesitations ("Hello? ... Haan, yes"), the caller talks over the end of Kamala's sentence, the caller's voice has a phone-line filter, Kamala is slower and lower, Ruko is clean and warm with a soft chime before it speaks, and the lines pause the way people do.
 - **Honest limits:** the voices are still synthetic (labelled as role-play); the same voice family is used for Kamala and Ruko, told apart by pitch, pace, the chime and the on-screen label. If a clip fails to load the browser's own voice reads the line; with sound off the captions carry the demo.
 - **Retune:** edit `VOICES` or `FILTERS` in the script and run it again.
+
+## Positioning and the layer (22 Oct)
+
+- **The line:** "Your phone can spot the scam. Ruko stops the money." Full statement, the layer diagram, the moat and the honest gaps are in [POSITIONING.md](POSITIONING.md).
+- **Why:** Apple (Call Screening), Google and Samsung (on-device scam detection) are sensors at the phone for the person only; digital-arrest scams mostly run on WhatsApp video calls; most 65 to 85-year-olds are not on those phones; none involve family or the payment. Ruko is the response layer.
+- **Built:** Ruko is now a real installable app (a web app manifest with icons, home-screen shortcuts) and has **Share to Ruko**: from any app on Android Chrome, a message or call transcript can be shared to Ruko, which opens the check with the text in the box for the person to review and check. The text travels in a 2-minute cookie (never in a URL, never stored). Before this the app was called a PWA but had no manifest.
+- **Not possible:** reading Apple or Google alerts automatically (no API); the person shares instead. Screenshots through the Share sheet need a service worker and are next.
+- **Judgement call:** the moat is described as the family network, the bank relationships and the data, not the AI, because the AI is copyable.

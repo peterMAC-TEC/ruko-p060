@@ -100,20 +100,27 @@ export function CheckApp({
   trusted,
   elderName,
   sensitivity = "normal",
+  sharedText,
 }: {
   elderId: string;
   demo: boolean;
   trusted?: { name: string; phone: string };
   elderName?: string;
   sensitivity?: Sensitivity;
+  /** Text shared to Ruko from another app: shown in the "tell me what they said" box for the person to check. */
+  sharedText?: string;
 }) {
   const { t, toggle, lang } = useLang();
   const lib = usePatternLibrary();
   const bankCalls = useVerifiedCalls(elderId);
-  const [step, setStep] = useState<Step>({ kind: "who" });
+  const [step, setStep] = useState<Step>(sharedText ? { kind: "say" } : { kind: "who" });
   const [identity, setIdentity] = useState<Identity>("unknown");
   const [answers, setAnswers] = useState<Partial<Record<RadarQuestion, Answer>>>({});
-  const [said, setSaid] = useState("");
+  const [said, setSaid] = useState(sharedText ?? "");
+  // The shared text was only kept for two minutes; clear it now that the person has it.
+  useEffect(() => {
+    if (sharedText) document.cookie = "ruko_shared=; path=/check; max-age=0";
+  }, [sharedText]);
   const [listening, setListening] = useState(false);
   const [micMissing, setMicMissing] = useState(false);
   const [stopOpen, setStopOpen] = useState(false);
@@ -480,6 +487,11 @@ export function CheckApp({
             }}
           />
           <Title sub={t.saySub}>{t.sayTitle}</Title>
+          {sharedText && said === sharedText && (
+            <p className="rounded-2xl bg-safe-soft p-4 text-[18px] leading-snug text-safe" role="status">
+              {lang === "en" ? "This came from another app. Read it, change it if you like, then tap Check this." : "Yeh doosre app se aaya hai. Padhiye, chahein to badlein, phir Check this dabaiye."}
+            </p>
+          )}
           {voice.supported ? (
             <button
               onClick={() => (recording ? voice.stop() : void voice.start())}

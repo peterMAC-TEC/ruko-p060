@@ -68,6 +68,23 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
+        <p className="text-[17px] font-semibold tracking-[0.14em] text-ink-soft uppercase">Works with what you already have</p>
+        <h2 className="display mt-3 max-w-4xl text-[40px] leading-[1.05] sm:text-[72px]">Your phone can spot the scam. Ruko stops the money.</h2>
+        <div className="mt-10 grid gap-8 sm:grid-cols-3">
+          {[
+            ["Share anything to Ruko", "A strange message, a call transcript from your phone's own call screening: send it to Ruko in one tap, from any app."],
+            ["Family hears first", "Someone you trust is told straight away, with what to say. A familiar voice breaks the spell."],
+            ["Payments wait", "A risky payment pauses and asks a trusted person before any money can move."],
+          ].map(([title, body]) => (
+            <div key={title} className="border-t border-ink pt-4">
+              <h3 className="text-[24px] font-semibold">{title}</h3>
+              <p className="mt-2 text-[19px] leading-relaxed text-ink-soft">{body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-16 sm:py-24">
         <h2 className="display text-[40px] leading-tight sm:text-[64px]">How Ruko helps</h2>
         <ol className="mt-10 grid gap-0 sm:grid-cols-4">
           {steps.map((s, i) => (
