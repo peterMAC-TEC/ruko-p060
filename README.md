@@ -61,3 +61,5 @@ Two phones: **Kamala's** (elder, `/app`) and **Priya's** (family, `/family`, wit
 **If something fails on stage:** keep going on the same phone. Every step works offline in presenter mode. If the AI is slow, Ruko says "Still checking…" and answers from the phone's own phrase check within 30 seconds.
 
 **Ruko Line** (`/line`): grades an unknown caller, screens them, then puts through, takes a message or blocks, and tells the family. See [docs/LINE.md](docs/LINE.md).
+
+**Live call demo** (`/demo`, `/demo/live`): a fictional officer phones you by voice; Ruko steps in at the money ask; two endings. Walk-through in [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md), answers in [docs/JUDGE-QA.md](docs/JUDGE-QA.md).

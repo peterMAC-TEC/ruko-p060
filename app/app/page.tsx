@@ -136,8 +136,9 @@ export default function Home() {
       <footer className="mx-auto max-w-6xl px-6 py-8 text-[16px] text-ink-soft">
         <p className="font-semibold text-ink">ForgeX 2.0 · P060 · For the judges and the field test</p>
         <nav className="mt-3 flex flex-wrap gap-x-6 gap-y-2">
+          <Link href="/demo/live" className="underline underline-offset-4">Live call</Link>
           <Link href="/demo/call" className="underline underline-offset-4">Call demo (audio)</Link>
-          <Link href="/demo" className="underline underline-offset-4">Live demo</Link>
+          <Link href="/demo" className="underline underline-offset-4">Demo hub</Link>
           <Link href="/lab" className="underline underline-offset-4">Trial lab</Link>
           <Link href="/results" className="underline underline-offset-4">Results</Link>
           <Link href="/console" className="underline underline-offset-4">Fraud desk</Link>
