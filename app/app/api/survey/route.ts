@@ -4,7 +4,8 @@ import { addSurveyResponse, getTrialCall } from "@/lib/store";
 import { SURVEY_KINDS, validate, type SurveyKind } from "@/lib/survey";
 
 // The survey bot saves one finished survey.
-//   open        : anyone with the link; anonymous; needs the person to have agreed on the first screen.
+//   open / incident : anyone with the link (incident: after a scam call, from Ruko Companion); anonymous; needs the
+//                 person to have agreed on the first screen.
 //   participant : the older person after a drill call; family: the family member. Both are opened by the
 //                 facilitator in the trial lab, so they need lab access and a call to link to.
 // The answers are checked against the allowed options and free text is scrubbed (lib/survey.ts), so no name,
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
     arm: null,
     is_scam: null,
   };
-  if (kind === "open") {
+  if (kind === "open" || kind === "incident") {
     if (consent !== true) return Response.json({ error: "Please agree first" }, { status: 400 });
   } else {
     if (!(await labAllowed())) return labDenied();

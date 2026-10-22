@@ -11,6 +11,7 @@ const TITLE: Record<SurveyKind, string> = {
   participant: "Older adults, after a drill call",
   family: "Family members, after a drill call",
   open: "Open survey (shared link or QR code)",
+  incident: "Scam calls reported through Ruko Companion",
 };
 
 const label = (kind: SurveyKind, qid: string, optionId: string) => QUESTIONS[kind].find((q) => q.id === qid)?.options?.find((o) => o.id === optionId)?.label.en ?? optionId;
@@ -77,7 +78,7 @@ export function SurveyPanel() {
       {s && data!.total === 0 && <p className="mt-4 text-[15px] text-ink-soft">No survey answers yet. After a drill call, open the survey from the call screen.</p>}
 
       {s &&
-        (["participant", "family", "open"] as const).map((kind) =>
+        (["participant", "family", "open", "incident"] as const).map((kind) =>
           s.n[kind] === 0 ? null : (
             <div key={kind} className="mt-5 border-t border-ink/8 pt-4">
               <h3 className="text-[16px] font-bold">

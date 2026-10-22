@@ -234,6 +234,7 @@ export function CompanionApp({
                 <Send className="size-6" />
               </button>
             </form>
+            <OptionButton o={{ id: "report", label: ACTION_LABEL.report, action: "report" }} lang={lang} trusted={trusted} onChoose={choose} onClose={onClose} />
             {mic.error && <p className="text-[16px] font-bold text-white/90">{lang === "en" ? "I didn't catch that. Try again or type." : "Samajh nahi aaya. Phir se bolein ya likhein."}</p>}
           </>
         )}
@@ -278,6 +279,12 @@ function OptionButton({
   if (o.action === "help")
     return (
       <Link href="/help" className={primary}>
+        {label}
+      </Link>
+    );
+  if (o.action === "report")
+    return (
+      <Link href={`/survey/incident?lang=${lang}`} className={`${cls} border-2 border-white/40 bg-transparent text-white`}>
         {label}
       </Link>
     );

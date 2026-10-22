@@ -25,6 +25,7 @@ ok("every step can be reached from the start", reach.size === ids.length, `${rea
 ok("the script never tells anyone to send, pay or share", ids.every((s) => !/\b(please|you should)\s+(send|pay|transfer|share)\b/i.test(STEPS[s].say.en)));
 ok("the script never blames", ids.every((s) => !/your fault\b(?!.*not)/i.test(STEPS[s].say.en.replace(/not your fault/gi, ""))));
 ok("the 'paid' path leads to 1930", STEPS.paid.options.some((o) => o.action === "call_1930"));
+ok("the 'paid' path also offers the report that helps warn others", STEPS.paid.options.some((o) => o.action === "report") && STEPS.free.options.some((o) => o.action === "report"));
 ok("the scared path leads to family", STEPS.scared.options.some((o) => o.action === "call_family"));
 
 // The AI's replies are only shown when safe.

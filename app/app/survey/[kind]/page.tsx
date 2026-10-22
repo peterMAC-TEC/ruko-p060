@@ -19,8 +19,10 @@ export default function CallSurvey({ params, searchParams }: PageProps<"/survey/
 
 async function Inner({ params, searchParams }: Pick<PageProps<"/survey/[kind]">, "params" | "searchParams">) {
   const { kind } = await params;
-  if (kind !== "participant" && kind !== "family") notFound();
+  if (kind !== "participant" && kind !== "family" && kind !== "incident") notFound();
   const { call, lang } = await searchParams;
+  // After a scam call, from Ruko Companion: anonymous, open to the person themselves (or their family).
+  if (kind === "incident") return <SurveyBot kind="incident" initialLang={lang === "hing" ? "hing" : "en"} />;
   if (!(await labAllowed())) return <p className="p-10 text-[18px]">This survey is opened by the facilitator, from the call screen.</p>;
   const c = typeof call === "string" ? await getTrialCall(call) : undefined;
   if (!c) return <p className="p-10 text-[18px]">Open this from the call screen, so it knows which call it is for.</p>;

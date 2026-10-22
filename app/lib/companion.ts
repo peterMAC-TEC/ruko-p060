@@ -11,7 +11,7 @@ export type ElderStatus = "talking" | "hung_up" | "needs_help" | "paid";
 export const ELDER_STATUSES: readonly ElderStatus[] = ["talking", "hung_up", "needs_help", "paid"];
 
 export type StepId = "hello" | "end_call" | "scared" | "after" | "paid" | "calm" | "free";
-export type Action = "call_family" | "call_1930" | "help" | "close";
+export type Action = "call_family" | "call_1930" | "help" | "report" | "close";
 
 type Text = Record<CLang, string>;
 
@@ -80,6 +80,7 @@ export const STEPS: Record<StepId, Step> = {
     options: [
       { id: "call_1930", label: { en: "Call 1930", hing: "1930 par phone karo" }, action: "call_1930" },
       { id: "help", label: { en: "What else to do", hing: "Aur kya karna hai" }, action: "help" },
+      { id: "report", label: { en: "Help warn others", hing: "Doosron ko chetane mein madad" }, action: "report" },
     ],
   },
   calm: {
@@ -101,6 +102,7 @@ export const STEPS: Record<StepId, Step> = {
     options: [
       { id: "call_family", label: { en: "Call my family", hing: "Parivar ko phone karo" }, action: "call_family" },
       { id: "call_1930", label: { en: "Call 1930", hing: "1930 par phone karo" }, action: "call_1930" },
+      { id: "report", label: { en: "Help warn others", hing: "Doosron ko chetane mein madad" }, action: "report" },
     ],
   },
 };
@@ -207,5 +209,6 @@ export const ACTION_LABEL: Record<Action, Text> = {
   call_family: { en: "Call my family", hing: "Parivar ko phone karo" },
   call_1930: { en: "Call 1930", hing: "1930 par phone karo" },
   help: { en: "What else to do", hing: "Aur kya karna hai" },
+  report: { en: "Help warn others", hing: "Doosron ko chetane mein madad" },
   close: { en: "I'm okay now", hing: "Ab main theek hoon" },
 };

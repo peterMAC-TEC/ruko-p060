@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
 import { hush, say } from "@/lib/voice";
 import { useVoiceCapture } from "@/lib/voice-capture";
-import { nextQuestion, visible, type Answers, type Ctx, type Question, type SurveyKind } from "@/lib/survey";
+import { incidentSummary, nextQuestion, visible, type Answers, type Ctx, type Question, type SurveyKind } from "@/lib/survey";
 
 // The survey bot: Ruko asks one question at a time, in English or Hinglish, answered with big buttons
 // (or the voice, for the free-text questions). It never asks for names or numbers, and says so.
@@ -27,6 +27,10 @@ const T = {
       en: "Thank you for helping. A few quick questions about what you saw on your phone during the practice call.",
       hing: "Madad ke liye shukriya. Practice call ke dauraan aapke phone par jo dikha, uske baare mein kuch chhote sawaal.",
     },
+    incident: {
+      en: "I'm sorry that happened. You did the right thing. Can I ask a few quick questions? They help warn other families, and I'll write a report you can send to 1930.",
+      hing: "Mujhe afsos hai ki aisa hua. Aapne sahi kiya. Kya main kuch chhote sawaal pooch sakta hoon? Isse doosre parivaron ko chetane mein madad milegi, aur main ek report likh dunga jo aap 1930 ko bhej sakte hain.",
+    },
   },
   privacy: {
     en: "It is anonymous. Please don't write names, phone numbers or account numbers. You can stop any time.",
@@ -45,6 +49,12 @@ const T = {
   saved: { en: "Saved", hing: "Save ho gaya" },
   failed: { en: "Couldn't save just now.", hing: "Abhi save nahi ho paya." },
   retry: { en: "Try again", hing: "Phir koshish karein" },
+  reportTitle: { en: "Your report, ready to use", hing: "Aapki report, istemaal ke liye taiyaar" },
+  copy: { en: "Copy the report", hing: "Report copy karein" },
+  copied: { en: "Copied", hing: "Copy ho gaya" },
+  whatsappReport: { en: "Send it by WhatsApp", hing: "WhatsApp se bhejein" },
+  call1930: { en: "Call 1930", hing: "1930 par phone karein" },
+  nextSteps: { en: "What to do next", hing: "Ab kya karein" },
   shareTitle: { en: "Know another family who could answer? Share this with them.", hing: "Kya koi aur parivar jawab de sakta hai? Unhe yeh bhejiye." },
   share: { en: "Share on WhatsApp", hing: "WhatsApp par bhejein" },
   shareText: {
@@ -137,6 +147,8 @@ export function SurveyBot({ kind, callId, ctx = {}, initialLang = "en" }: { kind
 
   const url = typeof window !== "undefined" ? `${window.location.origin}/survey` : "/survey";
   const intro = T.intro[kind];
+  const report = useMemo(() => (kind === "incident" && done ? incidentSummary(answers) : null), [kind, done, answers]);
+  const [copied, setCopied] = useState(false);
 
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-md flex-col bg-paper px-5 pt-[max(1rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] text-ink">
@@ -166,7 +178,7 @@ export function SurveyBot({ kind, callId, ctx = {}, initialLang = "en" }: { kind
           <Bubble>{t(intro, lang)}</Bubble>
           <Bubble soft>{t(T.privacy, lang)}</Bubble>
           <div className="mt-auto pt-6">
-            <Big onClick={() => setStarted(true)}>{kind === "open" ? t(T.agree, lang) : t(T.start, lang)}</Big>
+            <Big onClick={() => setStarted(true)}>{kind === "open" || kind === "incident" ? t(T.agree, lang) : t(T.start, lang)}</Big>
           </div>
         </div>
       )}
@@ -264,6 +276,39 @@ export function SurveyBot({ kind, callId, ctx = {}, initialLang = "en" }: { kind
             <div className="mt-3">
               <Big onClick={() => void save()}>{t(T.retry, lang)}</Big>
             </div>
+          )}
+          {report && (
+            <section className="mt-5 rounded-[24px] bg-white p-5 shadow-soft">
+              <h2 className="text-[20px] font-bold">{t(T.reportTitle, lang)}</h2>
+              <p className="mt-2 text-[17px] leading-snug">{report.text}</p>
+              <h3 className="mt-4 text-[18px] font-bold">{t(T.nextSteps, lang)}</h3>
+              <ul className="mt-1 list-disc space-y-1 pl-5 text-[16px] leading-snug">
+                {report.checklist.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+              <div className="mt-4 flex flex-col gap-3">
+                <a href="tel:1930" className="flex min-h-16 items-center justify-center rounded-2xl bg-alarm text-[20px] font-bold text-white">
+                  {t(T.call1930, lang)}
+                </a>
+                <Big
+                  variant="light"
+                  onClick={() => {
+                    void navigator.clipboard?.writeText(report.text).then(() => setCopied(true)).catch(() => {});
+                  }}
+                >
+                  {copied ? `✓ ${t(T.copied, lang)}` : t(T.copy, lang)}
+                </Big>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(report.text)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-h-16 items-center justify-center rounded-2xl bg-calm text-[20px] font-bold text-white"
+                >
+                  {t(T.whatsappReport, lang)}
+                </a>
+              </div>
+            </section>
           )}
           {kind === "open" && saved === "yes" && (
             <div className="mt-auto flex flex-col gap-3 pt-6">

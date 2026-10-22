@@ -1,7 +1,7 @@
 // The survey bot: the questions, the skip rules, what is accepted and what is scrubbed, and the results.
 // Run: npx tsx scripts/check-survey.ts
 import assert from "node:assert/strict";
-import { QUESTIONS, SURVEY_KINDS, nextQuestion, scrub, summarize, toCsv, validate, visible, type Answers, type SurveyKind, type SurveyRow } from "../lib/survey";
+import { QUESTIONS, SURVEY_KINDS, incidentSummary, nextQuestion, scrub, summarize, toCsv, validate, visible, type Answers, type SurveyKind, type SurveyRow } from "../lib/survey";
 
 let n = 0;
 const ok = (name: string, cond: boolean, detail = "") => {
@@ -64,6 +64,17 @@ ok("ordinary text is kept", scrub("The button was too small for me") === "The bu
 ok("text is capped at 500 characters", scrub("a".repeat(900)).length === 500);
 const withText = validate("participant", ctx, { ...good, confusing: "Call me on 9845012345 or mail a@b.co" })!;
 ok("scrubbing happens inside validate()", typeof withText.confusing === "string" && !/\d{6}/.test(withText.confusing as string) && !(withText.confusing as string).includes("@"));
+
+// the incident report (from Ruko Companion)
+const inc = { who: "police", channel: "video", asked: ["send_money", "keep_secret", "stay_video"], long: "1-3h", sent: "stopped", stopped_by: ["ruko"], told: "no" };
+ok("an incident report validates", validate("incident", {}, inc) !== null);
+ok("who, channel, what they asked, how long, whether money went and whether they told anyone are required", validate("incident", {}, { ...inc, who: undefined }) === null && validate("incident", {}, { ...inc, sent: undefined }) === null);
+ok("'what helped you stop' appears only if they stopped; the loss only if they sent money", idsOf("incident", {}, { sent: "stopped" }).includes("stopped_by") && !idsOf("incident", {}, { sent: "stopped" }).includes("loss") && idsOf("incident", {}, { sent: "money" }).includes("loss") && !idsOf("incident", {}, { sent: "money" }).includes("stopped_by"));
+const rep = incidentSummary(inc);
+ok("the report reads as plain sentences about what happened", /video call/.test(rep.text) && /police, CBI, customs or a court/.test(rep.text) && /send money to an account/.test(rep.text) && /stopped before any money moved/.test(rep.text));
+ok("the report holds no number, name or account", !/\d{4}/.test(rep.text.replace(/₹10,000|₹1 lakh|1930/g, "")));
+ok("the report says what to add and where to report", rep.checklist.some((c) => /cybercrime\.gov\.in/.test(c)) && rep.checklist.some((c) => /caller's number/.test(c)));
+ok("if money or an OTP went, the first step is to call 1930 now", /Call 1930 now/.test(incidentSummary({ ...inc, sent: "money", loss: "gt1l" }).checklist[0]) && /more than ₹1 lakh/.test(incidentSummary({ ...inc, sent: "money", loss: "gt1l" }).text) && /Call 1930 now/.test(incidentSummary({ ...inc, sent: "otp" }).checklist[0]));
 
 // results
 const rows: SurveyRow[] = [

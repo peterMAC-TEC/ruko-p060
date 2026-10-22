@@ -3,11 +3,13 @@
 //   participant : the older person, right after a drill call (the facilitator opens it, linked to their code P01...)
 //   family      : the family member, after a drill call
 //   open        : anyone, from a shared link or QR code (anonymous): past scam experiences and what would help
+//   incident    : the person who just had a scam call, helped by Ruko Companion: what happened, so other families can be
+//                 warned and a report for 1930 / cybercrime.gov.in can be pre-written (no names, numbers or accounts)
 // Pure code: the same checks run on the phone and on the server. No names, phone numbers or emails are kept:
 // free text is scrubbed, and every choice is checked against the allowed answers.
 
-export type SurveyKind = "participant" | "family" | "open";
-export const SURVEY_KINDS: readonly SurveyKind[] = ["participant", "family", "open"];
+export type SurveyKind = "participant" | "family" | "open" | "incident";
+export const SURVEY_KINDS: readonly SurveyKind[] = ["participant", "family", "open", "incident"];
 
 type Text = { en: string; hing: string };
 export type Answer = string | number | string[];
@@ -225,7 +227,139 @@ const OPEN: Question[] = [
   { id: "comment", type: "text", optional: true, ask: { en: "Anything else we should know? (Please don't write names, phone numbers or account numbers.)", hing: "Aur kuch jo hamein pata hona chahiye? (Kripya naam, phone number ya account number na likhein.)" } },
 ];
 
-export const QUESTIONS: Record<SurveyKind, Question[]> = { participant: PARTICIPANT, family: FAMILY, open: OPEN };
+const INCIDENT: Question[] = [
+  {
+    id: "who",
+    type: "choice",
+    ask: { en: "Who did the caller say they were?", hing: "Caller ne kaun hone ka daava kiya?" },
+    options: [
+      opt("police", "Police, CBI, customs or a court", "Police, CBI, customs ya court"),
+      opt("courier", "A courier or parcel company", "Courier ya parcel company"),
+      opt("bank", "A bank or KYC team", "Bank ya KYC team"),
+      opt("telecom", "A phone or SIM company", "Phone ya SIM company"),
+      opt("electricity", "The electricity board", "Bijli vibhag"),
+      opt("family", "A family member or friend", "Parivar ka sadasya ya dost"),
+      opt("other", "Someone else", "Koi aur"),
+    ],
+  },
+  {
+    id: "channel",
+    type: "choice",
+    ask: { en: "How did they reach you?", hing: "Unhone aapse kaise sampark kiya?" },
+    options: [opt("call", "A phone call", "Phone call"), opt("video", "WhatsApp or Skype video call", "WhatsApp ya Skype video call"), opt("message", "A WhatsApp or SMS message", "WhatsApp ya SMS message"), opt("other", "Something else", "Kuch aur")],
+  },
+  {
+    id: "asked",
+    type: "multi",
+    ask: { en: "What did they ask you to do? Pick all that fit.", hing: "Unhone aapse kya karne ko kaha? Jo sahi lage sab chuniye." },
+    options: [
+      opt("send_money", "Send money to an account", "Kisi account mein paise bhejna"),
+      opt("share_otp", "Tell an OTP, PIN or password", "OTP, PIN ya password batana"),
+      opt("install_app", "Install an app or share my screen", "App dalna ya screen dikhana"),
+      opt("stay_video", "Stay on the video call", "Video call par bane rehna"),
+      opt("keep_secret", "Tell nobody", "Kisi ko na batana"),
+      opt("documents", "Give Aadhaar, PAN or bank details", "Aadhaar, PAN ya bank ki jaankari dena"),
+      opt("break_fd", "Break a fixed deposit or take a loan", "FD todna ya loan lena"),
+    ],
+  },
+  {
+    id: "long",
+    type: "choice",
+    ask: { en: "How long did it go on?", hing: "Yeh kitni der chala?" },
+    options: [opt("lt10", "Under 10 minutes", "10 minute se kam"), opt("10-60", "10 minutes to an hour", "10 minute se ek ghanta"), opt("1-3h", "1 to 3 hours", "1 se 3 ghante"), opt("days", "More than a day", "Ek din se zyada")],
+  },
+  {
+    id: "sent",
+    type: "choice",
+    ask: { en: "Did you send money, or tell them an OTP or PIN?", hing: "Kya aapne paise bheje, ya OTP ya PIN bataya?" },
+    options: [opt("no", "No, nothing", "Nahi, kuch nahi"), opt("stopped", "I started, then stopped", "Shuru kiya, phir ruk gaya"), opt("money", "I sent money", "Maine paise bheje"), opt("otp", "I told an OTP or PIN", "Maine OTP ya PIN bataya"), opt("both", "Both", "Dono")],
+  },
+  {
+    id: "loss",
+    type: "choice",
+    optional: true,
+    ask: { en: "About how much did you send? (You can skip.)", hing: "Lagbhag kitne paise bheje? (Chhod sakte hain.)" },
+    options: [opt("lt10k", "Under ₹10,000", "₹10,000 se kam"), opt("10k-1l", "₹10,000 to ₹1 lakh", "₹10,000 se ₹1 lakh"), opt("gt1l", "More than ₹1 lakh", "₹1 lakh se zyada")],
+    when: (_c, a) => a.sent === "money" || a.sent === "both",
+  },
+  {
+    id: "stopped_by",
+    type: "multi",
+    ask: { en: "What helped you stop? Pick all that fit.", hing: "Aapko rukne mein kisne madad ki? Jo sahi lage sab chuniye." },
+    options: [
+      opt("ruko", "Ruko warned me", "Ruko ne chetaya"),
+      opt("remembered", "I remembered it could be a scam", "Mujhe yaad aaya ki yeh dhokha ho sakta hai"),
+      opt("someone", "Someone told me to stop", "Kisi ne mujhe rukne ko kaha"),
+      opt("bank", "My bank stopped it", "Mere bank ne rok diya"),
+      opt("suspicious", "Something felt wrong", "Kuch theek nahi laga"),
+    ],
+    when: (_c, a) => a.sent === "no" || a.sent === "stopped",
+  },
+  {
+    id: "told",
+    type: "choice",
+    ask: { en: "Did you tell anyone while it was happening?", hing: "Kya aapne yeh hote waqt kisi ko bataya?" },
+    options: [opt("yes", "Yes", "Haan"), opt("no", "No", "Nahi")],
+  },
+  { id: "comment", type: "text", optional: true, ask: { en: "Anything else that could help warn others? (Please don't write names, phone numbers or account numbers.)", hing: "Doosron ko chetane ke liye aur kuch? (Kripya naam, phone number ya account number na likhein.)" } },
+];
+
+export const QUESTIONS: Record<SurveyKind, Question[]> = { participant: PARTICIPANT, family: FAMILY, open: OPEN, incident: INCIDENT };
+
+const WHO_TEXT: Record<string, string> = {
+  police: "the police, CBI, customs or a court",
+  courier: "a courier or parcel company",
+  bank: "a bank or KYC team",
+  telecom: "a phone or SIM company",
+  electricity: "the electricity board",
+  family: "a family member or friend",
+  other: "someone official",
+};
+const CHANNEL_TEXT: Record<string, string> = { call: "a phone call", video: "a WhatsApp or Skype video call", message: "a WhatsApp or SMS message", other: "a contact" };
+const ASKED_TEXT: Record<string, string> = {
+  send_money: "send money to an account",
+  share_otp: "tell an OTP, PIN or password",
+  install_app: "install an app or share my screen",
+  stay_video: "stay on the video call",
+  keep_secret: "tell nobody",
+  documents: "give Aadhaar, PAN or bank details",
+  break_fd: "break a fixed deposit or take a loan",
+};
+const LONG_TEXT: Record<string, string> = { lt10: "under 10 minutes", "10-60": "10 minutes to an hour", "1-3h": "1 to 3 hours", days: "more than a day" };
+const LOSS_TEXT: Record<string, string> = { lt10k: "under ₹10,000", "10k-1l": "between ₹10,000 and ₹1 lakh", gt1l: "more than ₹1 lakh" };
+
+/**
+ * A plain-language report the person can copy into cybercrime.gov.in or read to the 1930 helpline, from their
+ * answers. It holds no names, numbers or accounts: they add those themselves, and the checklist says what to add.
+ */
+export function incidentSummary(a: Answers): { text: string; checklist: string[] } {
+  const asked = (Array.isArray(a.asked) ? a.asked : []).map((x) => ASKED_TEXT[x]).filter(Boolean);
+  const sent = a.sent as string | undefined;
+  const parts = [
+    `I received ${CHANNEL_TEXT[String(a.channel)] ?? "a contact"} from someone claiming to be ${WHO_TEXT[String(a.who)] ?? "someone official"}.`,
+    asked.length ? `They asked me to ${asked.join(", ")}.` : "",
+    a.long ? `It went on for ${LONG_TEXT[String(a.long)] ?? "a while"}.` : "",
+    sent === "no"
+      ? "I did not send any money or share any OTP or PIN."
+      : sent === "stopped"
+        ? "I started to, but stopped before any money moved."
+        : sent === "otp"
+          ? "I told them an OTP or PIN."
+          : sent === "money" || sent === "both"
+            ? `I sent money${a.loss ? ` (${LOSS_TEXT[String(a.loss)]})` : ""}${sent === "both" ? " and told them an OTP or PIN" : ""}.`
+            : "",
+    "This summary was prepared with Ruko, a safety app. I will add the date and time, the caller's number and my bank details.",
+  ].filter(Boolean);
+  const moneyGone = sent === "money" || sent === "both" || sent === "otp";
+  const checklist = [
+    ...(moneyGone ? ["Call 1930 now, and your bank's helpline, as fast as you can. The first hours matter most."] : ["If anything is still happening, call 1930."]),
+    "Report on cybercrime.gov.in and paste the summary above.",
+    "Add: the date and time, the caller's number, and any account or UPI id they gave you.",
+    "Keep screenshots, call logs and messages. Do not delete anything.",
+    "Report the number at sancharsaathi.gov.in (Chakshu) so others are warned.",
+  ];
+  return { text: parts.join(" "), checklist };
+}
 
 /** The questions to ask given what is known so far, in order. */
 export function visible(kind: SurveyKind, ctx: Ctx, answers: Answers): Question[] {
@@ -323,8 +457,8 @@ function add(t: Tally, q: Question, v: Answer) {
 
 export function summarize(rows: SurveyRow[]): SurveySummary {
   const out: SurveySummary = {
-    n: { participant: 0, family: 0, open: 0 },
-    tallies: { participant: {}, family: {}, open: {} },
+    n: { participant: 0, family: 0, open: 0, incident: 0 },
+    tallies: { participant: {}, family: {}, open: {}, incident: {} },
     byArm: {},
     texts: [],
   };
