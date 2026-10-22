@@ -18,6 +18,7 @@ const steps = [
 const doors = [
   { href: "/check", title: "Is this a scam?", body: "Five questions. A clear answer." },
   { href: "/companion", title: "Talk to Ruko", body: "A calm voice for the next minute." },
+  { href: "/setup", title: "Set up Ruko for Mum or Dad", body: "Five small steps for the family, in about five minutes." },
   { href: "/circle", title: "My family circle", body: "The people who will hear first." },
   { href: "/bank", title: "Pause before you pay", body: "Practise a payment that stops to think." },
   { href: "/line", title: "Ruko Line", body: "Check who is calling before you answer." },

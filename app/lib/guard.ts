@@ -41,6 +41,7 @@ const RULES: Rule[] = [
   // Each one is an AI call (Gemini free tier): keep it modest.
   { name: "ai", test: (p, m) => (p === "/api/check/read" || p === "/api/companion/ask") && m === "POST", limit: 20 },
   { name: "line", test: (p, m) => p === "/api/line/screen" && m === "POST", limit: 40 },
+  { name: "setup", test: (p, m) => p.startsWith("/api/setup") && m === "POST", limit: 10 },
   { name: "intent", test: (p, m) => p.startsWith("/api/callintent") && m === "POST", limit: 20 },
   { name: "number", test: (p) => p === "/api/number", limit: 60 },
   { name: "write", test: (p, m) => p.startsWith("/api/") && !SAFE.has(m), limit: 240 },

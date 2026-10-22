@@ -1,6 +1,7 @@
 "use client";
 
 import { Guardian } from "@/components/brand/Guardian";
+import { ruleCard } from "@/lib/rule-card";
 import { ArrowRight, Check, ChevronRight, Headphones, Landmark, LifeBuoy, MessageCircleHeart, Phone, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -121,6 +122,11 @@ export function ElderHome({
             {t.youAreProtected}
           </p>
         )}
+
+        {/* The Rule Card: the one sentence the family agreed, as the headline of the home screen. */}
+        <p className="display mt-6 rounded-[18px] border border-ink p-5 text-[30px] leading-[1.12]" aria-label="Rule Card">
+          {ruleCard(trusted?.name.split(" ")[0], lang === "en" ? "en" : "hing").rule}
+        </p>
 
         <VerifiedCallBanner elderId={elderId} t={t} lang={lang} />
 

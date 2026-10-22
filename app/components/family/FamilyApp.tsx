@@ -321,6 +321,13 @@ export function FamilyApp({
               )}
             </section>
 
+            {!embed && (
+              <a href="/setup" className="flex min-h-16 items-center justify-between rounded-[18px] border border-hair px-5 text-[19px] font-semibold">
+                Set up Ruko for Mum or Dad
+                <span aria-hidden>→</span>
+              </a>
+            )}
+
             {earlier.length > 0 && (
               <section>
                 <h2 className="text-[15px] font-bold text-ink-soft">Earlier</h2>

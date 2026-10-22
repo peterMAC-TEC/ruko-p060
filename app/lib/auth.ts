@@ -31,7 +31,7 @@ export async function getViewer(): Promise<Viewer | null> {
 /** The open sandbox: the demo people (in DEMO_MODE) and trial practice accounts, which hold no real data. */
 export const isDemoId = (id: string) => (flags.DEMO_MODE && DEMO_USER_IDS.includes(id)) || isTrialAccountId(id);
 
-type Allowed = { ok: true; viewer: Viewer | null } | { ok: false; status: 401 | 403; error: string };
+export type Allowed = { ok: true; viewer: Viewer | null } | { ok: false; status: 401 | 403; error: string };
 
 const denied = (viewer: Viewer | null): Allowed =>
   viewer?.user
