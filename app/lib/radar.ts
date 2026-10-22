@@ -36,6 +36,20 @@ export interface RadarResult {
   signals: string[];
 }
 
+/** "I don't know" and similar say nothing about the call, however many words they use. */
+const VAGUE = /\b(i )?(do ?n'?t|dont|didn'?t) (know|understand|remember)|\bidk\b|\bnot sure\b|\bno idea\b|\bnothing\b|\bsomething\b|\bpata nahi\b|\bmaloom nahi\b|\bkuch nahi\b|\bhmm+\b|\bokay?\b|[^\p{L}\p{N}\s]/giu;
+
+/**
+ * Is there enough to say "nothing matches"? Three firm "no" answers, or a few words about the call, count.
+ * Otherwise a "clear" result would only mean "I was told nothing", and Ruko says so instead of sounding all-clear.
+ */
+export function hasEnoughToJudge(answers: RadarInput["answers"], said?: string): boolean {
+  const noes = RADAR_QUESTIONS.filter((q) => answers[q] === "no").length;
+  const told = (said ?? "").replace(VAGUE, " ");
+  const words = told.trim().split(/\s+/).filter(Boolean).length;
+  return noes >= 3 || words >= 3;
+}
+
 export function runRadar(lib: PatternLibrary, input: RadarInput): RadarResult {
   const threshold = STOP_THRESHOLD[input.sensitivity ?? "normal"];
   const signals: string[] = [];

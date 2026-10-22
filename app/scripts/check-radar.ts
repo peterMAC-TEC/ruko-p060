@@ -3,7 +3,7 @@
 import assert from "node:assert/strict";
 import { BUNDLED_LIBRARY as lib } from "../lib/patterns";
 import { normalizeNumber, scoreNumber } from "../lib/numberRisk";
-import { runRadar } from "../lib/radar";
+import { hasEnoughToJudge, runRadar } from "../lib/radar";
 
 let n = 0;
 const ok = (name: string, cond: boolean, detail = "") => {
@@ -60,5 +60,14 @@ ok("reported 214 times as fake police → high", (() => {
 ok("one scam report → medium-ish, not high", scoreNumber("+91 98765 43210", { reports: { scam: 1, notScam: 0, unsure: 0 } }).level !== "high");
 ok("more 'not a scam' than 'scam' → low", scoreNumber("+91 98765 43210", { reports: { scam: 2, notScam: 9, unsure: 0 } }).level === "low");
 ok("saved contact stays low even if international", scoreNumber("+44 7700 900123", { inContacts: true }).level === "low");
+
+// Too little told: never an all-clear.
+ok("nothing answered is not enough to judge", !hasEnoughToJudge({}, ""));
+ok("'I don't know' (all not sure) is not enough", !hasEnoughToJudge({ stay_on_call: "unsure", share_otp: "unsure", keep_secret: "unsure" }, "I don't know"));
+ok("two 'no' answers are not enough", !hasEnoughToJudge({ stay_on_call: "no", share_otp: "no" }, "idk"));
+ok("three firm 'no' answers are enough", hasEnoughToJudge({ stay_on_call: "no", share_otp: "no", keep_secret: "no" }, ""));
+ok("a short description of a normal call is enough", hasEnoughToJudge({}, "my daughter called to say she reached home"));
+ok("empty input never crashes the radar and never reaches caution", runRadar(lib, { answers: {}, said: "" }).level === "clear");
+ok("garbage text never crashes the radar", runRadar(lib, { answers: {}, said: " ???  ;;; <script>" }).level === "clear");
 
 console.log(`all ${n} Scam Radar checks passed`);

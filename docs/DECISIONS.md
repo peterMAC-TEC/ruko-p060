@@ -201,3 +201,9 @@ The user chose direction **C, "Ink"** from three samples (`design/ruko-design-di
 - **Decision:** build the decision engine now, free, as `lib/line.ts` + `/api/line/screen` + the `/line` demo. It is pure rules (no AI), replayed on the server, tested against the drill scripts. See [LINE.md](LINE.md).
 - **Not built:** answering real calls (needs a paid phone line or a native Android app; the card also forbids interception without consent) and scraping caller data (against third-party terms). Both wait for the user's go-ahead.
 - **Judgement calls:** a number is never "green" unless it is a saved contact; a risky number is never put through even if the caller sounds calm (a message is taken instead); a block also writes the number to the person's own block list and tells the family, and turns on Money Lock only if money or a code was asked, to keep false alarms down.
+
+## "I can't tell yet" on /check (22 Oct)
+
+- **Why:** with empty input, "I don't know" or mostly "not sure" answers, `/check` used to say "Nothing you told me matches a scam we know", which sounds like an all-clear. For test 3 (bad or ambiguous input) it must ask for more instead.
+- **Rule (plain code, `hasEnoughToJudge` in `lib/radar.ts`):** a clear result needs three firm "no" answers, or at least three meaningful words about the call (filler like "I don't know", "idk", "nothing" is ignored). Otherwise the screen says "I can't tell yet", offers "Tell me what they said", and keeps family and 1930 one tap away. If the AI read something (even finding nothing), the result stands.
+- **Not changed:** the radar's own levels (stop, caution, clear), the STOP threshold, and the family alert and Money Lock rules. Nothing new is alerted or locked for "can't tell yet", to keep false alarms down.

@@ -36,7 +36,7 @@ import { waLink } from "@/lib/utils";
 import { useVoiceCapture } from "@/lib/voice-capture";
 import { useLang, type UiLang } from "@/lib/i18n";
 import type { Identity } from "@/lib/patterns";
-import { RADAR_QUESTIONS, runRadar, STOP_THRESHOLD, type Answer, type RadarQuestion, type RadarResult, type Sensitivity } from "@/lib/radar";
+import { hasEnoughToJudge, RADAR_QUESTIONS, runRadar, STOP_THRESHOLD, type Answer, type RadarQuestion, type RadarResult, type Sensitivity } from "@/lib/radar";
 
 // Scam Radar's guided check (v2): who they claim to be, then five yes/no
 // questions. The check runs on the device against the cached pattern library,
@@ -122,6 +122,8 @@ export function CheckApp({
   const [signs, setSigns] = useState<Sign[] | null>(null);
   /** Who answered: the AI, the phone's own phrase check, or nobody (couldn't check). */
   const [engine, setEngine] = useState<"ai" | "local" | "none" | null>(null);
+  // A "clear" with almost nothing told is not an all-clear: say so and ask for more.
+  const needMore = step.kind === "result" && step.r.level === "clear" && engine !== "ai" && engine !== "none" && !hasEnoughToJudge(answers, said);
   const [busy, setBusy] = useState(false);
   /** The free AI tier can take 20 s or more: after a few seconds, say what to do meanwhile. */
   const [slow, setSlow] = useState(false);
@@ -530,12 +532,12 @@ export function CheckApp({
       {step.kind === "result" && (
         <div className="flex flex-col gap-5 animate-in fade-in duration-300">
           {step.r.level !== "stop" && (
-            <section className={`rounded-[28px] p-6 ${step.r.level === "caution" ? "bg-warn-soft" : "bg-calm-soft"}`}>
+            <section className={`rounded-[28px] p-6 ${step.r.level === "clear" && !needMore ? "bg-calm-soft" : "bg-warn-soft"}`}>
               <h1 className="display text-[38px] leading-[1.06]">
-                {step.r.level === "caution" ? t.cautionTitle : t.clearTitle}
+                {needMore ? t.needMoreTitle : step.r.level === "caution" ? t.cautionTitle : t.clearTitle}
               </h1>
               <p className="mt-2 text-[19px]">
-                {engine === "none" ? t.couldNotCheck : step.r.level === "caution" ? t.cautionBody : t.clearBody}
+                {engine === "none" ? t.couldNotCheck : needMore ? t.needMoreBody : step.r.level === "caution" ? t.cautionBody : t.clearBody}
               </p>
               {step.r.level === "caution" && step.r.pattern && (
                 <p className="mt-3 text-[18px] font-bold">{step.r.pattern.rule[lang]}</p>
@@ -562,6 +564,11 @@ export function CheckApp({
                 ))}
               </ul>
             </section>
+          )}
+          {needMore && (
+            <BigButton variant="brand" onClick={() => setStep({ kind: "say" })}>
+              {t.needMoreAsk}
+            </BigButton>
           )}
           {engine === "ai" && signs?.length === 0 && <p className="text-[18px] text-ink-soft">{t.noticedNone}</p>}
           {aiPending && (
@@ -590,7 +597,7 @@ export function CheckApp({
               {t.whatsappFamily(trusted.name.split(" ")[0])}
             </a>
           )}
-          <PostCall t={t} patternId={step.r.pattern?.id} warned={step.r.level !== "clear"} />
+          {!needMore && <PostCall t={t} patternId={step.r.pattern?.id} warned={step.r.level !== "clear"} />}
           <Link href="/help" className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-alarm/30 text-[18px] font-bold text-alarm">
             <Building2 className="size-5" />
             {t.alreadyPaid}
