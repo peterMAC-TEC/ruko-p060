@@ -199,6 +199,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         audioCtx.current?.close().catch(() => {});
         const ctx = new AC();
         audioCtx.current = ctx;
+        void ctx.resume(); // some browsers start an audio context paused; the meter needs it running
         const an = ctx.createAnalyser();
         an.fftSize = 512;
         ctx.createMediaStreamSource(s).connect(an);
