@@ -70,4 +70,12 @@ ok("a short description of a normal call is enough", hasEnoughToJudge({}, "my da
 ok("empty input never crashes the radar and never reaches caution", runRadar(lib, { answers: {}, said: "" }).level === "clear");
 ok("garbage text never crashes the radar", runRadar(lib, { answers: {}, said: " ???  ;;; <script>" }).level === "clear");
 
+ok("'I don't know if it was a scam' is not enough, however long", !hasEnoughToJudge({ stay_on_call: "no" }, "Someone called me about my bank account. I don't know if it was a scam."));
+ok("a normal call told in words is still enough", hasEnoughToJudge({}, "My daughter called to say she reached home safely."));
+ok("claiming to be police, with no other answer, is a caution and names the scam", (() => {
+  const r = runRadar(lib, { identity: "police", answers: { stay_on_call: "no", pay_avoid_arrest: "no", install_app: "no", share_otp: "no", keep_secret: "no" } });
+  return r.level === "caution" && r.pattern?.id === "digital_arrest";
+})());
+ok("claiming to be a courier or bank with no warning sign stays clear (no false alarm)", runRadar(lib, { identity: "bank", answers: { pay_avoid_arrest: "no" } }).level === "clear" && runRadar(lib, { identity: "courier", answers: {} }).level === "clear");
+
 console.log(`all ${n} Scam Radar checks passed`);

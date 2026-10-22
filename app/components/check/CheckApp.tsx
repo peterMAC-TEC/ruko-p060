@@ -123,7 +123,7 @@ export function CheckApp({
   /** Who answered: the AI, the phone's own phrase check, or nobody (couldn't check). */
   const [engine, setEngine] = useState<"ai" | "local" | "none" | null>(null);
   // A "clear" with almost nothing told is not an all-clear: say so and ask for more.
-  const needMore = step.kind === "result" && step.r.level === "clear" && engine !== "ai" && engine !== "none" && !hasEnoughToJudge(answers, said);
+  const needMore = step.kind === "result" && step.r.level === "clear" && engine !== "none" && !hasEnoughToJudge(answers, said);
   const [busy, setBusy] = useState(false);
   /** The free AI tier can take 20 s or more: after a few seconds, say what to do meanwhile. */
   const [slow, setSlow] = useState(false);

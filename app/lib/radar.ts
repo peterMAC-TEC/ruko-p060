@@ -36,6 +36,12 @@ export interface RadarResult {
   signals: string[];
 }
 
+/** The person is telling Ruko they cannot tell. */
+const UNSURE = /\b(do ?n'?t|dont|do not|not) (know|sure) (if|whether|what|who)|\bwas (it|this|that) a scam|\bis (it|this|that) a scam|\bmaybe\b|\bscam (hai|tha|thi) ya nahi|\bpata nahi (ki|kya)/i;
+
+/** Callers who claim to be this never arrest or collect money by phone, so the claim alone is a warning. */
+const AUTHORITY_ALONE: ReadonlySet<string> = new Set(["police"]);
+
 /** "I don't know" and similar say nothing about the call, however many words they use. */
 const VAGUE = /\b(i )?(do ?n'?t|dont|didn'?t) (know|understand|remember)|\bidk\b|\bnot sure\b|\bno idea\b|\bnothing\b|\bsomething\b|\bpata nahi\b|\bmaloom nahi\b|\bkuch nahi\b|\bhmm+\b|\bokay?\b|[^\p{L}\p{N}\s]/giu;
 
@@ -47,7 +53,10 @@ export function hasEnoughToJudge(answers: RadarInput["answers"], said?: string):
   const noes = RADAR_QUESTIONS.filter((q) => answers[q] === "no").length;
   const told = (said ?? "").replace(VAGUE, " ");
   const words = told.trim().split(/\s+/).filter(Boolean).length;
-  return noes >= 3 || words >= 3;
+  if (noes >= 3) return true;
+  // "I don't know if it was a scam" is a question, not evidence, however many words it has.
+  if (UNSURE.test(said ?? "")) return false;
+  return words >= 3;
 }
 
 export function runRadar(lib: PatternLibrary, input: RadarInput): RadarResult {
@@ -84,7 +93,7 @@ export function runRadar(lib: PatternLibrary, input: RadarInput): RadarResult {
   // Hearing two or more of a serious scam's own phrases is a STOP by itself.
   const phraseStop = Boolean(byPhrase && byPhrase.hits >= 2 && byPhrase.p.severity === "high");
   const level: RadarResult["level"] =
-    yes >= threshold || phraseStop ? "stop" : yes > 0 || byPhrase ? "caution" : "clear";
+    yes >= threshold || phraseStop ? "stop" : yes > 0 || byPhrase || (input.identity && AUTHORITY_ALONE.has(input.identity)) ? "caution" : "clear";
 
   return { level, yes, pattern, signals };
 }

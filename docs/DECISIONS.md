@@ -207,3 +207,11 @@ The user chose direction **C, "Ink"** from three samples (`design/ruko-design-di
 - **Why:** with empty input, "I don't know" or mostly "not sure" answers, `/check` used to say "Nothing you told me matches a scam we know", which sounds like an all-clear. For test 3 (bad or ambiguous input) it must ask for more instead.
 - **Rule (plain code, `hasEnoughToJudge` in `lib/radar.ts`):** a clear result needs three firm "no" answers, or at least three meaningful words about the call (filler like "I don't know", "idk", "nothing" is ignored). Otherwise the screen says "I can't tell yet", offers "Tell me what they said", and keeps family and 1930 one tap away. If the AI read something (even finding nothing), the result stands.
 - **Not changed:** the radar's own levels (stop, caution, clear), the STOP threshold, and the family alert and Money Lock rules. Nothing new is alerted or locked for "can't tell yet", to keep false alarms down.
+
+## Audit fixes: ambiguous input must never read as an all-clear (22 Oct)
+
+Found by running the live app against the three MVP tests:
+- **Words path:** "Someone called me about my bank account. I don't know if it was a scam." (and "I don't know") showed "Nothing you told me matches a scam we know." because the "can't tell yet" check was skipped whenever the AI had read the words, and a long sentence counted as enough. Fix: the check now applies after the AI too, and a sentence saying the person is unsure ("I don't know if…", "was it a scam", "maybe") is never enough (`hasEnoughToJudge`, `lib/radar.ts`).
+- **Guided path:** choosing "Police, CBI, customs or a court" and answering no/not sure to everything showed an all-clear for the classic digital-arrest call. Fix: a police/CBI claim alone is now "Be careful, check before you do anything" and names the scam (`AUTHORITY_ALONE`). Other identities (bank, courier, family) are not escalated by the claim alone, to avoid false alarms on genuine calls.
+- **Unchanged:** STOP threshold, family alert and Money Lock rules, AI role (it still only adds evidence).
+- **Noted, not fixed:** on the free AI tier, text the AI cannot read in 10 s falls back to the phone's own check ("Checked on this phone only…"), so results can take about 11 s instead of 10.
