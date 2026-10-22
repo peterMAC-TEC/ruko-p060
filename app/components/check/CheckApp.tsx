@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Guardian } from "@/components/brand/Guardian";
 import { RukoWordmark } from "@/components/brand/RukoMark";
 import { BackLink, BigButton, ElderShell, StepDots, Title } from "@/components/elder/ui";
 import { CompanionApp } from "@/components/companion/CompanionApp";
@@ -366,7 +367,12 @@ export function CheckApp({
 
       {step.kind === "who" && (
         <div className="flex flex-col gap-5 animate-in fade-in duration-300">
-          <Title sub={t.checkIntroTitle}>{t.whoCalled}</Title>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <Title sub={t.checkIntroTitle}>{t.whoCalled}</Title>
+            </div>
+            <Guardian mood="safe" className="size-16" />
+          </div>
           <div className="grid grid-cols-2 gap-3">
             {IDENTITIES.map((id) => {
               const I = IDENTITY_ICONS[id];
@@ -408,8 +414,11 @@ export function CheckApp({
         <div className="flex flex-1 flex-col gap-6" key={step.i}>
           <BackLink t={t} onBack={() => setStep(step.i === 0 ? { kind: "who" } : { kind: "q", i: step.i - 1 })} />
           <div className="flex items-center justify-between gap-3">
-            <StepDots step={step.i + 1} of={RADAR_QUESTIONS.length} />
-            <span className="text-[15px] text-ink-soft tabular">{t.qCount(step.i + 1, RADAR_QUESTIONS.length)}</span>
+            <div className="flex flex-col gap-2">
+              <span className="text-[20px] font-semibold tabular">{t.qCount(step.i + 1, RADAR_QUESTIONS.length)}</span>
+              <StepDots step={step.i + 1} of={RADAR_QUESTIONS.length} />
+            </div>
+            <Guardian mood="checking" className="size-14" />
           </div>
           {identity === "bank" &&
             (bankCalls.verified.length ? (
@@ -421,7 +430,7 @@ export function CheckApp({
                 {t.noBankCall}
               </p>
             ))}
-          <h1 className="display text-[40px] leading-[1.06] animate-in fade-in slide-in-from-bottom-1 duration-300">
+          <h1 className="display text-[40px] leading-[1.06] m-slide">
             {t.radarQuestions[RADAR_QUESTIONS[step.i]]}
           </h1>
           <div className="flex flex-wrap gap-3">
@@ -442,11 +451,11 @@ export function CheckApp({
           </div>
           {micMissing && <p className="text-[16px] text-ink-soft">{t.noMic}</p>}
           <div className="mt-auto grid grid-cols-2 gap-3">
-            <button onClick={() => answer("yes")} className="flex min-h-20 flex-col items-center justify-center gap-1 rounded-2xl bg-ink text-[22px] font-bold text-white active:scale-[0.98]">
+            <button onClick={() => answer("yes")} className="press flex min-h-[112px] flex-col items-center justify-center gap-1 rounded-2xl bg-ink text-[30px] font-bold text-white">
               <Check className="size-7" strokeWidth={2.6} />
               {t.yes}
             </button>
-            <button onClick={() => answer("no")} className="flex min-h-20 flex-col items-center justify-center gap-1 rounded-2xl bg-white text-[22px] font-bold shadow-soft active:scale-[0.98]">
+            <button onClick={() => answer("no")} className="press flex min-h-[112px] flex-col items-center justify-center gap-1 rounded-2xl bg-white text-[30px] font-bold shadow-soft">
               <X className="size-7" strokeWidth={2.6} />
               {t.no}
             </button>

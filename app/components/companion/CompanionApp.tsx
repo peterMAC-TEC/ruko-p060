@@ -3,8 +3,11 @@
 import { ArrowRight, Check, Mic, Phone, Send, Volume2, VolumeX } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Guardian } from "@/components/brand/Guardian";
 import {
   ACTION_LABEL,
+  SCRIPTS,
+  SITUATIONS,
   STEPS,
   actionsFor,
   fallbackAnswer,
@@ -49,6 +52,8 @@ export function CompanionApp({
   const [text, setText] = useState("");
   const [thinking, setThinking] = useState(false);
   const [extra, setExtra] = useState<Action[]>([]);
+  const [showSay, setShowSay] = useState(false);
+  const [copied, setCopied] = useState<number | null>(null);
   const sent = useRef(new Set<ElderStatus>());
 
   // Remember the language between visits.
@@ -151,6 +156,22 @@ export function CompanionApp({
     [elderId, lang, thinking, tell],
   );
 
+  // A picked situation gets fixed, reviewed guidance, instantly and with no AI.
+  const pick = (s: (typeof SITUATIONS)[number]) => {
+    setLog((l) => [...l, { from: "me", text: s.label[lang] }, { from: "ruko", text: s.guidance[lang] }]);
+    setExtra(s.actions);
+    setShowSay(false);
+  };
+  const copy = async (i: number, text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(i);
+      setTimeout(() => setCopied(null), 2000);
+    } catch {
+      // Some phones refuse; the line is on screen to read aloud instead.
+    }
+  };
+
   const mic = useVoiceCapture(lang === "en" ? "en" : "hi", (o) => {
     if (o.engine === "browser") void ask(o.transcript);
   });
@@ -182,6 +203,11 @@ export function CompanionApp({
       }}
       speaking={speaking}
     >
+      {step === "hello" && autoStart && (
+        <p className="mt-6 rounded-[18px] bg-safe-soft p-4 text-[22px] leading-snug font-semibold text-safe m-rise">
+          {lang === "en" ? "You have paused. That was a good step." : "Aap ruk gaye. Yeh achha kadam tha."}
+        </p>
+      )}
       <p className="display mt-6 text-[46px] leading-[1.04]" aria-live="polite">
         {thinking ? (lang === "en" ? "One moment…" : "Ek minute…") : line}
       </p>
@@ -207,6 +233,34 @@ export function CompanionApp({
 
         {step === "free" && (
           <>
+            {actions.length === 0 &&
+              SITUATIONS.map((s) => (
+                <button key={s.id} onClick={() => pick(s)} className={row}>
+                  <span>{s.label[lang]}</span>
+                  <ArrowRight className="size-6 shrink-0" strokeWidth={1.6} />
+                </button>
+              ))}
+            <button onClick={() => setShowSay((v) => !v)} aria-expanded={showSay} className={row}>
+              <span>{lang === "en" ? "What can I say?" : "Main kya keh sakta hoon?"}</span>
+              <ArrowRight className={`size-6 shrink-0 transition ${showSay ? "rotate-90" : ""}`} strokeWidth={1.6} />
+            </button>
+            {showSay && (
+              <ul className="m-rise flex flex-col gap-3 border-b border-hair py-4">
+                {SCRIPTS.map((sc, i) => (
+                  <li key={i} className="rounded-[18px] bg-cream/60 p-4">
+                    <p className="display text-[26px] leading-snug">&ldquo;{sc[lang]}&rdquo;</p>
+                    <div className="mt-3 flex gap-2">
+                      <button onClick={() => say(sc[lang], "en")} className="min-h-12 rounded-full bg-white px-5 text-[17px] font-semibold shadow-soft">
+                        {lang === "en" ? "Read it aloud" : "Zor se padhiye"}
+                      </button>
+                      <button onClick={() => void copy(i, sc[lang])} className="min-h-12 rounded-full bg-white px-5 text-[17px] font-semibold shadow-soft">
+                        {copied === i ? (lang === "en" ? "Copied" : "Copy ho gaya") : lang === "en" ? "Copy" : "Copy karein"}
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
             {actions.map((a) => (
               <OptionButton key={a} o={{ id: a, label: ACTION_LABEL[a], action: a }} lang={lang} trusted={trusted} onChoose={choose} onClose={onClose} />
             ))}
@@ -339,13 +393,14 @@ function Shell({
           </button>
         </div>
 
-        <p className="mt-8 flex items-center gap-3 text-[17px] text-ink-soft">
+        <div className="mt-6 flex items-center gap-3 text-[17px] text-ink-soft">
+          <Guardian mood="after" className="size-16" />
           <span className="relative grid size-3 place-items-center">
             {speaking && <span className="absolute size-5 animate-ping rounded-full bg-ink/20" />}
             <span className="size-2.5 rounded-full bg-ink" />
           </span>
           {lang === "en" ? "Ruko is with you" : "Ruko aapke saath hai"}
-        </p>
+        </div>
         {children}
       </div>
     </div>

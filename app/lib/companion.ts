@@ -212,3 +212,53 @@ export const ACTION_LABEL: Record<Action, Text> = {
   report: { en: "Help warn others", hing: "Doosron ko chetane mein madad" },
   close: { en: "I'm okay now", hing: "Ab main theek hoon" },
 };
+
+/**
+ * Four situations a person can pick instead of typing, each with fixed, reviewed guidance (never AI: money, arrest and
+ * secrecy are too important to improvise). The guidance never tells anyone to pay or share anything.
+ */
+export const SITUATIONS: Array<{ id: string; label: Text; guidance: Text; actions: Action[] }> = [
+  {
+    id: "police",
+    label: { en: "Someone says they are from the police", hing: "Koi kehta hai woh police se hai" },
+    guidance: {
+      en: "Real police do not arrest anyone over a phone or video call. Please hang up. To check, call 112 or your local police station yourself, not a number the caller gave you.",
+      hing: "Asli police phone ya video call par kisi ko giraftar nahi karti. Kripya call kaat dijiye. Check karne ke liye khud 112 ya apne local thane par phone kijiye, caller ke diye number par nahi.",
+    },
+    actions: ["call_family", "call_1930"],
+  },
+  {
+    id: "money",
+    label: { en: "Someone is asking me to transfer money", hing: "Koi mujhse paise transfer karne ko keh raha hai" },
+    guidance: {
+      en: "Please do not send money to anyone who called you, whatever they say. No office asks you to transfer money to prove you are innocent. Tell your family before you do anything.",
+      hing: "Jisne aapko call kiya hai, usse kisi bhi baat par paise mat bhejiye. Koi office nirdosh sabit karne ke liye paise transfer karne ko nahi kehta. Kuch bhi karne se pehle parivar ko bataiye.",
+    },
+    actions: ["call_family", "call_1930"],
+  },
+  {
+    id: "secret",
+    label: { en: "Someone told me not to speak to my family", hing: "Kisi ne kaha parivar se baat mat karo" },
+    guidance: {
+      en: "A caller who says not to tell your family is a warning sign. Real officers never ask for that. Please tell someone you trust, right now.",
+      hing: "Jo caller parivar ko batane se mana kare, woh khatre ki nishani hai. Asli officer aisa kabhi nahi kehte. Abhi kisi apne ko bataiye.",
+    },
+    actions: ["call_family"],
+  },
+  {
+    id: "unsure",
+    label: { en: "I am not sure whether this call is real", hing: "Mujhe pata nahi yeh call asli hai ya nahi" },
+    guidance: {
+      en: "That is okay. If you are not sure, do not send money or read out any code. Hang up, then check by calling the bank or office on a number you already know.",
+      hing: "Koi baat nahi. Agar pakka nahi hai, to paise mat bhejiye aur koi code mat batayiye. Call kaatiye, phir bank ya office ko aise number par phone karke check kijiye jo aapke paas pehle se hai.",
+    },
+    actions: ["call_family", "call_1930"],
+  },
+];
+
+/** "What can I say?": short lines to say out loud to a caller, to read aloud or copy. They refuse and stall; they never argue. */
+export const SCRIPTS: Text[] = [
+  { en: "I will verify this independently.", hing: "Main yeh khud alag se verify karunga." },
+  { en: "I will call back using an official number.", hing: "Main official number par wapas call karunga." },
+  { en: "I need to speak to my family before doing anything.", hing: "Kuch bhi karne se pehle mujhe apne parivar se baat karni hai." },
+];

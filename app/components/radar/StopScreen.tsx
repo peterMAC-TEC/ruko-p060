@@ -3,6 +3,7 @@
 import { ChevronDown, MessageCircle, Phone, PhoneOff } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { Guardian } from "@/components/brand/Guardian";
 import type { Strings, UiLang } from "@/lib/i18n";
 import type { ScamPattern } from "@/lib/patterns";
 import { waLink } from "@/lib/utils";
@@ -34,15 +35,19 @@ export function StopScreen({
   const row = "flex min-h-[64px] items-center justify-between gap-3 border-b border-hair text-[21px] font-semibold";
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto border-t-[10px] border-alarm bg-white text-ink animate-in fade-in duration-200" role="alertdialog" aria-labelledby="stop-title">
+    <div className="fixed inset-0 z-50 overflow-y-auto border-t-[10px] border-alarm bg-white text-ink m-fade" role="alertdialog" aria-labelledby="stop-title">
       <div className="mx-auto flex min-h-full max-w-md flex-col px-6 pt-6 pb-8">
-        <p className="text-[15px] font-semibold tracking-[0.16em] text-alarm uppercase">{t.stopIntro}</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-[15px] font-semibold tracking-[0.16em] text-alarm uppercase">{t.stopIntro}</p>
+          <Guardian mood="danger" className="size-14" />
+        </div>
         <h1 id="stop-title" className="display mt-6 text-[150px] leading-[0.86] text-alarm">
           {t.stopWord === "STOP" ? "Stop." : `${t.stopWord}.`}
         </h1>
         <div className="my-5 h-[3px] bg-alarm" />
         <p className="display text-[26px] leading-tight text-ink-soft">{pattern?.name[lang] ?? t.verdictHigh}</p>
         <p className="display mt-3 text-[36px] leading-[1.12]">{rule}</p>
+        <p className="mt-5 border-l-4 border-alarm pl-4 text-[24px] leading-snug font-semibold">{t.stopInstruction}</p>
         <p className="mt-4 text-[17px] text-ink-soft">{t.notYourFault}</p>
         {familyAlerted && <p className="mt-2 text-[17px] font-semibold">✓ {t.familyTold}</p>}
 
@@ -55,7 +60,7 @@ export function StopScreen({
             className="flex min-h-[72px] items-center justify-center gap-3 rounded-[18px] bg-ink text-[23px] font-semibold text-white"
           >
             <PhoneOff className="size-6" strokeWidth={2} />
-            {t.hangUp}
+            {t.iHaveHungUp}
           </button>
           {hangUpShown && <p className="mt-3 rounded-[16px] bg-paper-2 p-4 text-[18px]">{t.hangUpHow}</p>}
 

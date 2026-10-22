@@ -1,7 +1,7 @@
 // Ruko Companion checks: the script, the safety filter on the AI's replies, and the offline answers.
 // Run: npx tsx scripts/check-companion.ts
 import assert from "node:assert/strict";
-import { ELDER_STATUSES, FAMILY_LINE, MAX_REPLY_CHARS, STEPS, actionsFor, fallbackAnswer, safeReply, type StepId } from "../lib/companion";
+import { ELDER_STATUSES, FAMILY_LINE, MAX_REPLY_CHARS, SCRIPTS, SITUATIONS, STEPS, actionsFor, fallbackAnswer, safeReply, type StepId } from "../lib/companion";
 
 let n = 0;
 const ok = (name: string, cond: boolean, detail = "") => {
@@ -52,5 +52,12 @@ ok("scared → family", q("I am very scared").intent === "call_family");
 ok("Hinglish question gets a Hinglish answer", /mat bhejiye/.test(q("paise bhejna hai kya?", "hing").reply));
 ok("anything else → the safe default", q("what is the weather").intent === "other" && /hang up/i.test(q("what is the weather").reply));
 ok("every offline answer passes the safety filter", ["send money", "otp please", "police arrest", "already paid", "scared", "family call", "weather"].every((x) => safeReply(q(x).reply) !== null && safeReply(q(x, "hing").reply) !== null));
+
+// The situations a person can pick, and the lines they can say
+ok("there are four situations, each with guidance in both languages", SITUATIONS.length === 4 && SITUATIONS.every((x) => x.guidance.en && x.guidance.hing && x.label.en && x.label.hing));
+ok("every fixed guidance line is safe and short", SITUATIONS.every((x) => safeReply(x.guidance.en) !== null && x.guidance.en.length <= MAX_REPLY_CHARS && x.guidance.hing.length <= MAX_REPLY_CHARS));
+ok("no guidance tells anyone to pay, share a code or keep a secret", SITUATIONS.every((x) => !/(send|transfer|pay) (the )?money (to|now)|share (the |your )?(otp|pin)|keep (it )?secret/i.test(x.guidance.en)));
+ok("every situation offers a way to reach a person", SITUATIONS.every((x) => x.actions.includes("call_family") || x.actions.includes("call_1930")));
+ok("the three 'what can I say' lines are short, in both languages", SCRIPTS.length === 3 && SCRIPTS.every((x) => x.en.split(" ").length <= 12 && x.hing.length > 0));
 
 console.log(`all ${n} companion checks passed`);
