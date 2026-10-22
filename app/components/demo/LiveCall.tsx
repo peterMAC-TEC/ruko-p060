@@ -698,9 +698,9 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           {/* The caller: a circle that glows while he speaks, his name, and what he is saying (captions, always on). */}
           <div className="mt-4 flex items-center gap-5">
             <span className="relative grid size-24 shrink-0 place-items-center" aria-hidden>
-              <span className={`absolute inset-0 rounded-full border border-white/30 transition-transform duration-150 ${status === "speaking" ? "motion-safe:animate-ping" : ""}`} style={{ transform: `scale(${status === "listening" && !muted ? 1 + level * 0.45 : 1})` }} />
-              <span className={`absolute inset-2 rounded-full border border-white/40 ${status === "speaking" ? "motion-safe:animate-pulse" : ""}`} />
-              <span className="relative grid size-16 place-items-center rounded-full bg-white/15 text-[30px] text-white">S</span>
+              <span className={`absolute inset-0 rounded-full border border-[#38e1ff]/60 transition-transform duration-150 ${status === "speaking" ? "motion-safe:animate-ping" : ""}`} style={{ transform: `scale(${status === "listening" && !muted ? 1 + level * 0.45 : 1})` }} />
+              <span className={`absolute inset-2 rounded-full border border-[#38e1ff]/40 ${status === "speaking" ? "motion-safe:animate-pulse" : ""}`} />
+              <span className="relative grid size-16 place-items-center rounded-full bg-[#38e1ff]/15 text-[30px] text-[#38e1ff]">S</span>
             </span>
             <div>
               <p className="text-[24px] font-semibold">Officer Sethi</p>
@@ -722,7 +722,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             </p>
             {micTest === "ok" && !muted && (
               <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/10" role="meter" aria-label="Microphone level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}>
-                <div className="h-full rounded-full bg-white transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
+                <div className="h-full rounded-full bg-[#38e1ff] transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
               </div>
             )}
             <p className="mt-3 text-[22px] leading-snug">
@@ -919,6 +919,21 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
               {en ? "Run the call again" : "Call phir se chalaiye"}
             </button>
           </div>
+          <nav aria-label="Keep exploring" className="mt-6 rounded-[22px] bg-[#060a10] p-5 text-white">
+            <p className="font-mono text-[12px] tracking-[0.14em] text-[#38e1ff] uppercase">{en ? "Keep exploring" : "Aage dekhiye"}</p>
+            <div className="mt-3 grid gap-2">
+              {[
+                ["/family", en ? "See the family phone" : "Parivar ka phone dekhiye"],
+                ["/console", en ? "See what the bank's fraud desk saw" : "Bank ke fraud desk ne kya dekha"],
+                ["/demo/how", en ? "How it works under the hood" : "Andar se yeh kaise kaam karta hai"],
+                ["/demo", en ? "Back to the control room" : "Control room par wapas"],
+              ].map(([href, label]) => (
+                <Link key={href} href={href} className="flex min-h-14 items-center justify-between rounded-[14px] border border-white/15 px-4 text-[18px] font-semibold transition hover:border-[#38e1ff] hover:text-[#38e1ff]">
+                  {label} <span aria-hidden>→</span>
+                </Link>
+              ))}
+            </div>
+          </nav>
           <p className="mt-5 display text-[26px] leading-snug">{en ? "Either way, the money didn't move. Ruko doesn't try to win the argument with a scammer. It protects the moment that matters." : "Dono mein se jo bhi ho, paise nahi gaye. Ruko scammer se behes jeetne ki koshish nahi karta. Woh sahi pal ko bachata hai."}</p>
           <p className="mt-4 flex items-center justify-between gap-3 border-t border-hair pt-3 text-[16px] text-ink-soft">
             <a href="tel:1930" className="min-h-12 content-center text-ink"><b className="text-[22px] tabular">1930</b> helpline</a>

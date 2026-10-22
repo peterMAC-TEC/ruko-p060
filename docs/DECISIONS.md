@@ -303,3 +303,10 @@ Built on a branch, **not merged and not deployed to the live address**, so the v
 - **Caveat, same as the older demo:** the recordings come from Microsoft's free Edge voices through the community `edge-tts` package. That is an unofficial route, not a contracted API. It is used only to make the files once; the app never calls it. The clean upgrade is an official voice key (Sarvam AI). Hinglish is read by the Indian English voice, which I could not listen to here.
 - **Trade-off:** AI-reworded lines have no recording, so they would use the browser's voice. AI wording is therefore OFF by default (a tick box on the first screen turns it on). The scripted answer tree still reacts to what the person says, by rules, in the recorded voice.
 - The name is not used in recorded lines (it would break the recording); it is only passed to the AI when AI wording is on.
+
+## 23 Oct: control-room look, free-roam hub, Under the hood
+
+- Owner's answers: free-roam hub (no forced tour), dark cyber-security look, and an "Under the hood" page.
+- **Look:** judge-facing screens (`/`, `/demo`, `/demo/how`, and the top bar on the fraud desk, results, Ruko Line, family phone, bank and setup) use a near-black background, a faint blueprint grid, cyan for action and green for "live/ok", mono labels, red only for danger. The calm elder screens (check, companion, family alert content, STOP) keep the light, large-type Ink look on purpose.
+- **Flow:** `/` and `/demo` open on one big "Take a live scam call" card, then nine cards for everything else (each tagged front end / back end / code / AI). A control-room bar (`components/tech/TechNav.tsx`) keeps every part one tap away and pins "Live call" in cyan. The call's result screen ends with "Keep exploring" links (family phone, fraud desk, under the hood, control room). Suggested order is shown as step chips, not enforced.
+- **Under the hood** (`/demo/how`): the path of one call (code vs AI, with file names), a live Ruko Guard box that runs the real `assessGuard` in the browser, the safety rails, and the honest limits.

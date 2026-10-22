@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { JetBrains_Mono, Newsreader, Noto_Sans_Devanagari, Public_Sans } from "next/font/google";
 import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
+import { TechNav } from "@/components/tech/TechNav";
 
 // Ink: Public Sans (clear, neutral, easy to read at large sizes) for the interface, Newsreader for the big, light display words.
 const publicSans = Public_Sans({ variable: "--font-public", subsets: ["latin"], weight: ["400", "600", "800"] });
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${publicSans.variable} ${devanagari.variable} ${newsreader.variable} ${mono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}
+      <body className="min-h-full flex flex-col">
+        <TechNav />
+        {children}
         <SiteChrome />
       </body>
     </html>
