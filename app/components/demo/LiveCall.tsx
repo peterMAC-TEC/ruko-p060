@@ -16,7 +16,7 @@ import { SCALE, stoppedBeforePay } from "@/lib/trial";
 import { clipPlan, RUKO_STOP, type LiveManifest } from "@/lib/live-audio";
 import { hush as speechHush, ring } from "@/lib/voice";
 import { CallTimeline, KaraokeCaption, TacticChip, TensionMeter, Waveform } from "@/components/motion/call-motion";
-import { MotionToggle } from "@/components/motion/motion";
+import { Confetti, MotionToggle } from "@/components/motion/motion";
 import { CallerFace, SilhouetteToShield } from "@/components/character/CallerFace";
 import { expressionFor, type CallerExpression } from "@/lib/caller-expression";
 import { TACTIC_WHY } from "@/lib/tactic-explain";
@@ -1043,6 +1043,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       {phase === "result" && (
         <section className="m-rise flex flex-1 flex-col">
           <p className="mt-4 inline-block self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">{en ? "Demo data. Not real trial data." : "Demo data. Asli trial data nahi."}</p>
+          {stopped && (
+            <div className="relative">
+              <Confetti />
+            </div>
+          )}
           <h1 className="display mt-3 text-[46px] leading-[1.04]">{ending === "A" ? (en ? "You stopped before paying." : "Aap paise bhejne se pehle ruk gaye.") : tx && ["blocked", "cancelled"].includes(tx.status) ? (en ? "The payment was held and blocked." : "Payment ruka aur block hua.") : en ? "The payment was held." : "Payment ruka hua hai."}</h1>
           <p className="mt-3 text-[21px] leading-snug">
             {ending === "A"

@@ -5,6 +5,7 @@ import { Chip, TechBackdrop } from "@/components/tech/TechBackdrop";
 import { FeatureGrid, LiveCallCard } from "@/components/tech/FeatureGrid";
 import { flags } from "@/lib/flags";
 import { Reveal, RotatingWords, WordByWord } from "@/components/motion/motion";
+import { FactsStrip, HeroCaller, HowSaves, ProofPoints } from "@/components/tech/HomeSections";
 
 // The front door for judges: the live scam call first, then every other part of Ruko as a card, in any order.
 // Calm, large-type elder screens live elsewhere (/check, /companion, /family ...); this page is the control room.
@@ -16,6 +17,8 @@ export default function Home() {
     <div className="relative min-h-[100dvh] overflow-hidden bg-[#060a10] text-white">
       <TechBackdrop />
       <main className="relative mx-auto max-w-6xl px-4 pt-10 pb-20 sm:px-6 sm:pt-10">
+        <div className="grid items-center gap-8 lg:grid-cols-[1.5fr_1fr]">
+          <div>
         <div className="flex flex-wrap items-center gap-2">
           <Chip tone="green">
             <span className="size-2 rounded-full bg-[#4ade80] motion-safe:animate-pulse" /> Demo mode
@@ -44,9 +47,21 @@ export default function Home() {
           Scammers pose as police and keep older people on a call until they pay. Ruko listens for the pressure, steps in with one word, and brings the family in.
         </p>
 
+        <Link
+          href="/demo/live"
+          className="press m-tap mt-6 inline-flex min-h-[72px] items-center gap-3 rounded-[18px] bg-[#38e1ff] px-8 text-[24px] font-semibold text-[#041016] shadow-[0_0_40px_rgba(56,225,255,0.35)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        >
+          Take a live scam call <ArrowRight className="size-6" strokeWidth={2} />
+        </Link>
+          </div>
+          <HeroCaller />
+        </div>
+
         <div className="mt-6">
           <LiveCallCard />
         </div>
+
+        <FactsStrip />
 
         <div className="mt-10 flex flex-wrap items-center gap-x-3 gap-y-2 font-mono text-[13px] tracking-wide text-white/50 uppercase">
           {STACK.map((s, i) => (
@@ -57,7 +72,15 @@ export default function Home() {
           ))}
         </div>
 
-        <div className="mt-12 flex items-end justify-between gap-4">
+        <div className="mt-14">
+          <HowSaves />
+        </div>
+
+        <div className="mt-14">
+          <ProofPoints />
+        </div>
+
+        <div className="mt-14 flex items-end justify-between gap-4">
           <div>
             <p className="font-mono text-[13px] tracking-[0.14em] text-[#38e1ff] uppercase">Explore Ruko</p>
             <h2 className="mt-1 text-[30px] font-bold tracking-tight sm:text-[40px]">Open anything, in any order</h2>

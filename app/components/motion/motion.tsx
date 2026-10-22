@@ -178,3 +178,72 @@ export function CountUp({ to, format = (n: number) => Math.round(n).toLocaleStri
     </span>
   );
 }
+
+/** A strip of facts that scrolls slowly. Pause button; with reduced motion it is a still, wrapped list. */
+export function Marquee({ items, className = "" }: { items: string[]; className?: string }) {
+  const ok = useMotionOk();
+  const [paused, setPaused] = useState(false);
+  const row = (hidden: boolean) => (
+    <ul className="flex shrink-0 items-center gap-10 pr-10" aria-hidden={hidden || undefined}>
+      {items.map((t) => (
+        <li key={t} className="flex items-center gap-10 whitespace-nowrap">
+          {t}
+          <span className="size-1.5 rounded-full bg-[#38e1ff]" aria-hidden />
+        </li>
+      ))}
+    </ul>
+  );
+  if (!ok) {
+    return (
+      <ul className={`flex flex-wrap gap-x-8 gap-y-2 ${className}`}>
+        {items.map((t) => (
+          <li key={t}>{t}</li>
+        ))}
+      </ul>
+    );
+  }
+  return (
+    <div className={`relative flex items-center gap-3 ${className}`}>
+      <div className="relative min-w-0 flex-1 overflow-hidden" style={{ maskImage: "linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)", WebkitMaskImage: "linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)" }}>
+        <div className="flex w-max" style={{ animation: "ruko-marquee 60s linear infinite", animationPlayState: paused ? "paused" : "running" }}>
+          {row(false)}
+          {row(true)}
+        </div>
+      </div>
+      <button onClick={() => setPaused((p) => !p)} aria-pressed={paused} className="min-h-11 shrink-0 rounded-full border border-white/20 px-4 text-[14px] font-semibold text-white/80">
+        {paused ? "Play" : "Pause"}
+      </button>
+    </div>
+  );
+}
+
+/** A badge that pops in, slightly tilted. Words only. */
+export function Sticker({ children, tilt = -3, delay = 0, className = "" }: { children: ReactNode; tilt?: number; delay?: number; className?: string }) {
+  const ok = useMotionOk();
+  return (
+    <span className={`inline-block rounded-full border-2 border-current px-3 py-1 font-mono text-[12px] font-bold tracking-wide uppercase ${className}`} style={{ transform: `rotate(${tilt}deg)`, animation: ok ? `ruko-pop 0.5s ${delay}ms var(--m-ease) both` : undefined }}>
+      {children}
+    </span>
+  );
+}
+
+/** A short burst of paper confetti for the safe outcome. Once, no flashing, skipped when motion is reduced. */
+export function Confetti() {
+  const ok = useMotionOk();
+  if (!ok) return null;
+  const colors = ["#38e1ff", "#ffffff", "#4ade80", "#fbbf24"];
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-0 overflow-visible">
+      {Array.from({ length: 26 }, (_, i) => {
+        const x = ((i * 37) % 100) - 50;
+        return (
+          <span
+            key={i}
+            className="absolute left-1/2 block h-2.5 w-1.5 rounded-[1px]"
+            style={{ background: colors[i % colors.length], ["--x" as string]: `${x * 3}px`, ["--r" as string]: `${(i * 53) % 360}deg`, animation: `ruko-confetti ${1.3 + (i % 5) * 0.12}s ${(i % 7) * 40}ms cubic-bezier(.2,.7,.3,1) both` }}
+          />
+        );
+      })}
+    </div>
+  );
+}

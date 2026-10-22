@@ -254,3 +254,5 @@
 }
 :root[data-motion="reduce"] .m-word,
 :root[data-motion="reduce"] .m-reveal { opacity: 1 !important; transform: none !important; }
+@keyframes ruko-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes ruko-confetti { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 100% { transform: translate(var(--x), 260px) rotate(var(--r)); opacity: 0; } }

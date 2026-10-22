@@ -5,7 +5,7 @@ import { CountUp } from "@/components/motion/motion";
 // Why this matters: published figures, each with its source on screen. Checked 22 Oct 2026 against the sources named.
 // Only figures that could be confirmed are here. "AI could make scams rise again" is our hypothesis, not a measured trend.
 
-const FACTS: Array<{ big: string; count?: { prefix?: string; to: number; suffix?: string }; text: string; source: string; href: string }> = [
+export const FACTS: Array<{ big: string; count?: { prefix?: string; to: number; suffix?: string }; text: string; source: string; href: string }> = [
   {
     big: "₹22,845 crore",
     count: { prefix: "₹", to: 22845, suffix: " crore" },
