@@ -5,6 +5,7 @@
 - **Live:** **https://ruko-seven.vercel.app** (elder: `/app`, family: `/family`, laptop demo: `/demo`). The demo people, Kamala (72) and her daughter Priya, are an open sandbox. `/lab` and `/results` are locked: open `/lab/unlock?key=<RUKO_LAB_KEY from app/.env.local>` once on the facilitator's browser.
 - **Code:** [app/](app/) (Next.js 16, Supabase, Gemini). Developer notes: [app/README.md](app/README.md) and [app/CLAUDE.md](app/CLAUDE.md).
 - **Field test protocol (10 older adults and their families):** [docs/FIELD-TEST.md](docs/FIELD-TEST.md)
+- **The bots (scammer, defender, companion, survey):** [docs/BOTS.md](docs/BOTS.md)
 - **Decisions:** [docs/DECISIONS.md](docs/DECISIONS.md)
 
 ## What it does
@@ -15,6 +16,7 @@
 | Elder | after **Hang up**, or `/app` → **Talk to Ruko** | **Ruko Companion**: a calm voice and text chat in English or Hinglish. It asks if the caller is still on the line, helps them end the call, asks if money or an OTP already went (then points to 1930), and stays with them until family arrives. Free questions are answered by fixed lines for risky topics and by the AI for the rest, all safety-checked. It talks to the person on their own phone; it never joins the call. |
 | Elder | `/app` → **Tell my family** | A silent alert: nothing a scammer on video would notice. |
 | Family | `/family` | Red alert with sound and vibration ("Ruko's call check says Kamala is probably on a scam call"), a one-line live status from the Companion ("Kamala says the caller has hung up"), **Call Kamala now** right under it, the reasons in plain words, and a "What to say" script. |
+| Research | `/lab`, `/results` | **A scammer bot plays the caller** in the practice calls (fixed script, replies to what the person says, ends kindly after two refusals), then a **survey bot** asks the participant and their family a few quick questions, and anyone can answer the open survey from a QR code. The results page shows the north star, the survey answers and a clearly labelled simulator (below). See [docs/BOTS.md](docs/BOTS.md). |
 | Bank | `/bank`, `/console` | A practice bank: a payment to a "safe account" during a live threat gets a 30-second pause, then a hold; the family is alerted and the fraud desk sees why. |
 | Research | `/lab`, `/results` | Consent-gated role-play scam calls and the **north star: the share of role-played scam calls where the person stops before transferring**, with vs without Ruko, plus false alarms. |
 
@@ -26,7 +28,7 @@
 cd app && npm install && npm run dev -- -p 3200
 ```
 
-Tests: `npm test` (all rule, radar, threat, trial and warning-sign checks). Live AI cases: `npm run check:ai` (uses the free Gemini quota).
+Tests: `npm test` (all rule, radar, threat, trial, warning-sign, companion, bot and survey checks). Simulator: `npm run sim` (the scammer bot against Ruko's own check and the defender bot). Live AI cases: `npm run check:ai` (uses the free Gemini quota).
 
 ## Presenter mode (never depends on the internet or the AI)
 

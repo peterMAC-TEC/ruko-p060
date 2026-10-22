@@ -39,6 +39,7 @@ Read it in the person's language. The Hindi lines for the safety rules are below
 > 6. Please name one family member. They will know the dates, not the times, and their phone may get practice alerts marked DRILL.
 > 7. **What we record:** the steps you reached, times, and button taps. **No audio, no video, no transcripts, no real bank details.** You are a code (P01–P10). The paper list linking your name to your code is destroyed by 30 Nov 2026.
 > 8. **About Ruko's helper:** in the with-Ruko calls, Ruko may talk to you in a chat on your phone to keep you calm. It never joins or listens to the call. What you say or type to it is not kept.
+> 8a. **About the practice caller:** it is a computer program with a computer voice. It listens through the practice screen's microphone and answers what you say. It does not record you: it only uses your words to decide its next line, and then forgets them. It may sometimes use Google's AI to word one sentence, so please don't say real names, numbers or account details. Say "RUKO" or hang up to stop it at any time.
 > 8b. **About Ruko's AI check:** in the with-Ruko calls you may press "Tell me what they said" or "Show me a photo". The words, the voice clip or the picture go to Google's Gemini AI to be read, and Ruko itself keeps none of them. Please don't show real documents during practice.
 > 9. Taking part is voluntary. You can stop at any time, and ask us to delete your results until 26 Oct. Results are shown only as group numbers.
 > 10. Separate yes/no boxes: (a) one real phone call to your own phone; (b) practice alerts to my family member; (c) photos or video for the demo (default **no**); (d) contact me for future studies.
@@ -69,6 +70,9 @@ All callers are fictional ("Central Investigation Cell – DRILL"): no real agen
 The two measured scams reach the same milestones in the same order, so "how far did they get" means the same thing in both.
 
 ## 5. Running one call (facilitator)
+
+The scammer bot plays the caller (leave **Bot plays the caller** ticked). You watch how they reply (never their words) and tick the levels; the bot suggests one. After the debrief, open the survey from the call screen: **Ask P01**, then **Ask their family member**. See [BOTS.md](BOTS.md).
+
 
 1. **Set up:** run the app on the laptop (`npm run dev -- -p 3200`), open `/lab`, enrol the person (code, age band, consent and teach-back ticked) and open their **phone link** on the practice phone. The family member opens `/family` on their own phone.
 2. **Before the call:** record mood (5 faces), language and channel. Open the caller screen. For a with-Ruko call, Ruko is on the practice phone; for a baseline call it shows "paused".

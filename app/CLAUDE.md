@@ -67,6 +67,11 @@ Ruko ("stop" in Hindi) stops digital-arrest scams before money moves.
   - **Tests:** `npm test` (all `scripts/check-*.ts`; `check-signs.ts` is new). Live AI cases: `npm run check:ai`.
   - **Docs:** `../docs/FIELD-TEST.md` (the 10-elder protocol) and `../README.md` (the 2-minute demo script).
 - [x] **Ruko Companion (22 Oct)**, see the last section of ../docs/DECISIONS.md: `lib/companion.ts` (script, safeReply, offline answers; `scripts/check-companion.ts`), `components/companion/*`, `/companion`, `/api/companion/{ask,status}`, `lib/ai/companion.ts`, migration 0009 (`risk_events.elder_status`). Opens from STOP → Hang up and from the home screen. The family screen shows the elder's status. Home simplified ("More" fold).
+- [x] **The bots (22 Oct)**, see ../docs/BOTS.md and the last section of ../docs/DECISIONS.md:
+  - `lib/bots/*` (intent reader, scammer bot, defender bot, guardrails, harness; `scripts/check-bots.ts`, `npm run sim`). The scammer bot plays the caller in the lab (`live.auto`, `heard` action in `/api/lab/calls/[id]`, caller screen sends what it hears).
+  - `lib/survey.ts` + `components/survey/*` + `/survey*` + `/api/survey` + `/api/lab/surveys` (`scripts/check-survey.ts`); kinds participant, family, open, incident. Results: `components/lab/SurveyPanel.tsx`, `SimPanel.tsx`.
+  - Pattern library v2 (`data/scam-patterns.json`; `lib/patterns.ts` weights common words half, ignores reassurance sentences, folds Hindi nukta); the database upgrades itself (`loadPatternLibrary`).
+  - Migrations 0009 to 0011 applied.
 - [ ] Step 6: trials, Expo app, polish, backup video
 
 Dev server: port 3200 (`npm run dev -- -p 3200`).
