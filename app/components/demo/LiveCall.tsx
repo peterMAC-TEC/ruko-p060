@@ -8,7 +8,7 @@ import { CompanionApp } from "@/components/companion/CompanionApp";
 import { VoiceTrust } from "@/components/demo/VoiceTrust";
 import { demoOffline } from "@/lib/demo-mode";
 import { extractName, FILLERS, objectionOf, type Objection } from "@/lib/officer-brain";
-import { officerNext, officerOpen, officerStart, rukoShouldStep, tacticsUsed, TACTIC_LABEL, type Lang, type OfficerState } from "@/lib/demo-officer";
+import { officerNext, officerOpen, officerStart, rukoShouldStep, STAGES, tacticsUsed, TACTIC_LABEL, type Lang, type OfficerState } from "@/lib/demo-officer";
 import { classify } from "@/lib/bots/intent";
 import { BUNDLED_LIBRARY } from "@/lib/patterns";
 import { runRadar } from "@/lib/radar";
@@ -315,7 +315,10 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           }
         }
       }, 80);
+      let spokeInBrowser = false;
       const browserVoice = () => {
+        if (spokeInBrowser || finished) return;
+        spokeInBrowser = true;
         if (typeof window === "undefined" || !("speechSynthesis" in window)) {
           setTimeout(() => finish("done"), Math.min(12_000, 1500 + text.split(/\s+/).length * 380));
           return;
@@ -360,7 +363,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         } catch {
           // No analyser: the waveform falls back to a gentle simulated wave.
         }
-        a.playbackRate = role === "officer" ? Math.min(1.1, 0.98 + urgencyRef.current * 0.02) : 1;
+        a.playbackRate = role === "officer" ? Math.min(1.04, 1 + urgencyRef.current * 0.007) : 1;
         activeClip = a;
         a.onended = next;
         a.onerror = () => {
@@ -535,21 +538,20 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       nameGiven = extractName(reply) ?? nameGiven;
       // Scripted lines are recorded without a name in them; the AI wording (if on) may use it.
       state = { ...state, name: null };
-      turn = officerNext(state, reply, Date.now() - callStart.current, lang);
-      state = turn.state;
-      if (turn.kind === "end") return endCall("stop_word", state);
-      let text = turn.text;
-      let source = "script";
-      // The code has decided the stage and the move; the AI may only reword it. Slow, unsafe or failed: the script line plays.
-      if (aiWordingRef.current && !offline.current && aiFails < 2 && turn.kind !== "nudge" && turn.stage) {
+      // The AI only READS what you meant (when the rules cannot tell). The answer is always a recorded line chosen by
+      // code, so there is one voice, spoken once, with no overlap and no change of tone.
+      let hint: Objection | null = null;
+      const rulesRead = objectionOf(reply);
+      const wordCount = reply.trim().split(/\s+/).filter(Boolean).length;
+      if (aiWordingRef.current && !offline.current && aiFails < 2 && !rulesRead && wordCount >= 3 && intent !== "stop_word" && intent !== "will_pay" && state.stage < 5) {
         let filler: Promise<"done" | "stop" | "barged"> | null = null;
         const fillerTimer = setTimeout(() => {
           const f = FILLERS[(state.seed + convo.length) % FILLERS.length];
           filler = say(f[lang], "officer", id);
         }, 700);
         const ctrl = new AbortController();
-        const abortTimer = setTimeout(() => ctrl.abort(), 4000);
-        // The stop word (spoken, or the big button) is honoured while the AI is still thinking: nothing waits for the AI.
+        const abortTimer = setTimeout(() => ctrl.abort(), 3200);
+        // The stop word (spoken, or the big button) is honoured while the AI is thinking: nothing waits for the AI.
         let stopHit = false;
         const stopWatch = setInterval(() => {
           if (STOP_WORD.test(heard.current.text)) {
@@ -562,12 +564,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             method: "POST",
             headers: { "content-type": "application/json" },
             signal: ctrl.signal,
-            body: JSON.stringify({ turns: convo.slice(-6), stage: turn.stage, rung: Math.min(12, state.stage + state.objections.length), name: nameGiven, lang, objection: turn.objection ?? objectionOf(reply) }),
+            body: JSON.stringify({ mode: "classify", turns: convo.slice(-6), stage: STAGES[Math.max(0, state.stage)], rung: 0, name: null, lang, objection: null }),
           });
-          const j = (await res.json()) as { source?: string; reply?: string };
-          if (j.source === "ai" && j.reply) {
-            text = j.reply;
-            source = "ai";
+          const j = (await res.json()) as { source?: string; objection?: Objection | null };
+          if (j.source === "ai") {
+            hint = j.objection ?? null;
             aiFails = 0;
           } else if (!res.ok) aiFails++;
         } catch {
@@ -586,6 +587,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         }
         if (id !== run.current) return;
       }
+      turn = officerNext(state, reply, Date.now() - callStart.current, lang, hint);
+      state = turn.state;
+      if (turn.kind === "end") return endCall("stop_word", state);
+      const text = turn.text;
+      const source = hint ? "ai" : "recorded";
       convo.push({ who: "officer", text });
       {
         // Ruko's own scam check on everything the caller has said so far (code, the same one behind the STOP screen).
@@ -756,7 +762,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           </div>
           <label className="mt-4 flex min-h-12 items-start gap-3 text-[16px] leading-snug text-ink-soft">
             <input type="checkbox" checked={aiWording} onChange={(e) => setAiWording(e.target.checked)} className="mt-1 size-5 shrink-0" />
-            <span>{en ? "AI adaptive replies: he answers your exact words (best in Edge; if the AI is slow he uses a recorded line instead)." : "AI adaptive jawab: woh aapke asli shabdon ka jawab deta hai (Edge mein best; AI dheema ho to recorded line chalegi)."}</span>
+            <span>{en ? "AI reads what you mean, so he answers even unusual replies. His voice stays the one recorded voice." : "AI samajhta hai aap kya keh rahe hain, isliye woh anokhe jawab ka bhi uttar deta hai. Awaaz wahi recorded awaaz rehti hai."}</span>
           </label>
           <button onClick={consent} className="press mt-auto min-h-[72px] rounded-[18px] bg-ink text-[22px] font-semibold text-white">
             {en ? "I understand" : "Main samajh gaya"}
@@ -860,7 +866,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
               {usedIds.slice(-3).map((id, i, arr) => (
                 <TacticChip key={id} label={TACTIC_LABEL[id] ?? id} why={TACTIC_WHY[id] ?? ""} fresh={i === arr.length - 1} />
               ))}
-              {hud.source && <span className="rounded-full border border-white/15 px-2.5 py-1 font-mono text-[12px] text-white/50 uppercase">{hud.source === "ai" ? (en ? "AI-worded reply" : "AI ka jawab") : en ? "Recorded line" : "Recorded line"}</span>}
+              {hud.source && <span className="rounded-full border border-white/15 px-2.5 py-1 font-mono text-[12px] text-white/50 uppercase">{hud.source === "ai" ? (en ? "AI read your meaning" : "AI ne matlab samjha") : en ? "Recorded line" : "Recorded line"}</span>}
               {!hud.objection && hud.tactics.length === 0 && <span className="text-[14px] text-white/50">{en ? "Waiting for the caller's tactics…" : "Caller ki chaalon ka intezaar…"}</span>}
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { aiConfigured, runTask } from "@/lib/ai";
 import { flags } from "@/lib/flags";
-import { buildOfficerPrompt, guardAiReply, OBJECTIONS } from "@/lib/officer-brain";
+import { buildClassifyPrompt, buildOfficerPrompt, guardAiReply, OBJECTIONS } from "@/lib/officer-brain";
 
 // Words one line for the role-play officer in the live demo call. The state machine in lib/demo-officer.ts decides the
 // stage and what happens next; this only writes the sentence, and guardAiReply checks it. Anything unsafe, slow or
@@ -16,6 +16,7 @@ const Body = z
     name: z.string().max(20).nullable(),
     lang: z.enum(["en", "hing"]),
     objection: z.enum(OBJECTIONS).nullable(),
+    mode: z.enum(["reply", "classify"]).default("reply"),
   })
   .strict();
 
@@ -25,12 +26,22 @@ const Reply = z.object({
   reply: z.string().max(300),
 });
 
+const Classify = z.object({
+  state: z.enum(["agreeing", "doubting", "refusing", "scared", "angry", "asking", "silent", "leaving"]),
+  objection: z.enum([...OBJECTIONS, "none"]),
+});
+
 export async function POST(req: Request) {
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "bad request" }, { status: 400 });
   if (!flags.DEMO_MODE || !aiConfigured()) return Response.json({ source: "script" });
   const b = parsed.data;
   try {
+    if (b.mode === "classify") {
+      // The AI only reads what the person meant. The answer is a recorded line chosen by code.
+      const c = await runTask(Classify, { prompt: buildClassifyPrompt(b) });
+      return Response.json({ source: "ai", objection: c.objection === "none" ? null : c.objection, state: c.state });
+    }
     const r = await runTask(Reply, { prompt: buildOfficerPrompt(b) });
     const verdict = guardAiReply(r.reply, b.stage);
     if (!verdict.ok) return Response.json({ source: "script", rejected: verdict.why });

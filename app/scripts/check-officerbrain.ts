@@ -123,4 +123,10 @@ ok(`${calls} simulated calls: payment ask reached in time, no repeats, nothing u
   const named = officerNext(officerNext(s0, "my name is Asha", 1000, "en").state, "I will call my son", 5000, "en");
   ok("the person's name is used once given", /Asha ji/.test(named.text) || named.kind !== "counter", named.text.slice(0, 40));
 }
+{
+  const s1 = officerOpen(officerStart(0), "en").state;
+  const plain = officerNext(s1, "hmm that sounds rather fishy to me sir", 4000, "en");
+  const hinted = officerNext(s1, "hmm that sounds rather fishy to me sir", 4000, "en", "doubt");
+  ok("an AI hint turns an unusual reply into the right recorded answer", hinted.kind === "counter" && hinted.objection === "doubt" && /D-0417|C-2291|verify/i.test(hinted.text), plain.kind);
+}
 console.log(`all ${n} officer-brain checks passed`);

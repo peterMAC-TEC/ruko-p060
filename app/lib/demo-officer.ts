@@ -186,14 +186,14 @@ const FORWARD: ReadonlySet<Intent> = new Set(["comply", "agree_secret", "will_pa
  * resistance gets at most one counter per stage and three in the whole call, silence gets two nudges, and past 55 seconds
  * every remaining stage is skipped straight to the money. Saying the stop word ends the call at once.
  */
-export function officerNext(state: OfficerState, said: string | Intent, elapsedMs: number, lang: Lang): OfficerTurn {
+export function officerNext(state: OfficerState, said: string | Intent, elapsedMs: number, lang: Lang, hint: Objection | null = null): OfficerTurn {
   const intent: Intent = typeof said === "string" && (INTENTS_SET as ReadonlySet<string>).has(said) ? (said as Intent) : classify(said);
   if (intent === "stop_word" || state.ended) {
     const s = { ...state, ended: "stop_word" as const };
     return { id: "end", text: "", kind: "end", stage: null, reachedPayment: s.reachedPayment, state: s };
   }
   const raw = typeof said === "string" && !INTENTS_SET.has(said);
-  const objection: Objection | null = raw ? objectionOf(said) : null;
+  const objection: Objection | null = raw ? (objectionOf(said) ?? hint) : null;
   const gave = raw ? extractName(said) : null;
   if (gave && !state.name) state = { ...state, name: gave };
   // After the payment ask: the closing line once, then nothing more to say.
