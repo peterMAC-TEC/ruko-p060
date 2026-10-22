@@ -7,6 +7,7 @@ import { Guardian } from "@/components/brand/Guardian";
 import { CompanionApp } from "@/components/companion/CompanionApp";
 import { VoiceTrust } from "@/components/demo/VoiceTrust";
 import { demoOffline } from "@/lib/demo-mode";
+import { FILLERS, objectionOf } from "@/lib/officer-brain";
 import { officerNext, officerOpen, officerStart, rukoShouldStep, tacticsUsed, type Lang, type OfficerState } from "@/lib/demo-officer";
 import { classify } from "@/lib/bots/intent";
 import { BUNDLED_LIBRARY } from "@/lib/patterns";
@@ -77,6 +78,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [muted, setMuted] = useState(false);
   const [showType, setShowType] = useState(false);
   const [canListen, setCanListen] = useState(true);
+  const [sources, setSources] = useState<string[]>([]);
   const [latencies, setLatencies] = useState<number[]>([]);
   const [ending, setEnding] = useState<Ending | null>(null);
   const [familyAlerted, setFamilyAlerted] = useState<boolean | null>(null);
@@ -379,6 +381,10 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     let turn = officerOpen(state, lang);
     state = turn.state;
     setOfficerLine(turn.text);
+    // The conversation lives in memory for this call only. The last six turns go (without digits) to the wording AI.
+    const convo: { who: "officer" | "person"; text: string }[] = [{ who: "officer", text: turn.text }];
+    let aiFails = 0;
+    setSources([]);
     let carry = false;
     let outcome = await say(turn.text, "officer", id);
     for (let guard = 0; guard < 30 && id === run.current; guard++) {
@@ -394,12 +400,50 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       setStatus("thinking");
       const intent = classify(reply);
       if (intent === "agree_secret") setAgreedSecret(true);
+      if (reply) convo.push({ who: "person", text: reply });
       turn = officerNext(state, reply, Date.now() - callStart.current, lang);
       state = turn.state;
       if (turn.kind === "end") return endCall("stop_word", state);
-      setOfficerLine(turn.text);
+      let text = turn.text;
+      let source = "script";
+      // The code has decided the stage and the move; the AI may only reword it. Slow, unsafe or failed: the script line plays.
+      if (!offline.current && aiFails < 2 && turn.kind !== "nudge" && turn.stage) {
+        let filler: Promise<"done" | "stop" | "barged"> | null = null;
+        const fillerTimer = setTimeout(() => {
+          const f = FILLERS[(state.seed + convo.length) % FILLERS.length];
+          filler = say(f[lang], "officer", id);
+        }, 700);
+        const ctrl = new AbortController();
+        const abortTimer = setTimeout(() => ctrl.abort(), 2500);
+        try {
+          const res = await fetch("/api/demo/officer", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            signal: ctrl.signal,
+            body: JSON.stringify({ turns: convo.slice(-6), stage: turn.stage, rung: Math.min(12, state.stage + state.objections.length), name: state.name, lang, objection: turn.objection ?? objectionOf(reply) }),
+          });
+          const j = (await res.json()) as { source?: string; reply?: string };
+          if (j.source === "ai" && j.reply) {
+            text = j.reply;
+            source = "ai";
+            aiFails = 0;
+          } else if (!res.ok) aiFails++;
+        } catch {
+          aiFails++;
+        }
+        clearTimeout(fillerTimer);
+        clearTimeout(abortTimer);
+        if (filler) {
+          const f = await (filler as Promise<"done" | "stop" | "barged">);
+          if (f === "stop") return endCall("stop_word", state);
+        }
+        if (id !== run.current) return;
+      }
+      convo.push({ who: "officer", text });
+      setOfficerLine(text);
       setLatencies((l) => [...l.slice(-7), Date.now() - tReply]);
-      outcome = await say(turn.text, "officer", id);
+      setSources((l) => [...l.slice(-7), source]);
+      outcome = await say(text, "officer", id);
     }
   }, [endCall, lang, listen, ruko, say, startRecognition]);
 
@@ -664,7 +708,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           <details className="mt-4 text-[14px] text-ink-soft">
             <summary className="min-h-10 cursor-pointer py-2">Debug: latency</summary>
             <p>
-              Reply to officer speech: {latencies.length ? latencies.map((l) => `${l} ms`).join(", ") : "no turns yet"}. Voice out: {typeof window !== "undefined" && "speechSynthesis" in window ? "browser speech" : "none (captions only)"}. Voice in:{" "}
+              Wording: {sources.length ? sources.join(", ") : "none yet"}. Reply to officer speech: {latencies.length ? latencies.map((l) => `${l} ms`).join(", ") : "no turns yet"}. Voice out: {typeof window !== "undefined" && "speechSynthesis" in window ? "browser speech" : "none (captions only)"}. Voice in:{" "}
               {canListen ? "browser speech recognition" : "not available here"}. Mode: {offline.current ? "offline (scripts only)" : "scripts, AI wording off"}.
             </p>
           </details>

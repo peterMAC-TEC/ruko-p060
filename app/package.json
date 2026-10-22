@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx scripts/check-callcheck.ts && tsx scripts/check-radar.ts && tsx scripts/check-rules.ts && tsx scripts/check-threat.ts && tsx scripts/check-trial.ts && tsx scripts/check-signs.ts && tsx scripts/check-companion.ts && tsx scripts/check-bots.ts && tsx scripts/check-survey.ts && tsx scripts/check-line.ts && tsx scripts/check-demo.ts && tsx scripts/check-share.ts && tsx scripts/check-officer.ts && tsx scripts/check-codeword.ts && tsx scripts/check-setup.ts && tsx scripts/check-riskalert.ts && tsx scripts/check-guard.ts && tsx scripts/gen-android-vectors.ts --check",
+    "test": "tsx scripts/check-callcheck.ts && tsx scripts/check-radar.ts && tsx scripts/check-rules.ts && tsx scripts/check-threat.ts && tsx scripts/check-trial.ts && tsx scripts/check-signs.ts && tsx scripts/check-companion.ts && tsx scripts/check-bots.ts && tsx scripts/check-survey.ts && tsx scripts/check-line.ts && tsx scripts/check-demo.ts && tsx scripts/check-share.ts && tsx scripts/check-officer.ts && tsx scripts/check-officerbrain.ts && tsx scripts/check-codeword.ts && tsx scripts/check-setup.ts && tsx scripts/check-riskalert.ts && tsx scripts/check-guard.ts && tsx scripts/gen-android-vectors.ts --check",
     "check:ai": "tsx --conditions=react-server --env-file=.env.local scripts/check-ai-live.ts public/samples/fake-warrant.png",
     "demo:offline": "node scripts/demo-offline.mjs",
     "sim": "tsx scripts/sim.ts"

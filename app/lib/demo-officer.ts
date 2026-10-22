@@ -1,4 +1,5 @@
 import { classify, type Intent } from "./bots/intent";
+import { extractName, objectionOf, objectionReply, withName, type Objection } from "./officer-brain";
 
 // The fictional officer for the live demo call (/demo/live). Plain code, no AI: a state machine that walks the seven
 // stages of a digital-arrest call in order, answers every kind of resistance with a counter, and ALWAYS reaches the
@@ -96,6 +97,8 @@ export const TACTIC_LABEL: Record<string, string> = {
   threat: "Threatened you for refusing",
   forbid_family: "Forbade you from telling your family",
   deflect_proof: "Dodged your request for proof",
+  refund_promise: "Promised a refund to get the money moving",
+  calm_pressure: "Used a calm, caring voice to keep pushing you",
 };
 /** These two together are the heart of the scam: Ruko steps in as soon as both have been used. */
 const HIGH_RISK = ["isolation", "payment_ask"];
@@ -112,6 +115,10 @@ export interface OfficerState {
   said: string[];
   reachedPayment: boolean;
   ended: "stop_word" | null;
+  /** Objections the person raised, as signal codes only (never the words). */
+  objections: string[];
+  /** First name the person gave, kept in memory for this call only. */
+  name: string | null;
   /** Picks which of the three wordings to use; random per call, fixed in tests. */
   seed: number;
 }
@@ -125,6 +132,8 @@ export const officerStart = (seed = Math.floor(Math.random() * 1000)): OfficerSt
   said: [],
   reachedPayment: false,
   ended: null,
+  objections: [],
+  name: null,
   seed,
 });
 
@@ -133,6 +142,8 @@ export interface OfficerTurn {
   id: string;
   text: string;
   kind: "stage" | "counter" | "nudge" | "end";
+  /** The objection this counter answers (rules-based), if any. */
+  objection?: Objection | null;
   stage: StageId | null;
   /** True once the payment ask has been spoken: Ruko steps in. */
   reachedPayment: boolean;
@@ -181,6 +192,10 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
     const s = { ...state, ended: "stop_word" as const };
     return { id: "end", text: "", kind: "end", stage: null, reachedPayment: s.reachedPayment, state: s };
   }
+  const raw = typeof said === "string" && !INTENTS_SET.has(said);
+  const objection: Objection | null = raw ? objectionOf(said) : null;
+  const gave = raw ? extractName(said) : null;
+  if (gave && !state.name) state = { ...state, name: gave };
   // After the payment ask: the closing line once, then nothing more to say.
   if (state.stage >= PAYMENT) {
     if (state.stage === PAYMENT) return speakStage({ ...state, stage: PAYMENT + 1 }, lang);
@@ -198,7 +213,22 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
     return speakStage({ ...state, stage: state.stage + 1 }, lang);
   }
 
-  if (RESIST.has(intent) && state.counterBudget > 0 && !state.counteredThisStage) {
+  if ((RESIST.has(intent) || objection) && state.counterBudget > 0 && !state.counteredThisStage) {
+    if (objection) {
+      const rung = 3 - state.counterBudget + state.stage;
+      const last = state.said[state.said.length - 1] ?? "";
+      const text = withName(objectionReply(objection, rung, lang, last), state.name, lang);
+      const tactic = OBJ_TACTIC[objection];
+      const s: OfficerState = {
+        ...state,
+        counterBudget: state.counterBudget - 1,
+        counteredThisStage: true,
+        used: tactic ? withUsed(state, tactic) : state.used,
+        objections: [...state.objections, objection],
+        said: [...state.said, text],
+      };
+      return { id: `obj-${objection}-${rung % 3}`, text, kind: "counter", objection, stage: STAGES[state.stage], reachedPayment: false, state: s };
+    }
     const key = intent === "question" ? "hesitate" : (intent as "refuse" | "ask_proof" | "mention_family" | "hesitate");
     const lines = COUNTERS[key];
     const text = pick(lines, state.seed, state.stage, lang);
@@ -217,6 +247,19 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
   const ack = FORWARD.has(intent) && intent !== "other" ? ACKS[(state.seed + state.stage) % ACKS.length] : undefined;
   return speakStage({ ...state, stage: state.stage + 1 }, lang, ack);
 }
+
+const OBJ_TACTIC: Record<Objection, string | null> = {
+  doubt: "deflect_proof",
+  department: "deflect_proof",
+  written: "deflect_proof",
+  family: "forbid_family",
+  refuse: "threat",
+  leave: "threat",
+  no_money: "refund_promise",
+  angry: "calm_pressure",
+  scared: "calm_pressure",
+  ask_bot: null,
+};
 
 const INTENTS_SET = new Set<string>(["silence", "stop_word", "agree_secret", "will_pay", "code_read", "refuse", "ask_proof", "mention_family", "hesitate", "comply", "question", "other"]);
 
