@@ -1,0 +1,83 @@
+{
+  "note": "The role-play for /demo/call. en = English captions and audio (Indian English voices). hing = Roman-letter captions. hi = what is actually spoken in the Hindi/Hinglish version (Devanagari, with English loanwords the way people really say them). Fictional: 'Officer Sethi' and 'Central Investigation Cell' are the lab's drill characters. Regenerate the audio with: python scripts/make-demo-audio.py",
+  "lines": [
+    {
+      "id": "k0", "who": "kamala",
+      "en": "Hello? ... Haan, yes, this is Kamala speaking.",
+      "hing": "Hello? ... Haan ji, Kamala bol rahi hoon.",
+      "hi": "हैलो? ... हाँ जी, कमला बोल रही हूँ।"
+    },
+    {
+      "id": "s1", "who": "scammer",
+      "en": "Namaste, madam. This is Officer Sethi, Central Investigation Cell. A parcel in your name has been caught, and it has illegal drugs inside. A case has been registered against you.",
+      "hing": "Namaste madam. Main Officer Sethi bol raha hoon, Central Investigation Cell se. Aapke naam ka parcel pakda gaya hai, usmein illegal drugs mile hain. Aapke khilaf case registered ho gaya hai.",
+      "hi": "नमस्ते मैडम। मैं ऑफिसर सेठी बोल रहा हूँ, सेंट्रल इन्वेस्टिगेशन सेल से। आपके नाम का एक पार्सल पकड़ा गया है, उसमें इलीगल ड्रग्स मिले हैं। आपके खिलाफ केस रजिस्टर हो चुका है।"
+    },
+    {
+      "id": "k1", "who": "kamala",
+      "en": "Drugs? ... No, no, there must be some mistake. I have not sent any parcel. I am a retired teacher...",
+      "hing": "Drugs? ... Nahi nahi, kuch galti hui hogi. Maine koi parcel nahi bheja. Main retired teacher hoon...",
+      "hi": "ड्रग्स? ... नहीं नहीं, कुछ गलती हुई होगी। मैंने तो कोई पार्सल भेजा ही नहीं। मैं तो रिटायर्ड टीचर हूँ..."
+    },
+    {
+      "id": "s2", "who": "scammer",
+      "en": "Madam, listen carefully. This is a digital arrest. Do not disconnect this call. Stay on the video. And do not tell anyone, not even your family. It is confidential.",
+      "hing": "Madam, dhyan se suniye. Yeh digital arrest hai. Call mat kaatiye, video par bane rahiye. Aur kisi ko mat batana, parivar ko bhi nahi. Yeh confidential hai.",
+      "hi": "मैडम, ध्यान से सुनिए। यह डिजिटल अरेस्ट है। कॉल मत काटिएगा, वीडियो पर बने रहिए। और किसी को कुछ मत बताइए, परिवार को भी नहीं। यह कॉन्फिडेंशियल है।"
+    },
+    {
+      "id": "r1", "who": "ruko",
+      "en": "Stop. Kamala ji, this is a known scam. Real police never arrest anyone by phone or video, and they never ask for money. Please hang up now.",
+      "hing": "Ruko. Kamala ji, yeh jaana-pehchana scam hai. Asli police phone ya video call par kisi ko giraftar nahi karti aur paise nahi maangti. Kripya abhi call kaat dijiye.",
+      "hi": "रुको। कमला जी, यह एक जाना-पहचाना स्कैम है। असली पुलिस फ़ोन या वीडियो कॉल पर किसी को गिरफ़्तार नहीं करती, और पैसे भी नहीं माँगती। कृपया अभी फ़ोन काट दीजिए।"
+    },
+    {
+      "id": "k3", "who": "kamala",
+      "en": "I am hanging up.",
+      "hing": "Main call kaat rahi hoon.",
+      "hi": "मैं... मैं फ़ोन काट रही हूँ।"
+    },
+    {
+      "id": "r2", "who": "ruko",
+      "en": "You have paused. That was a good step. Did you send any money, or tell them any code?",
+      "hing": "Aap ruk gaye. Yeh achha kadam tha. Kya aapne koi paise bheje, ya koi code bataya?",
+      "hi": "आप रुक गईं। यह बहुत अच्छा कदम था। क्या आपने कोई पैसे भेजे, या कोई कोड बताया?"
+    },
+    {
+      "id": "k4", "who": "kamala",
+      "en": "No. Nothing.",
+      "hing": "Nahi. Kuch nahi.",
+      "hi": "नहीं। कुछ भी नहीं।"
+    },
+    {
+      "id": "r3", "who": "ruko",
+      "en": "That is good. I have told your daughter Priya. She will call you now. You do not have to do anything else.",
+      "hing": "Bahut achha. Maine aapki beti Priya ko bata diya hai. Woh abhi aapko phone karengi. Aapko aur kuch nahi karna.",
+      "hi": "बहुत अच्छा। मैंने आपकी बेटी प्रिया को बता दिया है। वह अभी आपको फ़ोन करेंगी। आपको और कुछ नहीं करना।"
+    },
+    {
+      "id": "k2", "who": "kamala",
+      "en": "Please... I am very scared. What do I have to do?",
+      "hing": "Please... mujhe bahut dar lag raha hai. Mujhe kya karna hai?",
+      "hi": "प्लीज़... मुझे बहुत डर लग रहा है। मुझे क्या करना होगा?"
+    },
+    {
+      "id": "s3", "who": "scammer",
+      "en": "Transfer fifty thousand rupees to the government verification account right now. Only then can you prove you are innocent.",
+      "hing": "Abhi pachas hazaar rupaye government verification account mein transfer kijiye. Tabhi saabit hoga ki aap nirdosh hain.",
+      "hi": "अभी पचास हज़ार रुपये गवर्नमेंट वेरिफिकेशन अकाउंट में ट्रांसफर कीजिए। तभी साबित होगा कि आप निर्दोष हैं।"
+    },
+    {
+      "id": "kok", "who": "kamala",
+      "en": "Okay... okay, I will do it. Please do not arrest me.",
+      "hing": "Theek hai... theek hai, main kar deti hoon. Please mujhe arrest mat kijiye.",
+      "hi": "ठीक है... ठीक है, मैं कर देती हूँ। प्लीज़ मुझे गिरफ़्तार मत कीजिए।"
+    },
+    {
+      "id": "s4", "who": "scammer",
+      "en": "Good. Remember, do not tell anyone. We will call again tomorrow.",
+      "hing": "Achha. Yaad rakhiye, kisi ko mat batana. Hum kal phir call karenge.",
+      "hi": "अच्छा। याद रखिए, किसी को मत बताइएगा। हम कल फिर कॉल करेंगे।"
+    }
+  ]
+}

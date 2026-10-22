@@ -231,3 +231,11 @@ Found by running the live app against the three MVP tests:
 - **Limits:** audio clips are not supported by this route (typed or spoken-to-text words still work); the phone falls back to its own check as before.
 - **Safety unchanged:** the AI only reads evidence; code decides.
 - **Security note:** the key was pasted in a chat, so it should be replaced after the hackathon (new key into `app/.env.local` and Vercel). The earlier Supabase key was replaced on 22 Oct; the old `service_role` key should still be disabled in Supabase.
+
+## The call demo sounds human (22 Oct)
+
+- **Why:** the first version used the browser's built-in voices, which sounded robotic and not Indian.
+- **What:** `/demo/call` now plays recorded natural Indian voices (Microsoft neural voices, free): Indian English for the English version and Hindi for the "Hinglish" version (spoken in Devanagari, with English loanwords the way people say them; captions stay in Roman letters). The script is `app/data/demo-call-script.json`; `app/scripts/make-demo-audio.py` records it (needs `pip install edge-tts` and ffmpeg; the finished clips are committed, so the app needs neither).
+- **Realism:** natural fillers and hesitations ("Hello? ... Haan, yes"), the caller talks over the end of Kamala's sentence, the caller's voice has a phone-line filter, Kamala is slower and lower, Ruko is clean and warm with a soft chime before it speaks, and the lines pause the way people do.
+- **Honest limits:** the voices are still synthetic (labelled as role-play); the same voice family is used for Kamala and Ruko, told apart by pitch, pace, the chime and the on-screen label. If a clip fails to load the browser's own voice reads the line; with sound off the captions carry the demo.
+- **Retune:** edit `VOICES` or `FILTERS` in the script and run it again.

@@ -17,40 +17,23 @@ const NAME: Record<Who, { en: string; hing: string }> = {
   ruko: { en: "Ruko", hing: "Ruko" },
 };
 
-function voiceFor(role: Who): SpeechSynthesisVoice | undefined {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return undefined;
-  const all = window.speechSynthesis.getVoices().filter((v) => /^en/i.test(v.lang));
-  const indian = all.filter((v) => /en[-_]IN/i.test(v.lang));
-  const pool = indian.length >= 2 ? indian : all;
-  const male = pool.filter((v) => /male|david|mark|james|ravi|hemant|prabhat|rishi|guy|george|daniel|ryan|alex|fred|ravi/i.test(v.name) && !/female/i.test(v.name));
-  const female = pool.filter((v) => /female|heera|zira|aria|swara|neerja|veena|samantha|karen|sonia|jenny|susan|emma|libby|moira|tessa|kalpana/i.test(v.name));
-  if (role === "scammer") return male[0] ?? pool[0];
-  if (role === "kamala") return female[0] ?? pool[1] ?? pool[0];
-  return female[1] ?? male[1] ?? pool[2] ?? pool[0];
-}
+// ---- sound -----------------------------------------------------------------------------------------------------
+// The voices are recorded (natural Indian voices, made by scripts/make-demo-audio.py) so they sound the same on every
+// phone. If a clip is missing the browser's own voice reads the line, and with the sound off the captions carry it.
 
-const STYLE: Record<Who, { pitch: number; rate: number }> = {
-  scammer: { pitch: 0.6, rate: 1.1 },
-  kamala: { pitch: 1.25, rate: 0.86 },
-  ruko: { pitch: 1.0, rate: 0.9 },
-};
+type Manifest = Record<"en" | "hi", Record<string, number>>;
+const folder = (l: DemoLang) => (l === "en" ? "en" : "hi");
 
-function speak(role: Who, text: string, on: boolean): Promise<void> {
+function browserSpeak(text: string): Promise<void> {
   return new Promise((resolve) => {
-    if (!on || typeof window === "undefined" || !("speechSynthesis" in window)) return void setTimeout(resolve, readingMs(text));
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return void setTimeout(resolve, readingMs(text));
     const u = new SpeechSynthesisUtterance(text);
     u.lang = "en-IN";
-    const v = voiceFor(role);
-    if (v) u.voice = v;
-    u.pitch = STYLE[role].pitch;
-    u.rate = STYLE[role].rate;
-    const guard = setTimeout(resolve, readingMs(text) + 6000); // never get stuck on a voice that does not report back
-    const done = () => {
+    const guard = setTimeout(resolve, readingMs(text) + 6000);
+    u.onend = u.onerror = () => {
       clearTimeout(guard);
       resolve();
     };
-    u.onend = done;
-    u.onerror = done;
     window.speechSynthesis.speak(u);
   });
 }
@@ -67,6 +50,8 @@ export function CallDemo() {
   const [shown, setShown] = useState<Beat[]>([]);
   const [speaker, setSpeaker] = useState<Who | null>(null);
   const run = useRef(0);
+  const players = useRef<HTMLAudioElement[]>([]);
+  const manifest = useRef<Manifest | null>(null);
   const stopRing = useRef<(() => void) | null>(null);
 
   const stopAll = useCallback(() => {
@@ -74,8 +59,39 @@ export function CallDemo() {
     stopRing.current?.();
     stopRing.current = null;
     hush();
+    for (const p of players.current) {
+      p.onended = p.onerror = null;
+      p.pause();
+    }
   }, []);
   useEffect(() => stopAll, [stopAll]);
+
+  const playClip = (src: string, fallbackText: string, dur: number | undefined): { end: Promise<void>; ms: number } => {
+    const ms = dur ? dur * 1000 : readingMs(fallbackText);
+    const el = players.current.find((p) => p.paused) ?? players.current[0];
+    if (!el || !dur) return { end: browserSpeak(fallbackText), ms };
+    const end = new Promise<void>((resolve) => {
+      const done = () => {
+        el.onended = el.onerror = null;
+        resolve();
+      };
+      const guard = setTimeout(done, ms + 3000);
+      el.onended = () => {
+        clearTimeout(guard);
+        done();
+      };
+      el.onerror = () => {
+        clearTimeout(guard);
+        browserSpeak(fallbackText).then(done);
+      };
+      el.src = src;
+      el.play().catch(() => {
+        clearTimeout(guard);
+        browserSpeak(fallbackText).then(done);
+      });
+    });
+    return { end, ms };
+  };
 
   const start = async (ruko: boolean) => {
     stopAll();
@@ -84,20 +100,63 @@ export function CallDemo() {
     setShown([]);
     setSpeaker(null);
     setPhase("ring");
-    if (sound) stopRing.current = ring();
+    if (sound) {
+      stopRing.current = ring();
+      // Phones only let a page play sound after a tap: unlock two players now, inside the tap.
+      players.current = [new Audio(), new Audio()];
+      for (const p of players.current) {
+        p.muted = true;
+        p.src = "/demo-audio/chime.mp3";
+        p.play().then(() => {
+          p.pause();
+          p.muted = false;
+        }).catch(() => {
+          p.muted = false;
+        });
+      }
+      if (!manifest.current) {
+        try {
+          manifest.current = (await (await fetch("/demo-audio/manifest.json")).json()) as Manifest;
+        } catch {
+          manifest.current = null;
+        }
+      }
+    } else players.current = [];
     await wait(3200);
     stopRing.current?.();
     stopRing.current = null;
     if (id !== run.current) return;
     setPhase("play");
     const { beats } = plan(lang, ruko);
+    let prev: { end: Promise<void>; startedAt: number; ms: number } | null = null;
+    let chimed = false;
     for (let i = 0; i < beats.length; i++) {
+      const b = beats[i];
       if (id !== run.current) return;
+      // The caller talks over the end of her sentence; everyone else waits their turn.
+      if (prev && b.cutsInMs) await wait(Math.max(0, prev.ms - (Date.now() - prev.startedAt) - b.cutsInMs));
+      else if (prev) {
+        await prev.end;
+        await wait(b.who === "ruko" ? 800 : b.who === "kamala" ? 550 : 350);
+      }
+      if (id !== run.current) return;
+      if (b.who === "ruko" && !chimed && sound) {
+        chimed = true;
+        const c = playClip("/demo-audio/chime.mp3", "", 0.7);
+        await wait(c.ms + 150);
+        if (id !== run.current) return;
+      }
       setShown(beats.slice(0, i + 1));
-      setSpeaker(beats[i].who);
-      await speak(beats[i].who, beats[i].text, sound);
-      await wait(beats[i].who === "ruko" ? 700 : 450);
+      setSpeaker(b.who);
+      if (!sound) {
+        const ms = readingMs(b.text);
+        prev = { end: wait(ms), startedAt: Date.now(), ms };
+      } else {
+        const clip = playClip(`/demo-audio/${folder(lang)}/${b.id}.mp3`, b.text, manifest.current?.[folder(lang)]?.[b.id]);
+        prev = { end: clip.end, startedAt: Date.now(), ms: clip.ms };
+      }
     }
+    if (prev) await prev.end;
     if (id !== run.current) return;
     setSpeaker(null);
     setPhase("done");

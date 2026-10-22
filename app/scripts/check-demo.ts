@@ -2,6 +2,9 @@
 // Run: npx tsx scripts/check-demo.ts
 import assert from "node:assert/strict";
 import { checkCallerLine } from "../lib/bots/guard";
+import { existsSync, readFileSync } from "node:fs";
+import path from "node:path";
+import script from "../data/demo-call-script.json";
 import { plan, readingMs, SCENE_TEXT, type DemoLang } from "../lib/demo-call";
 
 let n = 0;
@@ -31,5 +34,15 @@ for (const lang of ["en", "hing"] as DemoLang[]) {
 }
 ok("every scene caption exists in both languages", Object.values(SCENE_TEXT.en).every(Boolean) && Object.values(SCENE_TEXT.hing).every(Boolean));
 ok("reading time is sensible", readingMs("Hello") >= 1200 && readingMs("x".repeat(500)) <= 9000);
+
+// The recorded voices: every line has a clip in both languages, and the Hindi text is Devanagari.
+const audio = path.join(process.cwd(), "public", "demo-audio");
+const manifest = JSON.parse(readFileSync(path.join(audio, "manifest.json"), "utf8")) as Record<string, Record<string, number>>;
+const lines = script.lines as Array<{ id: string; en: string; hing: string; hi: string }>;
+ok("every line has a recorded clip in English and Hindi", lines.every((l) => existsSync(path.join(audio, "en", `${l.id}.mp3`)) && existsSync(path.join(audio, "hi", `${l.id}.mp3`))));
+ok("the manifest knows how long each clip is", lines.every((l) => manifest.en[l.id] > 0.5 && manifest.hi[l.id] > 0.5));
+ok("the Hindi lines are in Devanagari, the captions in Roman letters", lines.every((l) => /[ऀ-ॿ]/.test(l.hi) && !/[ऀ-ॿ]/.test(l.hing)));
+ok("the chime exists", existsSync(path.join(audio, "chime.mp3")));
+ok("every beat the demo can play has a clip", (["en", "hing"] as DemoLang[]).every((lg) => [true, false].every((r) => plan(lg, r).beats.every((b) => manifest[lg === "en" ? "en" : "hi"][b.id] > 0))));
 
 console.log(`all ${n} demo-call checks passed`);
