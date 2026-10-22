@@ -402,6 +402,14 @@ function Shell({
           {lang === "en" ? "Ruko is with you" : "Ruko aapke saath hai"}
         </div>
         {children}
+        <p className="mt-6 flex items-center justify-between gap-3 border-t border-hair pt-3 text-[16px] text-ink-soft">
+          <a href="tel:1930" className="flex min-h-12 items-center gap-2 text-ink">
+            <span className="text-[22px] font-semibold tabular">1930</span> helpline
+          </a>
+          <a href="https://cybercrime.gov.in" target="_blank" rel="noreferrer" className="flex min-h-12 items-center underline underline-offset-4">
+            cybercrime.gov.in
+          </a>
+        </p>
       </div>
     </div>
   );
