@@ -222,3 +222,12 @@ Found by running the live app against the three MVP tests:
 - **Built:** the Guardian character and motion language, the new landing page, question and STOP screens, post-stop reassurance, Companion situations and "What can I say?", honest Family Circle and Money Lock wording. Details in [DESIGN.md](DESIGN.md).
 - **Not changed:** the radar, thresholds, threat engine, payment rules, database, AI role, routes.
 - **Judgement calls:** (1) The STOP button now reads "I have hung up" and still opens the Companion. (2) The old dark pitch page is replaced by a light consumer landing page; the judge links (live demo, lab, results, fraud desk) moved to its footer. (3) "Not sure" stays as a third answer because the radar uses it. (4) Practice Mode was not rebuilt: the existing lab, drill scripts and practice phone already do it, and the deadline is 28 Oct. (5) A police/CBI claim alone is "Be careful" (see the audit fixes above).
+
+## AI provider: OpenRouter instead of the Gemini free tier (22 Oct)
+
+- **Why:** the Gemini free tier allowed about 20 requests a day and was slow (8 to 11 s). The owner supplied an OpenRouter key instead.
+- **What:** `lib/ai/openrouter.ts` is a second provider behind the same interface; `AI_PROVIDER=openrouter` selects it (the Gemini provider is kept, and with no key at all Ruko still runs on plain rules). The account's guardrails allow Google models only, so the list is `OPENROUTER_MODEL=google/gemma-4-26b-a4b-it:free,google/gemini-2.5-flash-lite`: the free Gemma 4 first, and the paid Gemini Flash-Lite (about 0.01 paisa per check, owner-approved) only if the free one is slow, busy or at its limit.
+- **Results:** words checks now take about 3 to 6 s (were 8 to 11 s) and read Hinglish correctly.
+- **Limits:** audio clips are not supported by this route (typed or spoken-to-text words still work); the phone falls back to its own check as before.
+- **Safety unchanged:** the AI only reads evidence; code decides.
+- **Security note:** the key was pasted in a chat, so it should be replaced after the hackathon (new key into `app/.env.local` and Vercel). The earlier Supabase key was replaced on 22 Oct; the old `service_role` key should still be disabled in Supabase.

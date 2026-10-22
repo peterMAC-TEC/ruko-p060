@@ -1,7 +1,8 @@
 import "server-only";
 import { AiError, type AiProvider, type JsonRequest } from "./provider";
 
-// OpenRouter (OpenAI-style chat API), used with FREE models only (ids ending in ":free").
+// OpenRouter (OpenAI-style chat API). The model list is explicit in OPENROUTER_MODEL: a free model first, then (only
+// if it is slow, busy or at its daily limit) one cheap paid model the owner approved. Nothing else can be called.
 // Same contract as the Gemini provider: JSON in the shape the caller's schema asks for, or an AiError, and the
 // phone's own phrase check stands whenever this is slow, busy or off. It never decides anything.
 
@@ -11,7 +12,7 @@ const CALL_TIMEOUT_MS = 28_000;
 const URL = "https://openrouter.ai/api/v1/chat/completions";
 
 /** Models that can read an image. The rest only get text. */
-const SEES = (m: string) => /(vl|vision|inkling|minimax-m3|gemma|llava|pixtral)/i.test(m);
+const SEES = (m: string) => /(gemma|gemini|vision|llava|pixtral)/i.test(m);
 
 function parseJson(text: string): unknown {
   // Some models wrap JSON in a code fence or add a sentence around it.
@@ -33,9 +34,7 @@ export function openrouterProvider(): AiProvider {
     .map((m) => m.trim())
     .filter(Boolean);
   if (!apiKey || models.length === 0) throw new AiError("not_configured", "OPENROUTER_API_KEY and OPENROUTER_MODEL must be set");
-  // Safety: never spend money. Paid models are refused outright.
-  const free = models.filter((m) => m.endsWith(":free"));
-  if (free.length === 0) throw new AiError("not_configured", "OPENROUTER_MODEL must list free models (ids ending in :free)");
+  const free = models;
 
   async function call(model: string, { system, prompt, media = [], jsonSchema }: JsonRequest): Promise<unknown> {
     if (media.some((m) => m.mimeType.startsWith("audio/"))) throw new AiError("unavailable", `${model}: audio is not supported`);
