@@ -1,4 +1,5 @@
 import { canActAsMember, canActForElder, deny } from "@/lib/auth";
+import { codeWordRequired } from "@/lib/code-word";
 import { getTransfer, getUser, listApprovals } from "@/lib/store";
 
 // GET ?memberId=…   the trusted person's approval requests, newest first
@@ -33,6 +34,7 @@ export async function GET(request: Request) {
         member_name: member?.name,
         elder_name: elder?.name,
         elder_phone: elder?.phone,
+        needs_code_word: t ? await codeWordRequired(t.elder_id) : false,
         transfer: t && {
           id: t.id,
           amount: t.amount,

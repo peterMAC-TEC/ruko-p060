@@ -25,7 +25,7 @@ type Step =
 /** A just-sent transfer; held ones carry the risk event that alerted the family. */
 type Sent = Transfer & { risk_event_id?: string };
 
-export type Prefill = { name: string; account: string; amount: number };
+export type Prefill = { name: string; account: string; amount: number; /** The live demo shortens the cooling-off so the story fits in three minutes. */ shortPause?: boolean };
 
 const OPENING_BALANCE = 642180;
 const PAUSE_SECONDS = 30; // like Google's in-call banking protection (docs/research/08)
@@ -425,6 +425,7 @@ export function BankApp({
 
       {step.kind === "pause" && (
         <PauseScreen
+          seconds={prefill?.shortPause ? 8 : PAUSE_SECONDS}
           familyName={familyName}
           familyPhone={familyPhone}
           onContinue={() => setStep({ kind: "pin" })}
@@ -688,14 +689,16 @@ function PauseScreen({
   familyPhone,
   onContinue,
   onStop,
+  seconds = PAUSE_SECONDS,
 }: {
   familyName: string;
   familyPhone: string;
   onContinue: () => void;
   onStop: () => void;
+  seconds?: number;
 }) {
   const { t } = useLang();
-  const [left, setLeft] = useState(PAUSE_SECONDS);
+  const [left, setLeft] = useState(seconds);
   useEffect(() => {
     if (left <= 0) return;
     const id = setTimeout(() => setLeft((n) => n - 1), 1000);

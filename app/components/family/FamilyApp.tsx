@@ -35,6 +35,7 @@ const SCRIPT = [
 
 type ApprovalRow = {
   id: string;
+  needs_code_word?: boolean;
   status: "pending" | "approved" | "declined";
   elder_name?: string;
   elder_phone?: string;
@@ -125,13 +126,21 @@ export function FamilyApp({
     } catch {}
   }, [memberId, elderId, ring]);
 
-  const decide = async (approvalId: string, decision: "approved" | "declined") => {
+  const decide = async (approvalId: string, decision: "approved" | "declined", codeWord?: string) => {
     const r = await fetch(`/api/approvals/${approvalId}`, {
       method: "PATCH",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ decision }),
+      body: JSON.stringify({ decision, codeWord }),
     });
     const d = await r.json().catch(() => ({}));
+    if (r.status === 403 && (d.error === "code_word_needed" || d.error === "code_word_wrong")) {
+      setDecided((x) => ({ ...x, [`${approvalId}:err`]: d.error === "code_word_wrong" ? "That is not the family code word. The payment is still on hold." : "Ask for the family code word first. The payment is still on hold." }));
+      return;
+    }
+    setDecided((x) => {
+      const { [`${approvalId}:err`]: _gone, ...rest } = x;
+      return rest;
+    });
     setDecided((x) => ({
       ...x,
       [approvalId]:
@@ -228,6 +237,14 @@ export function FamilyApp({
               </button>
             </div>
 
+            {approvals
+              .filter((x) => (x.status === "pending" && x.transfer?.status === "held") || decided[x.id])
+              .map((x) => (
+                <div key={x.id} className="mt-5">
+                  <ApprovalCard a={x} result={decided[x.id]} error={decided[`${x.id}:err`]} onDecide={decide} embed={embed} />
+                </div>
+              ))}
+
             {open.reasons.length > 0 && (
               <details className="group border-b border-hair">
                 <summary className="flex min-h-[60px] cursor-pointer list-none items-center justify-between text-[19px] text-ink-soft">
@@ -267,7 +284,7 @@ export function FamilyApp({
             {approvals
               .filter((a) => (a.status === "pending" && a.transfer?.status === "held") || decided[a.id])
               .map((a) => (
-                <ApprovalCard key={a.id} a={a} result={decided[a.id]} onDecide={decide} embed={embed} />
+                <ApprovalCard key={a.id} a={a} result={decided[a.id]} error={decided[`${a.id}:err`]} onDecide={decide} embed={embed} />
               ))}
             {protection?.active && (
               <section className="rounded-[28px] bg-warn-soft p-6">
@@ -344,14 +361,17 @@ function ago(ts: string, now: number) {
 function ApprovalCard({
   a,
   result,
+  error,
   onDecide,
   embed,
 }: {
   a: ApprovalRow;
   result?: string;
-  onDecide: (id: string, d: "approved" | "declined") => void;
+  error?: string;
+  onDecide: (id: string, d: "approved" | "declined", codeWord?: string) => void;
   embed: boolean;
 }) {
+  const [word, setWord] = useState("");
   const t = a.transfer;
   const first = a.elder_name?.split(" ")[0] ?? "They";
   if (result) return <p className="rounded-[28px] bg-calm-soft p-6 font-bold text-calm">{result}</p>;
@@ -385,6 +405,23 @@ function ApprovalCard({
         <Phone className="size-5" />
         Call {first} first
       </a>
+      {a.needs_code_word && (
+        <label className="mt-4 block">
+          <span className="text-[17px] font-bold">Ruko flagged a scam call. To approve, ask {first} for the family code word.</span>
+          <input
+            value={word}
+            onChange={(e) => setWord(e.target.value)}
+            autoComplete="off"
+            placeholder="Family code word"
+            className="mt-2 min-h-14 w-full rounded-2xl border-2 border-ink/15 bg-white px-4 text-[19px] outline-none focus:border-ink"
+          />
+        </label>
+      )}
+      {error && (
+        <p className="mt-3 rounded-2xl bg-white p-3 text-[16px] font-bold text-alarm" role="alert">
+          {error}
+        </p>
+      )}
       <div className="mt-3 grid grid-cols-2 gap-3">
         <button
           onClick={() => onDecide(a.id, "declined")}
@@ -394,7 +431,7 @@ function ApprovalCard({
           Say no
         </button>
         <button
-          onClick={() => onDecide(a.id, "approved")}
+          onClick={() => onDecide(a.id, "approved", word)}
           className="flex min-h-14 items-center justify-center gap-2 rounded-2xl border-2 border-calm/30 bg-white text-[18px] font-bold text-calm"
         >
           <Check className="size-5" />

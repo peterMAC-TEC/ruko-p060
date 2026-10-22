@@ -16,6 +16,8 @@ export const metadata: Metadata = { title: "Practice bank" };
 // step, ?prefill=scam so the judge only has to tap Send.
 const PREFILLS: Record<string, Prefill> = {
   scam: { name: "RBI Safe Account", account: "rbi.verify@axis", amount: 480000 },
+  // The live call demo (/demo/live): the officer asked for fifty thousand rupees to a "government verification account".
+  live: { name: "Government Verification Account", account: "rbi.verify@axis", amount: 50000, shortPause: true },
 };
 
 export default function BankPage({ searchParams }: PageProps<"/bank">) {

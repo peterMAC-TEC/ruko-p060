@@ -4,6 +4,7 @@ import Link from "next/link";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { RukoWordmark } from "@/components/brand/RukoMark";
+import { ProblemFacts } from "@/components/ProblemFacts";
 import { impactSummary } from "@/lib/metrics";
 import { loadPatternLibrary } from "@/lib/store";
 
@@ -78,6 +79,8 @@ async function Impact({ searchParams }: Pick<PageProps<"/impact">, "searchParams
           ))}
         </nav>
       </div>
+
+      <ProblemFacts />
 
       {s.includesDemo && (
         <p className="mt-4 inline-block rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">
