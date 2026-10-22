@@ -2,6 +2,7 @@
 
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { MotionToggle } from "@/components/motion/motion";
 
 // The footer every page shares: what this is and where help is. (The control-room bar is components/tech/TechNav.tsx.)
 
@@ -17,6 +18,9 @@ function Inner() {
         1930
       </a>{" "}
       · cybercrime.gov.in
+      <div className="mt-3 flex justify-center">
+        <MotionToggle tone={dark ? "dark" : "light"} />
+      </div>
     </footer>
   );
 }

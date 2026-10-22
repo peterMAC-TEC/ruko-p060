@@ -211,3 +211,46 @@
   outline-offset: 3px;
   border-radius: 6px;
 }
+
+/* ---- Motion tokens and extra keyframes (Oct 23) ----------------------------------------------------------------
+   One place for durations and easing. Only transform and opacity are animated, so it stays smooth on a mid-range phone.
+   Reduced motion: the system setting (media query below) or the in-app "Reduce motion" switch (data-motion="reduce")
+   turns every animation and transition off, and the components show their final state at once. */
+:root {
+  --m-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --m-fast: 160ms;
+  --m-base: 320ms;
+  --m-slow: 700ms;
+  --m-stagger: 70ms;
+}
+@keyframes ruko-word { from { opacity: 0; transform: translateY(0.35em); } to { opacity: 1; transform: none; } }
+@keyframes ruko-ring { 0% { transform: scale(0.7); opacity: 0.55; } 100% { transform: scale(1.9); opacity: 0; } }
+@keyframes ruko-buzz { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-2px) rotate(-0.4deg); } 40% { transform: translateX(2px) rotate(0.4deg); } 60% { transform: translateX(-1px); } 80% { transform: translateX(1px); } }
+@keyframes ruko-shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+@keyframes ruko-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes ruko-stop-in { from { opacity: 0; transform: scale(0.94); } to { opacity: 1; transform: none; } }
+@keyframes ruko-sheen { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.6; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .m-word { display: inline-block; opacity: 0; animation: ruko-word var(--m-slow) var(--m-ease) forwards; animation-delay: calc(var(--i, 0) * var(--m-stagger)); }
+  .m-ring { animation: ruko-ring 2.4s var(--m-ease) infinite; animation-delay: calc(var(--i, 0) * 0.8s); }
+  .m-buzz { animation: ruko-buzz 1.6s ease-in-out infinite; }
+  .m-shimmer::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(56, 225, 255, 0.18), transparent); animation: ruko-shimmer 1.4s linear infinite; }
+  .m-underline { transform-origin: left; animation: ruko-line 0.9s var(--m-ease) 0.9s both; }
+  .m-stop-in { animation: ruko-stop-in 0.45s var(--m-ease) both; }
+  .m-sheen { animation: ruko-sheen 9s ease-in-out infinite; }
+  .m-lift { transition: transform var(--m-fast) var(--m-ease); }
+  .m-lift:hover { transform: translateY(-2px); }
+  .m-tap { transition: transform var(--m-fast) var(--m-ease); }
+  .m-tap:active { transform: scale(0.97); }
+  .m-route { animation: ruko-fade 0.28s ease-out both; }
+}
+:root[data-motion="reduce"] *,
+:root[data-motion="reduce"] *::before,
+:root[data-motion="reduce"] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+:root[data-motion="reduce"] .m-word,
+:root[data-motion="reduce"] .m-reveal { opacity: 1 !important; transform: none !important; }

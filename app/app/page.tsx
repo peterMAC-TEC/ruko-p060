@@ -4,6 +4,7 @@ import { ResetDemo } from "@/components/ResetDemo";
 import { Chip, TechBackdrop } from "@/components/tech/TechBackdrop";
 import { FeatureGrid, LiveCallCard } from "@/components/tech/FeatureGrid";
 import { flags } from "@/lib/flags";
+import { Reveal, RotatingWords, WordByWord } from "@/components/motion/motion";
 
 // The front door for judges: the live scam call first, then every other part of Ruko as a card, in any order.
 // Calm, large-type elder screens live elsewhere (/check, /companion, /family ...); this page is the control room.
@@ -22,9 +23,23 @@ export default function Home() {
           <Chip tone="grey">ForgeX 2.0 · P060</Chip>
           <Chip tone="grey">No real money · nothing recorded</Chip>
         </div>
-        <h1 className="m-rise mt-6 max-w-4xl text-[40px] leading-[1.02] font-bold tracking-tight sm:text-[60px]">
-          Stop the scam call <span className="text-[#38e1ff]">before the money moves.</span>
+        <h1 className="mt-6 max-w-4xl text-[40px] leading-[1.02] font-bold tracking-tight sm:text-[60px]">
+          <WordByWord text="Stop the scam call before the money moves." accent="money" accentClass="text-[#38e1ff]" />
         </h1>
+        <RotatingWords
+          className="mt-3 text-[22px] font-semibold text-white sm:text-[28px]"
+          prefix={
+            <>
+              <span className="relative inline-block">
+                Ruko
+                <span className="m-underline absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-[#38e1ff]" />
+              </span>{" "}
+              stops
+            </>
+          }
+          words={["fake officers", "urgent threats", "pressure calls", "digital arrest scams"]}
+          staticSentence="Ruko stops fake officers, urgent threats, pressure calls and digital arrest scams."
+        />
         <p className="mt-3 max-w-2xl text-[18px] leading-relaxed text-white/70 sm:text-[20px]">
           Scammers pose as police and keep older people on a call until they pay. Ruko listens for the pressure, steps in with one word, and brings the family in.
         </p>
@@ -51,14 +66,15 @@ export default function Home() {
             See how it works under the hood
           </Link>
         </div>
-        <div className="mt-5">
+        <Reveal className="mt-5">
           <FeatureGrid />
-        </div>
+        </Reveal>
         <Link href="/demo/how" className="mt-4 flex min-h-14 items-center justify-center rounded-[16px] border border-white/20 text-[17px] font-semibold sm:hidden">
           See how it works under the hood
         </Link>
 
-        <section className="mt-14 grid gap-6 rounded-[24px] border border-[#ff4d3d]/30 bg-[#ff4d3d]/[0.06] p-6 sm:grid-cols-2 sm:p-8">
+        <Reveal className="mt-14">
+        <section className="grid gap-6 rounded-[24px] border border-[#ff4d3d]/30 bg-[#ff4d3d]/[0.06] p-6 sm:grid-cols-2 sm:p-8">
           <div>
             <p className="font-mono text-[13px] tracking-[0.14em] text-[#ff8a7d] uppercase">If money has already moved</p>
             <a href="tel:1930" className="mt-1 block text-[88px] leading-none font-bold tracking-tight sm:text-[120px]">
@@ -75,6 +91,7 @@ export default function Home() {
             </Link>
           </div>
         </section>
+        </Reveal>
 
         {flags.DEMO_MODE && (
           <div className="mt-8 text-white/70">

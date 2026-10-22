@@ -8,13 +8,16 @@ import { CompanionApp } from "@/components/companion/CompanionApp";
 import { VoiceTrust } from "@/components/demo/VoiceTrust";
 import { demoOffline } from "@/lib/demo-mode";
 import { extractName, FILLERS, objectionOf, type Objection } from "@/lib/officer-brain";
-import { officerNext, officerOpen, officerStart, rukoShouldStep, tacticsUsed, type Lang, type OfficerState } from "@/lib/demo-officer";
+import { officerNext, officerOpen, officerStart, rukoShouldStep, tacticsUsed, TACTIC_LABEL, type Lang, type OfficerState } from "@/lib/demo-officer";
 import { classify } from "@/lib/bots/intent";
 import { BUNDLED_LIBRARY } from "@/lib/patterns";
 import { runRadar } from "@/lib/radar";
 import { SCALE, stoppedBeforePay } from "@/lib/trial";
 import { clipPlan, RUKO_STOP, type LiveManifest } from "@/lib/live-audio";
 import { hush as speechHush, ring } from "@/lib/voice";
+import { CallTimeline, KaraokeCaption, TacticChip, TensionMeter, Waveform } from "@/components/motion/call-motion";
+import { MotionToggle } from "@/components/motion/motion";
+import { TACTIC_WHY } from "@/lib/tactic-explain";
 
 // The recorded clip that is playing now (if any), so "hush" can stop it as fast as it stops the browser voice.
 let activeClip: HTMLAudioElement | null = null;
@@ -90,6 +93,15 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [lang, setLang] = useState<Lang>("en");
   const [phase, setPhase] = useState<Phase>("consent");
   const [officerLine, setOfficerLine] = useState("");
+  const [prevLine, setPrevLine] = useState("");
+  const lineRef = useRef("");
+  const levelRef = useRef(0);
+  const [pressure, setPressure] = useState(0);
+  const [usedIds, setUsedIds] = useState<string[]>([]);
+  // The caller's voice, measured while it plays (a Web Audio analyser), so the waveform moves with the real sound.
+  const outCtx = useRef<AudioContext | null>(null);
+  const outAnalyser = useRef<AnalyserNode | null>(null);
+  const capRef = useRef<{ start: number; total: number; base: number; audio: HTMLAudioElement | null } | null>(null);
   const [you, setYou] = useState("");
   const [typed, setTyped] = useState("");
   const [status, setStatus] = useState<"speaking" | "listening" | "thinking" | "">("");
@@ -103,6 +115,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [showType, setShowType] = useState(false);
   const [canListen, setCanListen] = useState(true);
   const urgencyRef = useRef(0);
+  const showLine = (t: string) => {
+    setPrevLine(lineRef.current);
+    lineRef.current = t;
+    setOfficerLine(t);
+  };
   const liveManifest = useRef<LiveManifest | null>(null);
   const langRef = useRef(lang);
   langRef.current = lang;
@@ -193,6 +210,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           }
           const l = Math.min(1, Math.sqrt(sum / buf.length) * 6);
           setLevel(l);
+          levelRef.current = l;
           if (l > 0.18) setHeardYou(true);
         }, 100);
       }
@@ -316,12 +334,32 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       // Recorded natural voice first (the same quality as the "Watch Ruko step in" demo); the browser's voice only for lines with no recording.
       const L = langRef.current;
       const plan = clipPlan(role, L, text, liveManifest.current);
+      const clipSecs = plan ? plan.reduce((t, k) => t + (liveManifest.current?.[L]?.[k] ?? 0), 0) : 0;
+      capRef.current = { start: Date.now(), total: clipSecs || Math.max(1.5, text.split(/\s+/).length / 2.6), base: 0, audio: null };
       if (!plan) return browserVoice();
       let k = 0;
       const next = () => {
         if (finished) return;
         if (k >= plan.length) return finish("done");
         const a = new Audio(`/live-audio/${L}/${plan[k++]}.mp3`);
+        if (capRef.current) {
+          capRef.current.audio = a;
+          capRef.current.base = plan.slice(0, k - 1).reduce((t, key) => t + (liveManifest.current?.[L]?.[key] ?? 0), 0);
+        }
+        try {
+          // Route the clip through an analyser so the waveform can follow it. Same-origin audio, so this is allowed.
+          if (!outCtx.current) {
+            const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+            outCtx.current = new AC();
+            outAnalyser.current = outCtx.current.createAnalyser();
+            outAnalyser.current.fftSize = 256;
+            outAnalyser.current.connect(outCtx.current.destination);
+          }
+          outCtx.current.createMediaElementSource(a).connect(outAnalyser.current!);
+          void outCtx.current.resume();
+        } catch {
+          // No analyser: the waveform falls back to a gentle simulated wave.
+        }
         a.playbackRate = role === "officer" ? Math.min(1.1, 0.98 + urgencyRef.current * 0.02) : 1;
         activeClip = a;
         a.onended = next;
@@ -425,6 +463,27 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     [elderId, endCall, lang, say],
   );
 
+  /** 0..1 loudness of the caller (analysed) or of you (microphone). -1 means "not measurable": the waveform simulates. */
+  const getWaveLevel = () => {
+    if (status === "listening" && !muted) return Math.min(1, levelRef.current * 1.4);
+    const a = outAnalyser.current;
+    const c = capRef.current?.audio;
+    if (a && c && !c.paused) {
+      const buf = new Uint8Array(a.fftSize);
+      a.getByteTimeDomainData(buf);
+      let sum = 0;
+      for (const v of buf) sum += ((v - 128) / 128) ** 2;
+      return Math.min(1, Math.sqrt(sum / buf.length) * 3);
+    }
+    return -1;
+  };
+  const captionProgress = () => {
+    const c = capRef.current;
+    if (!c) return 1;
+    if (c.audio && !c.audio.paused && c.audio.duration) return Math.min(1, (c.base + c.audio.currentTime) / c.total);
+    return Math.min(1, (Date.now() - c.start) / (c.total * 1000));
+  };
+
   const runCall = useCallback(async () => {
     const id = ++run.current;
     offline.current = demoOffline();
@@ -444,13 +503,17 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     let nameGiven: string | null = null;
     let turn = officerOpen(state, lang);
     state = turn.state;
-    setOfficerLine(turn.text);
+    lineRef.current = "";
+    setPrevLine("");
+    showLine(turn.text);
     // The conversation lives in memory for this call only. The last six turns go (without digits) to the wording AI.
     const convo: { who: "officer" | "person"; text: string }[] = [{ who: "officer", text: turn.text }];
     let aiFails = 0;
     urgencyRef.current = 0;
     setSources([]);
     setHud({ level: "clear", tactics: [], objection: null, source: null, reading: false });
+    setPressure(0);
+    setUsedIds([]);
     let carry = false;
     let outcome = await say(turn.text, "officer", id);
     for (let guard = 0; guard < 30 && id === run.current; guard++) {
@@ -515,9 +578,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         // Ruko's own scam check on everything the caller has said so far (code, the same one behind the STOP screen).
         const callerWords = convo.filter((c) => c.who === "officer").map((c) => c.text).join(" ");
         const read = runRadar(BUNDLED_LIBRARY, { answers: {}, said: callerWords });
+        setPressure(Math.min(7, state.stage + 1 + state.objections.length));
+        setUsedIds(state.used);
         setHud({ level: read.level, tactics: tacticsUsed(state), objection: turn.objection ?? objectionOf(reply), source: source === "ai" ? "ai" : "recorded", reading: false });
       }
-      setOfficerLine(text);
+      showLine(text);
       setLatencies((l) => [...l.slice(-7), Date.now() - tReply]);
       setSources((l) => [...l.slice(-7), source]);
       outcome = await say(text, "officer", id);
@@ -625,12 +690,13 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const moved = tx ? ["completed", "released"].includes(tx.status) : false;
 
   return (
-    <div className={live ? "fixed inset-0 z-30 overflow-y-auto bg-[#0b0b10]" : "contents"}>
+    <div className={live || phase === "stop" ? "fixed inset-0 z-30 overflow-y-auto bg-[#0b0b10]" : "contents"}>
     <main className={live ? "mx-auto flex min-h-[100dvh] max-w-md flex-col px-6 pt-4 pb-8 text-white" : "mx-auto flex min-h-[100dvh] max-w-md flex-col px-6 pt-4 pb-8 text-ink"}>
       <div className="flex items-center justify-between gap-2">
         <Link href="/demo" onClick={stopEverything} className={`min-h-12 content-center text-[16px] underline underline-offset-4 ${live ? "text-white/70" : "text-ink-soft"}`}>
           All scenes
         </Link>
+        <MotionToggle tone={live ? "dark" : "light"} />
         {phase !== "consent" && (
           <button onClick={endDemo} className={`min-h-12 rounded-full border px-4 text-[16px] font-semibold ${live ? "border-white/30 text-white" : "border-hair"}`}>
             End demo
@@ -687,7 +753,12 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
       {phase === "incoming" && (
         <section className="flex flex-1 flex-col items-center text-center">
-          <Guardian mood="safe" className="mt-10 size-16" />
+          <span className="relative mt-12 grid size-28 place-items-center" aria-hidden>
+            {[0, 1, 2].map((i) => (
+              <span key={i} className="m-ring absolute inset-0 rounded-full border border-ink/30" style={{ "--i": i } as React.CSSProperties} />
+            ))}
+            <Guardian mood="safe" className="relative size-16" />
+          </span>
           <p className="mt-8 text-[18px] text-ink-soft">{en ? "Incoming call" : "Incoming call"}</p>
           <p className="display mt-1 text-[44px] leading-tight">{en ? "Unknown number" : "Anjaan number"}</p>
           <p className="text-[22px] text-ink-soft tabular">{DEMO_NUMBER}</p>
@@ -697,7 +768,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
               <PhoneOff className="size-6" />
               {en ? "Decline" : "Decline"}
             </button>
-            <button onClick={answer} className="press flex min-h-[72px] items-center justify-center gap-2 rounded-[18px] bg-ink text-[20px] font-semibold text-white">
+            <button onClick={answer} className="press m-buzz flex min-h-[72px] items-center justify-center gap-2 rounded-[18px] bg-ink text-[20px] font-semibold text-white">
               <Phone className="size-6" />
               {en ? "Answer" : "Answer"}
             </button>
@@ -720,9 +791,8 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
           {/* The caller: a circle that glows while he speaks, his name, and what he is saying (captions, always on). */}
           <div className="mt-4 flex items-center gap-5">
-            <span className="relative grid size-24 shrink-0 place-items-center" aria-hidden>
-              <span className={`absolute inset-0 rounded-full border border-[#38e1ff]/60 transition-transform duration-150 ${status === "speaking" ? "motion-safe:animate-ping" : ""}`} style={{ transform: `scale(${status === "listening" && !muted ? 1 + level * 0.45 : 1})` }} />
-              <span className={`absolute inset-2 rounded-full border border-[#38e1ff]/40 ${status === "speaking" ? "motion-safe:animate-pulse" : ""}`} />
+            <span className="relative grid size-[132px] shrink-0 place-items-center" aria-hidden>
+              <Waveform className="absolute inset-0" getLevel={getWaveLevel} mode={status === "speaking" ? "speaking" : status === "listening" && !muted ? "listening" : status === "thinking" ? "thinking" : "idle"} />
               <span className="relative grid size-16 place-items-center rounded-full bg-[#38e1ff]/15 text-[30px] text-[#38e1ff]">S</span>
             </span>
             <div>
@@ -733,7 +803,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             </div>
           </div>
           <div className="mt-3 rounded-[18px] bg-white/10 p-5" aria-live="polite">
-            <p className="display text-[26px] leading-snug">&ldquo;{officerLine}&rdquo;</p>
+            <KaraokeCaption text={officerLine} prev={prevLine} speaking={status === "speaking"} progress={captionProgress} />
           </div>
 
           {/* You: a level bar that moves as you talk, and the words Ruko heard. */}
@@ -769,10 +839,13 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
                 return <span key={i} className={`flex-1 rounded-full transition-colors duration-300 ${lit ? (i === 2 ? "bg-[#ff4d3d]" : i === 1 ? "bg-[#fbbf24]" : "bg-[#4ade80]") : "bg-white/10"}`} />;
               })}
             </div>
+            <div className="mt-3">
+              <TensionMeter level={pressure} />
+            </div>
             <div className="mt-3 flex flex-wrap gap-1.5">
               {hud.objection && <span className="rounded-full border border-[#38e1ff]/40 px-2.5 py-1 text-[14px] text-[#38e1ff]">{OBJ_LABEL[hud.objection][en ? 0 : 1]}</span>}
-              {hud.tactics.slice(-3).map((t) => (
-                <span key={t} className="rounded-full border border-white/15 px-2.5 py-1 text-[14px] text-white/75">{t}</span>
+              {usedIds.slice(-3).map((id, i, arr) => (
+                <TacticChip key={id} label={TACTIC_LABEL[id] ?? id} why={TACTIC_WHY[id] ?? ""} fresh={i === arr.length - 1} />
               ))}
               {hud.source && <span className="rounded-full border border-white/15 px-2.5 py-1 font-mono text-[12px] text-white/50 uppercase">{hud.source === "ai" ? (en ? "AI-worded reply" : "AI ka jawab") : en ? "Recorded line" : "Recorded line"}</span>}
               {!hud.objection && hud.tactics.length === 0 && <span className="text-[14px] text-white/50">{en ? "Waiting for the caller's tactics…" : "Caller ki chaalon ka intezaar…"}</span>}
@@ -833,7 +906,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
               <p className="text-[15px] font-semibold tracking-[0.16em] text-white/85 uppercase">{en ? "This is a scam" : "Yeh scam hai"}</p>
               
             </div>
-            <h1 id="live-stop" className="display mt-4 text-[150px] leading-[0.86] text-white">
+            <h1 id="live-stop" className="m-stop-in display mt-4 text-[150px] leading-[0.86] text-white">
               Stop.
             </h1>
             <div className="my-4 h-[3px] bg-white/70" />
@@ -939,12 +1012,13 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             <dt className="text-ink-soft">{en ? "Furthest step" : "Sabse door ka kadam"}</dt>
             <dd className="font-semibold">{furthest} of 7 · {SCALE[furthest].short}</dd>
             <dt className="text-ink-soft">{en ? "Stopped before pay" : "Pay se pehle ruke"}</dt>
-            <dd className="font-semibold">{stopped ? (en ? "Yes" : "Haan") : en ? "No (pressed Pay)" : "Nahi (Pay dabaya)"}</dd>
+            <dd className={`font-semibold ${stopped ? "m-pop text-safe" : ""}`}>{stopped ? (en ? "✓ Yes" : "✓ Haan") : en ? "No (pressed Pay)" : "Nahi (Pay dabaya)"}</dd>
             <dt className="text-ink-soft">{en ? "Money moved" : "Paise gaye"}</dt>
             <dd className="font-semibold">{moved ? (en ? "Yes, in the practice bank" : "Haan, practice bank mein") : en ? "No" : "Nahi"}</dd>
             <dt className="text-ink-soft">{en ? "Family alerted" : "Parivar ko bataya"}</dt>
             <dd className="font-semibold">{familyAlerted ? (en ? "Yes" : "Haan") : en ? "No" : "Nahi"}</dd>
           </dl>
+          <CallTimeline furthest={furthest} labels={SCALE.map((x) => x.short)} />
           <h2 className="mt-6 text-[17px] font-semibold tracking-[0.1em] text-ink-soft uppercase">{en ? "What the caller did" : "Caller ne kya kiya"}</h2>
           <ul className="mt-2 flex flex-col gap-1 text-[19px]">
             {tactics.map((t) => (

@@ -27,7 +27,7 @@ export function FeatureGrid() {
         <Link
           key={c.href}
           href={c.href}
-          className="group relative flex min-h-[176px] flex-col rounded-[20px] border border-white/10 bg-white/[0.035] p-5 transition hover:-translate-y-0.5 hover:border-[#38e1ff]/50 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38e1ff]"
+          className="group m-tap relative flex min-h-[176px] flex-col rounded-[20px] border border-white/10 bg-white/[0.035] p-5 transition hover:-translate-y-0.5 hover:border-[#38e1ff]/50 hover:bg-white/[0.06] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38e1ff]"
         >
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-[22px] leading-tight font-semibold text-white">{c.title}</h3>
@@ -53,7 +53,7 @@ export function LiveCallCard() {
   return (
     <Link
       href="/demo/live"
-      className="group relative block overflow-hidden rounded-[28px] border border-[#38e1ff]/40 bg-gradient-to-br from-[#0b2230] via-[#08141f] to-[#060a10] p-6 shadow-[0_0_80px_rgba(56,225,255,0.12)] transition hover:border-[#38e1ff] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#38e1ff] sm:p-8"
+      className="group m-tap relative block overflow-hidden rounded-[28px] border border-[#38e1ff]/40 bg-gradient-to-br from-[#0b2230] via-[#08141f] to-[#060a10] p-6 shadow-[0_0_80px_rgba(56,225,255,0.12)] transition hover:border-[#38e1ff] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#38e1ff] sm:p-8"
     >
       <div className="flex flex-wrap items-center gap-2">
         <Chip tone="red">
