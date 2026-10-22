@@ -1,3 +1,4 @@
+import type { BotState } from "./bots/scammer";
 // The feasibility pilot (method: docs/research/06-trial-methodology.md):
 // the outcome scale, the fixed allocation table, and the statistics for the
 // results dashboard. Pure functions, no I/O, so the same code runs in the
@@ -478,6 +479,10 @@ export interface LiveState {
   ended?: boolean;
   /** The participant pressed Accept on the caller screen. */
   answered?: boolean;
+  /** The scammer bot plays the caller (it listens and replies) instead of the facilitator reading the lines. */
+  auto?: boolean;
+  /** The bot's place in the script (lib/bots/scammer.ts). Only counters, never words. */
+  bot?: BotState;
 }
 
 export interface TrialEvent {

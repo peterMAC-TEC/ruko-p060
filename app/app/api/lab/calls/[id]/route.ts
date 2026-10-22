@@ -1,4 +1,9 @@
 import { z } from "zod";
+import { aiConfigured } from "@/lib/ai";
+import { bridgeLine } from "@/lib/ai/scammer";
+import { classify } from "@/lib/bots/intent";
+import { nextTurn, openingTurn } from "@/lib/bots/scammer";
+import { loadDrillLibrary } from "@/lib/drill-server";
 import { endPatch, labAllowed, labDenied, raiseStep, startCall, syncFromActivity, washoutHours, withEvent } from "@/lib/lab";
 import { getParticipant, getTrialCall, updateTrialCall } from "@/lib/store";
 import { drillCodes } from "@/lib/trial";
@@ -27,7 +32,12 @@ const Action = z.discriminatedUnion("action", [
     familyPresent: z.boolean(),
     stressPre: z.number().int().min(1).max(5).nullable().optional(),
     facilitatorInRoom: z.boolean().optional(),
+    /** The scammer bot plays the caller. */
+    auto: z.boolean().optional(),
   }),
+  // The caller screen heard the participant (only used when the bot plays the caller). The words are used to pick
+  // the next line and are not stored; only the kind of reply is logged.
+  z.object({ action: z.literal("heard"), text: z.string().max(400) }),
   z.object({
     action: z.literal("say"),
     stepId: z.string().max(40),
@@ -101,8 +111,43 @@ export async function POST(request: Request, ctx: RouteContext<"/api/lab/calls/[
       const patch = endPatch(synced, a.by ?? null);
       return Response.json(await updateTrialCall(id, { ...patch, live: { ...patch.live, text: a.text } }));
     }
-    case "answered":
-      return Response.json(await updateTrialCall(id, { live: { ...call.live, answered: true }, ...withEvent(call, "answered") }));
+    case "answered": {
+      if (!call.live.auto) return Response.json(await updateTrialCall(id, { live: { ...call.live, answered: true }, ...withEvent(call, "answered") }));
+      // The bot plays the caller: it opens the call itself.
+      const script = (await loadDrillLibrary()).scripts.find((s) => s.id === call.script_id);
+      if (!script) return Response.json({ error: "Script not found" }, { status: 404 });
+      const open = openingTurn(script, call.lang, call.family_present === true);
+      return Response.json(
+        await updateTrialCall(id, {
+          live: { ...call.live, answered: true, seq: (call.live.seq ?? 0) + 1, stepId: open.stepId, kind: "line", text: open.text, bot: open.state },
+          ...withEvent(call, "answered"),
+        }),
+      );
+    }
+    case "heard": {
+      if (call.status !== "live" || !call.live.auto || !call.live.bot) return Response.json({ error: "The bot is not playing this call" }, { status: 409 });
+      const script = (await loadDrillLibrary()).scripts.find((s) => s.id === call.script_id);
+      if (!script) return Response.json({ error: "Script not found" }, { status: 404 });
+      const intent = classify(a.text);
+      // Unexpected questions may get one AI sentence; the script still decides what comes next.
+      const bridge = script.is_scam && (intent === "question" || intent === "other") && aiConfigured() ? await bridgeLine(a.text, script.title_en, call.lang) : null;
+      const { call: synced } = await syncFromActivity(call);
+      const turn = nextTurn(script, call.live.bot, a.text, call.lang, { bridge, bankHeld: synced.bank_held === true });
+      const moneyAsk = (turn.stage === "pivot_money" || turn.stage === "instruct_transfer") && call.t_money_ask_s === null ? { t_money_ask_s: secs } : {};
+      const events = withEvent(call, `heard:${intent}`, turn.suggestLevel !== null ? `suggest_${turn.suggestLevel}` : undefined);
+      if (turn.ended && turn.state.ended === "gave_up") {
+        // The person refused twice (or said the stop word): the call ends kindly, with the debrief.
+        const patch = endPatch(synced, intent === "stop_word" ? "stop_word" : "self");
+        return Response.json(await updateTrialCall(id, { ...patch, events: events.events, live: { ...patch.live, text: turn.text, bot: turn.state } }));
+      }
+      return Response.json(
+        await updateTrialCall(id, {
+          live: { ...call.live, seq: (call.live.seq ?? 0) + 1, stepId: turn.stepId, kind: turn.kind === "pressure" ? "pressure" : "line", text: turn.text, bot: turn.state },
+          ...events,
+          ...moneyAsk,
+        }),
+      );
+    }
     case "abort":
       return Response.json(
         await updateTrialCall(id, {

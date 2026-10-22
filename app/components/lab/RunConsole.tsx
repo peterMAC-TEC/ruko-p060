@@ -32,7 +32,7 @@ export function RunConsole({ callId, script, nextCallId }: { callId: string; scr
   const [washout, setWashout] = useState<number | null>(null);
   const [codes, setCodes] = useState<{ case4: string; track6: string } | null>(null);
   const [spoken, setSpoken] = useState<string[]>([]);
-  const [setup, setSetup] = useState({ lang: "en" as "en" | "hi", channel: "browser" as "browser" | "phone", familyPresent: false, stressPre: 0, inRoom: true });
+  const [setup, setSetup] = useState({ lang: "en" as "en" | "hi", channel: "browser" as "browser" | "phone", familyPresent: false, stressPre: 0, inRoom: true, auto: true });
   const [now, setNow] = useState(0);
   const [post, setPost] = useState({ stress: 0, stressAfter: 0, confidence: 0, belief: "" as "" | "yes" | "unsure" | "no", control: "" as "" | ControlOutcome, debriefed: false, deviation: "", notes: "" });
   const [saved, setSaved] = useState(false);
@@ -196,6 +196,10 @@ export function RunConsole({ callId, script, nextCallId }: { callId: string; scr
                   Family member present (skips the opening disclosure)
                 </label>
                 <label className="flex items-center gap-2">
+                  <input type="checkbox" checked={setup.auto} onChange={(e) => setSetup({ ...setup, auto: e.target.checked })} className="size-4" />
+                  Bot plays the caller (it listens and replies; Space and H still work)
+                </label>
+                <label className="flex items-center gap-2">
                   <input type="checkbox" checked={setup.inRoom} onChange={(e) => setSetup({ ...setup, inRoom: e.target.checked })} className="size-4" />
                   Facilitator in the room
                 </label>
@@ -213,7 +217,7 @@ export function RunConsole({ callId, script, nextCallId }: { callId: string; scr
                 <li>Start when they are settled. The caller screen rings; they choose whether to answer.</li>
               </ol>
               <button
-                onClick={() => act({ action: "start", lang: setup.lang, channel: setup.channel, familyPresent: setup.familyPresent, stressPre: setup.stressPre || null, facilitatorInRoom: setup.inRoom })}
+                onClick={() => act({ action: "start", lang: setup.lang, channel: setup.channel, familyPresent: setup.familyPresent, stressPre: setup.stressPre || null, facilitatorInRoom: setup.inRoom, auto: setup.auto })}
                 className="mt-4 flex min-h-12 items-center gap-2 rounded-2xl bg-alarm px-5 text-[17px] font-bold text-white"
               >
                 <Play className="size-5" /> Start call (it rings)
@@ -234,6 +238,7 @@ export function RunConsole({ callId, script, nextCallId }: { callId: string; scr
                   Their phone shows the DRILL code <b className="tabular">{phoneCode}</b>. If they read it out, tick level 3 (Disclosed).
                 </p>
               )}
+              {call.live.auto && <BotPanel call={call} live={live} onAccept={(level) => act({ action: "step", level })} />}
               <ol className="mt-2 flex flex-col gap-1.5">
                 {steps.map((s) => {
                   const said = spoken.includes(s.id);
@@ -505,6 +510,49 @@ function Seg({ label, value, options, set }: { label: string; value: string; opt
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+const INTENT_WORDS: Record<string, string> = {
+  comply: "went along",
+  hesitate: "hesitated",
+  refuse: "refused",
+  ask_proof: "asked for proof",
+  mention_family: "mentioned their family",
+  will_pay: "said they would pay",
+  agree_secret: "agreed to keep it secret",
+  code_read: "read out a code",
+  silence: "said nothing",
+  question: "asked a question",
+  other: "said something else",
+  stop_word: "said RUKO",
+};
+
+/** What the scammer bot is doing: how the person replied (the kind only, never their words) and levels it suggests. */
+function BotPanel({ call, live, onAccept }: { call: TrialCall; live: boolean; onAccept: (level: number) => void }) {
+  const heard = call.events.filter((e) => e.kind.startsWith("heard:"));
+  const last = [...heard].reverse().find((e) => e.detail?.startsWith("suggest_"));
+  const suggested = last?.detail ? Number(last.detail.replace("suggest_", "")) : null;
+  const reached = call.furthest_step ?? -1;
+  return (
+    <div className="mt-2 rounded-xl bg-calm-soft px-3 py-2 text-[14px]">
+      <p className="font-bold">The bot is playing the caller{live ? "" : " (this call)"}.</p>
+      {heard.length === 0 ? (
+        <p className="text-ink-soft">Waiting for them to answer and speak. Their words are not stored, only how they replied.</p>
+      ) : (
+        <p className="mt-1 text-ink-soft">
+          {heard
+            .slice(-6)
+            .map((e) => INTENT_WORDS[e.kind.slice(6)] ?? e.kind.slice(6))
+            .join(" → ")}
+        </p>
+      )}
+      {live && suggested !== null && suggested > reached && call.is_scam && (
+        <button onClick={() => onAccept(suggested)} className="mt-2 rounded-full bg-calm px-3 py-1.5 text-[13px] font-bold text-white">
+          Bot suggests level {suggested} ({SCALE.find((s) => s.level === suggested)?.short ?? ""}): tick it
+        </button>
+      )}
     </div>
   );
 }

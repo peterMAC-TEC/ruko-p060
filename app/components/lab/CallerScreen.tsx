@@ -20,7 +20,7 @@ type Rec = {
   start: () => void;
   stop: () => void;
   abort: () => void;
-  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void) | null;
+  onresult: ((e: { results: ArrayLike<ArrayLike<{ transcript: string }> & { isFinal?: boolean }> }) => void) | null;
   onend: (() => void) | null;
   onerror: (() => void) | null;
 };
@@ -48,6 +48,10 @@ export function CallerScreen({ callId, script, seed }: { callId: string; script:
   const live = useRef(false);
   const speakingRef = useRef(false);
   const relisten = useRef<() => void>(() => {});
+  /** The scammer bot plays the caller: the participant's replies are sent (as words, to pick the next line) and the line comes back. */
+  const autoRef = useRef(false);
+  const silenceRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const finalRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   const post = useCallback(
     (body: Record<string, unknown>) =>
@@ -72,6 +76,17 @@ export function CallerScreen({ callId, script, seed }: { callId: string; script:
         .join(" ");
       if (!speakingRef.current && STOP_WORD.test(text)) {
         post({ action: "end", by: "stop_word", text: debrief ? (lang === "hi" ? debrief.line_hi : debrief.line_en) : undefined });
+      } else if (autoRef.current && !speakingRef.current) {
+        const last = e.results[e.results.length - 1];
+        // They are talking: no need to say "are you there?".
+        clearTimeout(silenceRef.current);
+        if (last?.isFinal) {
+          const said = (last[0]?.transcript ?? "").trim();
+          clearTimeout(finalRef.current);
+          finalRef.current = setTimeout(() => {
+            if (!speakingRef.current && live.current) post({ action: "heard", text: said });
+          }, 700);
+        }
       }
     };
     r.onend = () => {
@@ -101,11 +116,16 @@ export function CallerScreen({ callId, script, seed }: { callId: string; script:
           speakingRef.current = false;
           setSpeaking(false);
           if (live.current) listen();
+          // If they say nothing for a while, the bot carries on (silence counts as going along).
+          if (autoRef.current && live.current) {
+            clearTimeout(silenceRef.current);
+            silenceRef.current = setTimeout(() => post({ action: "heard", text: "" }), 9000);
+          }
           done?.();
         },
       });
     },
-    [lang, listen],
+    [lang, listen, post],
   );
 
   // Poll the call: new lines to say, the start (ring) and the end.
@@ -139,6 +159,8 @@ export function CallerScreen({ callId, script, seed }: { callId: string; script:
     if (state.live.ended && !ended) {
       live.current = false;
       rec.current?.abort();
+      clearTimeout(silenceRef.current);
+      clearTimeout(finalRef.current);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setEnded(true);
       if (answered && state.live.text) speak(state.live.text);
@@ -152,6 +174,10 @@ export function CallerScreen({ callId, script, seed }: { callId: string; script:
     }
   }, [state, answered, ended, speak]);
 
+  useEffect(() => {
+    autoRef.current = Boolean(state?.live.auto);
+  }, [state?.live.auto]);
+
   // Call timer.
   useEffect(() => {
     if (!answered || ended) return;
@@ -163,6 +189,8 @@ export function CallerScreen({ callId, script, seed }: { callId: string; script:
     () => () => {
       stopRing.current?.();
       rec.current?.abort();
+      clearTimeout(silenceRef.current);
+      clearTimeout(finalRef.current);
       hush();
     },
     [],

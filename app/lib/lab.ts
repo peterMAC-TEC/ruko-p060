@@ -135,7 +135,7 @@ export async function washoutHours(call: TrialCall): Promise<number | null> {
 /** Starts a call: a clean practice account (Ruko off for baseline) and the clock. */
 export async function startCall(
   call: TrialCall,
-  opts: { lang: "en" | "hi"; channel: "browser" | "phone"; familyPresent: boolean; stressPre?: number | null; facilitatorInRoom?: boolean },
+  opts: { lang: "en" | "hi"; channel: "browser" | "phone"; familyPresent: boolean; stressPre?: number | null; facilitatorInRoom?: boolean; auto?: boolean },
 ) {
   const p = await getParticipant(call.participant_id);
   if (p?.account_id) await resetPracticeAccount(p.account_id, p.code, birthYearFor(p.age_band), call.arm !== "baseline");
@@ -148,7 +148,7 @@ export async function startCall(
     family_present: opts.familyPresent,
     stress_pre: opts.stressPre ?? null,
     facilitator_in_room: opts.facilitatorInRoom ?? true,
-    live: { seq: 0 },
+    live: { seq: 0, ...(opts.auto ? { auto: true } : {}) },
     // The scale applies to scam calls only; genuine calls get a C0–C3 code instead.
     furthest_step: call.is_scam ? 0 : null,
     step_times: call.is_scam ? { "0": 0 } : {},
