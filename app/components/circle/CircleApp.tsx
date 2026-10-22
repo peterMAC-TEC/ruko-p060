@@ -250,7 +250,16 @@ export function CircleApp({ elderId, demo = false }: { elderId: string; demo?: b
             <ChevronRight className="size-6 shrink-0 text-ink/30" />
           </button>
 
-          {error && <p className="text-alarm">{error}</p>}
+          {error && (
+            <div role="alert" className="rounded-2xl bg-alarm-soft p-4 text-[19px]">
+              <p className="font-semibold text-alarm">{error}</p>
+              {error !== t.noFamily && <p className="mt-1">{t.alertFailed}</p>}
+              <a href="tel:1930" className="mt-3 flex min-h-14 items-center justify-center rounded-2xl bg-ink text-[20px] font-semibold text-white">
+                1930
+              </a>
+            </div>
+          )}
+          <p className="rounded-2xl bg-safe-soft p-4 text-[18px] leading-snug text-safe">{t.whatShared}</p>
         </div>
       )}
 

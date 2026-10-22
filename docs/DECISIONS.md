@@ -215,3 +215,10 @@ Found by running the live app against the three MVP tests:
 - **Guided path:** choosing "Police, CBI, customs or a court" and answering no/not sure to everything showed an all-clear for the classic digital-arrest call. Fix: a police/CBI claim alone is now "Be careful, check before you do anything" and names the scam (`AUTHORITY_ALONE`). Other identities (bank, courier, family) are not escalated by the claim alone, to avoid false alarms on genuine calls.
 - **Unchanged:** STOP threshold, family alert and Money Lock rules, AI role (it still only adds evidence).
 - **Noted, not fixed:** on the free AI tier, text the AI cannot read in 10 s falls back to the phone's own check ("Checked on this phone only…"), so results can take about 11 s instead of 10.
+
+## Redesign v3: the Guardian (22 Oct)
+
+- **Request:** a playful, animated, character-led redesign that stays calm and clear in danger.
+- **Built:** the Guardian character and motion language, the new landing page, question and STOP screens, post-stop reassurance, Companion situations and "What can I say?", honest Family Circle and Money Lock wording. Details in [DESIGN.md](DESIGN.md).
+- **Not changed:** the radar, thresholds, threat engine, payment rules, database, AI role, routes.
+- **Judgement calls:** (1) The STOP button now reads "I have hung up" and still opens the Companion. (2) The old dark pitch page is replaced by a light consumer landing page; the judge links (live demo, lab, results, fraud desk) moved to its footer. (3) "Not sure" stays as a third answer because the radar uses it. (4) Practice Mode was not rebuilt: the existing lab, drill scripts and practice phone already do it, and the deadline is 28 Oct. (5) A police/CBI claim alone is "Be careful" (see the audit fixes above).

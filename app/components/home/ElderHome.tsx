@@ -1,5 +1,6 @@
 "use client";
 
+import { Guardian } from "@/components/brand/Guardian";
 import { ArrowRight, Check, ChevronRight, Headphones, Landmark, LifeBuoy, MessageCircleHeart, Phone, Settings, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -108,7 +109,10 @@ export function ElderHome({
           </div>
         )}
 
-        <h1 className="display mt-8 text-[68px] leading-[0.95] whitespace-pre-line">{`${t.homeGreeting(first).replace(", ", ",\n")}.`}</h1>
+        <div className="m-rise mt-8 flex items-start justify-between gap-3">
+          <h1 className="display min-w-0 text-[68px] leading-[0.95] whitespace-pre-line">{`${t.homeGreeting(first).replace(", ", ",\n")}.`}</h1>
+          <Guardian mood="safe" className="size-20 sm:size-24" />
+        </div>
         {protection ? (
           <p className="mt-5 rounded-[18px] bg-warn-soft p-4 text-[17px] font-semibold text-warn">{t.protectionOn}</p>
         ) : (

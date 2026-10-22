@@ -568,7 +568,8 @@ function Result({
           <Clock className="size-5" strokeWidth={2.4} />
           <span className="tabular">{t.holdLeft(minsLeft)}</span>
         </div>
-        <h1 className="mt-3 text-[30px] font-bold leading-[1.15] tracking-tight">{t.pausedTitle}</h1>
+        <p className="mt-3 text-[15px] font-semibold tracking-[0.14em] uppercase text-warn">{t.pauseKicker}</p>
+        <h1 className="mt-1 text-[30px] font-bold leading-[1.15] tracking-tight">{t.pausedTitle}</h1>
         <p className="mt-2 text-[19px]">{t.pausedBody(amt, tr.payee)}</p>
       </section>
 

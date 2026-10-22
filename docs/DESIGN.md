@@ -40,3 +40,17 @@ Elder home, "Is this a scam?" and its result, STOP, Companion, family alert, sur
 ## Not changed
 
 What Ruko does. This is colour, type and layout only.
+
+## v3 (22 Oct): the Guardian and a livelier front door
+
+Same Ink foundation; this adds a character, a motion language and two supporting colours. Logic, thresholds and routes are unchanged.
+
+- **Colours:** ink `#171717`, hairline `#e8e8e8`, danger red `#d92d20` (red is still only for danger), plus **reassurance green** `#e5f0e8` (text `#1f5a37`) for "you did well" and **warm cream** `#f4e8cf` for warmth. Never colour alone: every state is also in words.
+- **The Guardian** (`components/brand/Guardian.tsx`): a geometric shield with two eyes and the bar from the Ruko mark. Moods: `safe` (relaxed, gentle bob and blink), `checking` (attentive, looks side to side), `danger` (steady, brows flat, red bar, **completely still**), `after` (soft eyes and smile, green bar). It never covers text or controls and is `aria-hidden` unless given a label. On the landing page the eyes follow the pointer (`LiveGuardian`).
+- **Where it appears:** landing hero, elder home greeting, each question (checking), the STOP screen (danger, small, beside the label), the Companion (after).
+- **Motion** (`globals.css`: `m-rise`, `m-slide`, `m-fade`, `m-pop`, `g-*`, `press`): used only to show a change of state. Everything is inside `prefers-reduced-motion: no-preference`, so reduced-motion users get static screens. **No animation on the STOP screen beyond a 0.2 s fade**, and no flashing, shaking or pulsing urgency anywhere.
+- **Focus:** one 3px ink focus ring on all links, buttons and fields.
+- **Question screens:** "Question 2 of 5" in 20px, two enormous Yes/No buttons (112px, 30px text), "Not sure" below, the 1930 bar always visible.
+- **STOP:** the huge red word, the scam's name and rule, then "Do not transfer money. Hang up and verify independently." and one button, "I have hung up".
+- **After stopping:** the Companion opens with "You have paused. That was a good step." on a green panel, then asks one question at a time. In the free step the person can pick one of four situations (fixed, reviewed guidance, no AI) or open **What can I say?** (three lines to read aloud or copy).
+- **Honest states:** the family alert says "alerted in Ruko" (not "will call you"); a failed alert says nobody has been told and offers 1930; the Circle explains what family can see; the practice bank says no real money moves or is frozen.
