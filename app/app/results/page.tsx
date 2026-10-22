@@ -1,20 +1,7 @@
-import type { Metadata } from "next";
-import { Suspense } from "react";
-import { ResultsDashboard } from "@/components/lab/ResultsDashboard";
-import { labAllowed } from "@/lib/lab";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = { title: "Pilot results" };
-
-export default function ResultsPage({ searchParams }: PageProps<"/results">) {
-  return (
-    <Suspense fallback={<div className="min-h-[100dvh] bg-paper-2" />}>
-      <Results searchParams={searchParams} />
-    </Suspense>
-  );
-}
-
-async function Results({ searchParams }: Pick<PageProps<"/results">, "searchParams">) {
-  if (!(await labAllowed())) return <p className="p-10 text-[18px]">The pilot results are for the research team.</p>;
-  const { data } = await searchParams;
-  return <ResultsDashboard initial={data === "seeded" ? "seeded" : "real"} />;
+// The results page is taken off the site (no field-trial results exist yet, and the live demo should not show a results
+// dashboard). The full page is in git history (before 23 Oct) if it is needed again.
+export default function ResultsPage() {
+  redirect("/demo");
 }

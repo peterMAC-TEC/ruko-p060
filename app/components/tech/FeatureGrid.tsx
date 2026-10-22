@@ -17,7 +17,6 @@ export const CARDS: Card[] = [
   { href: "/demo/call", title: "Watch it play", body: "The same scam as a short audio role-play, with and without Ruko.", tags: ["Recorded"] },
   { href: "/demo/guided", title: "Three phones, side by side", body: "The elder's phone, the family's phone and the bank's fraud desk on one screen, ticking through a scam.", tags: ["Front end", "Back end"] },
   { href: "/demo/how", step: "5", title: "Under the hood", body: "How a call moves through Ruko, and a live Ruko Guard box a bank would call.", tags: ["Back end", "Architecture"] },
-  { href: "/results", title: "Results and trial lab", body: "The north-star number and how it is measured. Demo data is labelled; no field results yet.", tags: ["Back end", "Stats"] },
 ];
 
 export function FeatureGrid() {
