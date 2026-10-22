@@ -40,30 +40,38 @@ const textOf = (id: string, lang: DemoLang) => LINES.get(id)![lang];
 export function plan(lang: DemoLang, withRuko: boolean): { beats: Beat[]; rukoAfterScammerLine: number | null; moneyAskedBeforeStop: boolean } {
   const beats: Beat[] = [beat("k0", lang, "call")];
   let said = "";
-  const rounds = [
+  // The call, round by round: the scammer climbs the ladder (rapport, a made-up case, authority, isolation, urgency, the
+  // money) and Kamala resists, then wavers. The caller sometimes talks over the end of her reply, as a real caller does.
+  const rounds: { scammer: string; kamala?: string; cutsInMs?: number }[] = [
     { scammer: "s1", kamala: "k1" },
     { scammer: "s2", kamala: "k2" },
+    { scammer: "s3", kamala: "k3", cutsInMs: 700 },
+    { scammer: "s4", kamala: "k6", cutsInMs: 900 },
+    { scammer: "s5", kamala: "k7" },
+    { scammer: "s6", kamala: "kok", cutsInMs: 600 },
   ];
+  const ruko = (i: number) => {
+    beats.push(beat("r1", lang, "stop"), beat("k5h", lang, "stop"), beat("r2", lang, "after"), beat("k4", lang, "after"), beat("r3", lang, "family"));
+    return { beats, rukoAfterScammerLine: i + 1, moneyAskedBeforeStop: false };
+  };
   for (let i = 0; i < rounds.length; i++) {
-    // The caller talks over the end of her reply (a real caller does not wait).
-    beats.push(beat(rounds[i].scammer, lang, "call", i === 1 ? 900 : undefined));
-    said = `${said} ${textOf(rounds[i].scammer, lang)}`.trim();
-    if (withRuko && runRadar(BUNDLED_LIBRARY, { answers: {}, said }).level === "stop") {
-      beats.push(beat("r1", lang, "stop"), beat("k3", lang, "stop"), beat("r2", lang, "after"), beat("k4", lang, "after"), beat("r3", lang, "family"));
-      return { beats, rukoAfterScammerLine: i + 1, moneyAskedBeforeStop: false };
-    }
-    beats.push(beat(rounds[i].kamala, lang, "call"));
+    const r = rounds[i];
+    const isMoneyAsk = r.scammer === "s6";
+    // Safety net: if the check somehow stayed quiet, Ruko still speaks before the money is asked for.
+    if (withRuko && isMoneyAsk) return ruko(i - 1);
+    beats.push(beat(r.scammer, lang, "call", i === 0 ? undefined : rounds[i - 1].cutsInMs));
+    said = `${said} ${textOf(r.scammer, lang)}`.trim();
+    // Ruko steps in when its own scam check says STOP and the caller has used the heart-of-the-scam tactic (secrecy / digital arrest),
+    // the same rule as the live call. Not a timer.
+    if (withRuko && runRadar(BUNDLED_LIBRARY, { answers: {}, said }).level === "stop" && ISOLATION.test(said)) return ruko(i);
+    if (r.kamala) beats.push(beat(r.kamala, lang, isMoneyAsk ? "call" : "call"));
   }
-  // Ruko did not step in (or is off): the scammer asks for money.
-  beats.push(beat("s3", lang, "call", 700));
-  if (withRuko) {
-    // Safety net: if the check somehow stayed quiet, it must speak now, before the person answers.
-    beats.push(beat("r1", lang, "stop"), beat("k3", lang, "stop"));
-    return { beats, rukoAfterScammerLine: 3, moneyAskedBeforeStop: true };
-  }
-  beats.push(beat("kok", lang, "call"), beat("s4", lang, "lost", 600));
+  beats.push(beat("s7", lang, "lost", 600));
   return { beats, rukoAfterScammerLine: null, moneyAskedBeforeStop: false };
 }
+
+/** Secrecy from the family, or a "digital arrest": the tactic that makes the scam work. */
+const ISOLATION = /do not tell|don.t tell|confidential|digital arrest|mat batana|kisi ko mat|giraftar/i;
 
 export const SCENE_TEXT: Record<DemoLang, { setup: string; withoutEnd: string; withEnd: string; family: string; stop: string }> = {
   en: {

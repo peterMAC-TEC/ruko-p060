@@ -23,6 +23,11 @@ for (const lang of ["en", "hing"] as DemoLang[]) {
   ok(`${lang}: the call ends with the family told`, withRuko.beats[withRuko.beats.length - 1].scene === "family");
   ok(`${lang}: the person hangs up before anything else`, withRuko.beats[rukoIndex + 1].who === "kamala" && /hanging up|call kaat/i.test(withRuko.beats[rukoIndex + 1].text));
 
+  const scammerBefore = withRuko.beats.slice(0, rukoIndex).filter((b) => b.who === "scammer").length;
+  ok(`${lang}: the scammer builds the call over ${scammerBefore} turns before Ruko steps in (not a one-liner)`, scammerBefore >= 4);
+  ok(`${lang}: Kamala resists and asks for her son before Ruko steps in`, withRuko.beats.slice(0, rukoIndex).some((b) => b.who === "kamala" && /son|bete/i.test(b.text)));
+  ok(`${lang}: the scammer uses a made-up badge and case number (the fictional ones)`, withRuko.beats.some((b) => /D-0417/.test(b.text)) && withRuko.beats.some((b) => /C-2291/.test(b.text)));
+
   const without = plan(lang, false);
   ok(`${lang}: without Ruko the scammer asks for money and the call ends in loss`, without.beats.some((b) => /fifty thousand|pachas hazaar/i.test(b.text)) && without.beats[without.beats.length - 1].scene === "lost");
   ok(`${lang}: Ruko never speaks in the without-Ruko version`, !without.beats.some((b) => b.who === "ruko"));
