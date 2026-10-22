@@ -17,6 +17,8 @@ import { clipPlan, RUKO_STOP, type LiveManifest } from "@/lib/live-audio";
 import { hush as speechHush, ring } from "@/lib/voice";
 import { CallTimeline, KaraokeCaption, TacticChip, TensionMeter, Waveform } from "@/components/motion/call-motion";
 import { MotionToggle } from "@/components/motion/motion";
+import { CallerFace, SilhouetteToShield } from "@/components/character/CallerFace";
+import { expressionFor, type CallerExpression } from "@/lib/caller-expression";
 import { TACTIC_WHY } from "@/lib/tactic-explain";
 
 // The recorded clip that is playing now (if any), so "hush" can stop it as fast as it stops the browser voice.
@@ -94,6 +96,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [phase, setPhase] = useState<Phase>("consent");
   const [officerLine, setOfficerLine] = useState("");
   const [prevLine, setPrevLine] = useState("");
+  const [expression, setExpression] = useState<CallerExpression>("friendly");
   const lineRef = useRef("");
   const levelRef = useRef(0);
   const [pressure, setPressure] = useState(0);
@@ -517,6 +520,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     setHud({ level: "clear", tactics: [], objection: null, source: null, reading: false });
     setPressure(0);
     setUsedIds([]);
+    setExpression("friendly");
     let carry = false;
     let outcome = await say(turn.text, "officer", id);
     for (let guard = 0; guard < 30 && id === run.current; guard++) {
@@ -591,6 +595,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       state = turn.state;
       if (turn.kind === "end") return endCall("stop_word", state);
       const text = turn.text;
+      setExpression(expressionFor(STAGES[Math.max(0, state.stage)], turn.objection, turn.kind));
       const source = hint ? "ai" : "recorded";
       convo.push({ who: "officer", text });
       {
@@ -776,7 +781,9 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             {[0, 1, 2].map((i) => (
               <span key={i} className="m-ring absolute inset-0 rounded-full border border-ink/30" style={{ "--i": i } as React.CSSProperties} />
             ))}
-            <Guardian mood="safe" className="relative size-16" />
+            <span className="relative block size-[84px] overflow-hidden rounded-full">
+              <CallerFace phase="silhouette" size={84} />
+            </span>
           </span>
           <p className="mt-8 text-[18px] text-ink-soft">{en ? "Incoming call" : "Incoming call"}</p>
           <p className="display mt-1 text-[44px] leading-tight">{en ? "Unknown number" : "Anjaan number"}</p>
@@ -810,12 +817,15 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
           {/* The caller: a circle that glows while he speaks, his name, and what he is saying (captions, always on). */}
           <div className="mt-4 flex items-center gap-5">
-            <span className="relative grid size-[132px] shrink-0 place-items-center" aria-hidden>
-              <Waveform className="absolute inset-0" getLevel={getWaveLevel} mode={status === "speaking" ? "speaking" : status === "listening" && !muted ? "listening" : status === "thinking" ? "thinking" : "idle"} />
-              <span className="relative grid size-16 place-items-center rounded-full bg-[#38e1ff]/15 text-[30px] text-[#38e1ff]">S</span>
+            <span className="relative grid size-[160px] shrink-0 place-items-center">
+              <Waveform className="absolute inset-0" size={160} getLevel={getWaveLevel} mode={status === "speaking" ? "speaking" : status === "listening" && !muted ? "listening" : status === "thinking" ? "thinking" : "idle"} />
+              <span className="relative block size-[96px] overflow-hidden rounded-full ring-2 ring-[#38e1ff]/40">
+                <CallerFace phase="face" expression={expression} speaking={status === "speaking"} getLevel={getWaveLevel} size={96} />
+              </span>
             </span>
             <div>
               <p className="text-[24px] font-semibold">Officer Sethi</p>
+              <p className="mt-0.5 inline-block rounded-full border border-[#ff4d3d]/50 px-2.5 py-0.5 font-mono text-[12px] font-semibold tracking-wide text-[#ff8a7d] uppercase">{en ? "Scam caller (role-play)" : "Scam caller (role-play)"}</p>
               <p className="text-[15px] text-white/60">
                 {DEMO_NUMBER} · actor{status === "speaking" ? (en ? " · speaking" : " · bol raha hai") : ""}
               </p>
@@ -923,6 +933,9 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           <div className="mx-auto flex min-h-full max-w-md flex-col px-6 pt-6 pb-8">
             <div className="flex items-center justify-between">
               <p className="text-[15px] font-semibold tracking-[0.16em] text-white/85 uppercase">{en ? "This is a scam" : "Yeh scam hai"}</p>
+              <span className="relative block size-[104px] overflow-hidden rounded-[20px] ring-2 ring-white/40">
+                <CallerFace phase="unmask" size={104} backdrop />
+              </span>
               
             </div>
             <h1 id="live-stop" className="m-stop-in display mt-4 text-[150px] leading-[0.86] text-white">
@@ -970,6 +983,9 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
       {phase === "endA" && (
         <section className="m-rise flex flex-1 flex-col">
+          <div className="mt-4 self-start">
+            <SilhouetteToShield size={88} shield={<Guardian mood="after" className="size-20" />} />
+          </div>
           <h1 className="display mt-6 text-[44px] leading-[1.05]">{endedBy === "stop_word" ? (en ? "Call ended. You are safe." : "Call khatam. Aap surakshit hain.") : en ? "Call ended. You paused." : "Call khatam. Aap ruk gaye."}</h1>
           <p className="mt-3 rounded-[18px] bg-safe-soft p-4 text-[21px] leading-snug font-semibold text-safe">{en ? "You have paused. That was a good step." : "Aap ruk gaye. Yeh achha kadam tha."}</p>
           <ol className="mt-5 flex flex-col gap-3 text-[21px] leading-snug">
@@ -992,6 +1008,12 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       {phase === "endB" && (
         <section className="m-rise flex flex-1 flex-col">
           <p className="mt-4 rounded-[12px] bg-ink px-4 py-3 text-center text-[17px] font-semibold tracking-[0.1em] text-white uppercase">MOCK BANK · {en ? "practice only · no real money" : "sirf practice · asli paise nahi"}</p>
+          <div className="mt-3 flex items-center gap-3">
+            <span className="block size-[64px] shrink-0 overflow-hidden rounded-full">
+              <CallerFace phase={tx && ["held", "pending"].includes(tx.status) ? "frozen" : "face"} expression="urgent" speaking={false} size={64} tag={false} />
+            </span>
+            <p className="text-[17px] leading-snug text-ink-soft">{tx && ["held", "pending"].includes(tx.status) ? (en ? "The caller is frozen. Payment paused." : "Caller ruka hua hai. Payment ruka hua hai.") : en ? "The caller is waiting on the line…" : "Caller line par intezaar kar raha hai…"}</p>
+          </div>
           <div className="mt-3 overflow-hidden rounded-[18px] border border-hair">
             <iframe title="Practice bank" src="/bank?embed=1&prefill=live" className="h-[560px] w-full" />
           </div>

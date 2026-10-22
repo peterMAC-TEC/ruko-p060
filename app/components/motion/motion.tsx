@@ -54,7 +54,7 @@ export function MotionToggle({ tone = "light" }: { tone?: "light" | "dark" }) {
       onClick={flip}
       role="switch"
       aria-checked={reduced}
-      className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-[14px] font-semibold ${tone === "dark" ? "border-white/25 text-white/80" : "border-hair text-ink-soft"}`}
+      className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-3 text-[13px] font-semibold whitespace-nowrap ${tone === "dark" ? "border-white/25 text-white/80" : "border-hair text-ink-soft"}`}
     >
       <span aria-hidden className={`inline-block h-4 w-7 rounded-full p-0.5 ${reduced ? (tone === "dark" ? "bg-[#38e1ff]" : "bg-ink") : "bg-current opacity-30"}`}>
         <span className={`block size-3 rounded-full bg-white transition-transform ${reduced ? "translate-x-3" : ""}`} />
