@@ -549,6 +549,14 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         }, 700);
         const ctrl = new AbortController();
         const abortTimer = setTimeout(() => ctrl.abort(), 4000);
+        // The stop word (spoken, or the big button) is honoured while the AI is still thinking: nothing waits for the AI.
+        let stopHit = false;
+        const stopWatch = setInterval(() => {
+          if (STOP_WORD.test(heard.current.text)) {
+            stopHit = true;
+            ctrl.abort();
+          }
+        }, 40);
         try {
           const res = await fetch("/api/demo/officer", {
             method: "POST",
@@ -567,6 +575,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         }
         clearTimeout(fillerTimer);
         clearTimeout(abortTimer);
+        clearInterval(stopWatch);
+        if (stopHit) {
+          hush();
+          return endCall("stop_word", state);
+        }
         if (filler) {
           const f = await (filler as Promise<"done" | "stop" | "barged">);
           if (f === "stop") return endCall("stop_word", state);
