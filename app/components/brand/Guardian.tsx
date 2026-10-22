@@ -10,7 +10,20 @@ const RED = "#d92d20";
 const CREAM = "#f4e8cf";
 const GREEN = "#bcd9c5";
 
-export function Guardian({ mood = "safe", className = "size-28", label }: { mood?: Mood; className?: string; label?: string }) {
+export function Guardian({
+  mood = "safe",
+  className = "size-28",
+  label,
+  gaze,
+}: {
+  mood?: Mood;
+  className?: string;
+  label?: string;
+  /** Where to look, -1 to 1 on each axis (the landing page uses it to follow the pointer). */
+  gaze?: { x: number; y: number };
+}) {
+  const gx = (gaze?.x ?? 0) * 4;
+  const gy = (gaze?.y ?? 0) * 3;
   // The bar across the chest (the Ruko mark's "hand held up"): cream when calm, red only when danger.
   const bar = mood === "danger" ? RED : mood === "after" ? GREEN : CREAM;
   const look = mood === "checking";
@@ -27,8 +40,8 @@ export function Guardian({ mood = "safe", className = "size-28", label }: { mood
         <ellipse cx="80" cy="60" rx="12" ry={mood === "after" ? 9 : 12} fill="#fff" />
       </g>
       <g className={look ? "g-look" : ""}>
-        <circle cx={mood === "danger" ? 40 : 41} cy="61" r="5.5" fill={INK} />
-        <circle cx={mood === "danger" ? 80 : 81} cy="61" r="5.5" fill={INK} />
+        <circle cx={(mood === "danger" ? 40 : 41) + gx} cy={61 + gy} r="5.5" fill={INK} />
+        <circle cx={(mood === "danger" ? 80 : 81) + gx} cy={61 + gy} r="5.5" fill={INK} />
       </g>
       <path d={brow} stroke="#fff" strokeWidth="4" strokeLinecap="round" fill="none" />
       <path d={mouth} stroke="#fff" strokeWidth="4" strokeLinecap="round" fill="none" />
