@@ -53,7 +53,7 @@ export function runRadar(lib: PatternLibrary, input: RadarInput): RadarResult {
     : undefined;
   const byPhrase = lib.patterns
     .map((p) => ({ p, hits: phraseHits(p, input.said ?? "") }))
-    .filter((x) => x.hits > 0)
+    .filter((x) => x.hits >= 1)
     .sort((a, b) => b.hits - a.hits || (a.p.severity === "high" ? -1 : 1))[0];
   if (byPhrase) signals.push(`said_${byPhrase.p.id}`);
 

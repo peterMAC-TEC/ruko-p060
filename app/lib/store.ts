@@ -647,6 +647,13 @@ export async function loadPatternLibrary(): Promise<PatternLibrary> {
         .upsert(BUNDLED_LIBRARY.patterns.map((p) => ({ id: p.id, version: BUNDLED_LIBRARY.version, data: p }))),
     );
     rows = BUNDLED_LIBRARY.patterns.map((p) => ({ id: p.id, version: BUNDLED_LIBRARY.version, data: p }));
+  } else if (BUNDLED_LIBRARY.version > Math.max(...rows.map((r: { version: number }) => r.version))) {
+    // The app shipped a newer library than the database holds: bring those patterns up to date
+    // (patterns that exist only in the database are left alone).
+    const upgraded = BUNDLED_LIBRARY.patterns.map((p) => ({ id: p.id, version: BUNDLED_LIBRARY.version, data: p }));
+    ok(await sb().from("scam_patterns").upsert(upgraded));
+    const kept = rows.filter((r: { id: string }) => !upgraded.some((u) => u.id === r.id));
+    rows = [...upgraded, ...kept];
   }
   return {
     version: Math.max(...rows.map((r: { version: number }) => r.version)),

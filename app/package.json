@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "tsx scripts/check-callcheck.ts && tsx scripts/check-radar.ts && tsx scripts/check-rules.ts && tsx scripts/check-threat.ts && tsx scripts/check-trial.ts && tsx scripts/check-signs.ts && tsx scripts/check-companion.ts",
+    "test": "tsx scripts/check-callcheck.ts && tsx scripts/check-radar.ts && tsx scripts/check-rules.ts && tsx scripts/check-threat.ts && tsx scripts/check-trial.ts && tsx scripts/check-signs.ts && tsx scripts/check-companion.ts && tsx scripts/check-bots.ts",
     "check:ai": "tsx --conditions=react-server --env-file=.env.local scripts/check-ai-live.ts public/samples/fake-warrant.png",
-    "demo:offline": "node scripts/demo-offline.mjs"
+    "demo:offline": "node scripts/demo-offline.mjs",
+    "sim": "tsx scripts/sim.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.132.1",
