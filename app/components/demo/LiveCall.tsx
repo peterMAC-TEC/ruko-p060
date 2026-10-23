@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Guardian } from "@/components/brand/Guardian";
 import { CompanionApp } from "@/components/companion/CompanionApp";
 import { VoiceTrust } from "@/components/demo/VoiceTrust";
-import { demoOffline } from "@/lib/demo-mode";
+import { demoFixed, demoOffline } from "@/lib/demo-mode";
 import { extractName, FILLERS, objectionOf, type Objection } from "@/lib/officer-brain";
 import { officerNext, officerOpen, officerStart, rukoShouldStep, STAGES, tacticsUsed, TACTIC_LABEL, type Lang, type OfficerState } from "@/lib/demo-officer";
 import { classify } from "@/lib/bots/intent";
@@ -500,8 +500,9 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
 
   const runCall = useCallback(async () => {
     const id = ++run.current;
-    offline.current = demoOffline();
-    let state = officerStart();
+    // Fixed script: same wordings every time and no AI reading, for a rehearsed demo.
+    offline.current = demoOffline() || demoFixed();
+    let state = officerStart(demoFixed() ? 0 : undefined);
     callStart.current = Date.now();
     setSeconds(0);
     setLatencies([]);

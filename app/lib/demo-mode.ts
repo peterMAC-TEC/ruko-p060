@@ -9,3 +9,15 @@ export function demoOffline(): boolean {
     return false;
   }
 }
+
+// Fixed script (also on the /demo hub): the caller always uses the same wordings and the AI reading is off, so a
+// rehearsed live demo follows a known path. The person's replies still steer it.
+export const FIXED_KEY = "ruko:demo-fixed";
+
+export function demoFixed(): boolean {
+  try {
+    return typeof window !== "undefined" && window.localStorage.getItem(FIXED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}

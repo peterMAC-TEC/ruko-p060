@@ -3,6 +3,7 @@ import { JetBrains_Mono, Newsreader, Noto_Sans_Devanagari, Public_Sans } from "n
 import "./globals.css";
 import { SiteChrome } from "@/components/SiteChrome";
 import { TechNav } from "@/components/tech/TechNav";
+import { DirectorKeys } from "@/components/tech/DirectorKeys";
 
 // Ink: Public Sans (clear, neutral, easy to read at large sizes) for the interface, Newsreader for the big, light display words.
 const publicSans = Public_Sans({ variable: "--font-public", subsets: ["latin"], weight: ["400", "600", "800"] });
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <TechNav />
         {children}
         <SiteChrome />
+        <DirectorKeys />
       </body>
     </html>
   );

@@ -3,17 +3,19 @@
 import { useEffect, useState } from "react";
 import { Chip, TechBackdrop } from "@/components/tech/TechBackdrop";
 import { FeatureGrid, LiveCallCard } from "@/components/tech/FeatureGrid";
-import { OFFLINE_KEY } from "@/lib/demo-mode";
+import { FIXED_KEY, OFFLINE_KEY } from "@/lib/demo-mode";
 
 // The control room: the live call first, then every other part of Ruko in any order, then the presenter's two switches
 // (offline mode, reset). Judges can start from here without help.
 
 export function DemoHub() {
   const [offline, setOffline] = useState(false);
+  const [fixed, setFixed] = useState(false);
   useEffect(() => {
     try {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setOffline(localStorage.getItem(OFFLINE_KEY) === "1");
+      setFixed(localStorage.getItem(FIXED_KEY) === "1");
     } catch {
       // Storage blocked: stays on.
     }
@@ -78,6 +80,29 @@ export function DemoHub() {
           </section>
           <section className="flex items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-white/[0.035] p-5">
             <div>
+              <p className="text-[21px] font-semibold">Fixed script</p>
+              <p className="mt-1 text-[16px] leading-snug text-white/65">{fixed ? "On: the caller uses the same wordings every time and the AI reading is off. Best for a rehearsed demo or a recording." : "Off: wordings vary from call to call."}</p>
+            </div>
+            <button
+              onClick={() => {
+                const next = !fixed;
+                setFixed(next);
+                try {
+                  localStorage.setItem(FIXED_KEY, next ? "1" : "0");
+                } catch {
+                  // Fine.
+                }
+              }}
+              role="switch"
+              aria-checked={fixed}
+              aria-label="Fixed script"
+              className={`relative h-12 w-24 shrink-0 rounded-full border transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#38e1ff] ${fixed ? "border-[#38e1ff] bg-[#38e1ff]/25" : "border-white/20 bg-white/10"}`}
+            >
+              <span className={`absolute top-1 size-10 rounded-full bg-white transition-all ${fixed ? "left-[3.2rem]" : "left-1"}`} />
+            </button>
+          </section>
+          <section className="flex items-center justify-between gap-4 rounded-[20px] border border-white/10 bg-white/[0.035] p-5">
+            <div>
               <p className="text-[21px] font-semibold">Reset the demo</p>
               <p className="mt-1 text-[16px] leading-snug text-white/65">Clears held payments, alerts and the lock, so the next run starts clean.</p>
             </div>
@@ -86,7 +111,8 @@ export function DemoHub() {
             </button>
           </section>
         </div>
-        <p className="mt-8 text-[15px] text-white/45">Demo data is labelled. No field-trial results exist yet; nothing on these screens is a measured outcome.</p>
+        <p className="mt-6 font-mono text-[14px] text-white/60">Presenter keys: 1 home · 2 live call · 3 architecture · 4 family phone · 5 mock bank · 6 eval · X X-Ray (in the call) · R reset · F motion · ? help</p>
+        <p className="mt-4 text-[15px] text-white/45">Demo data is labelled. No field-trial results exist yet; nothing on these screens is a measured outcome.</p>
       </main>
     </div>
   );
