@@ -1,5 +1,17 @@
 # Ruko: architecture (one page)
 
+## The judges' five boxes (23 Oct)
+
+**AI reads and words. Code decides.** Live version: /architecture, and X-Ray (press X) inside the call shows every turn's real trace.
+
+| 1 Frontend (user input) | 2 Backend (application logic) | 3 Services | 4 Backend prepares the result | 5 Frontend displays |
+|---|---|---|---|---|
+| PWA screens; browser speech recognition, mic level, typed fallback; share target | Call state machine, 7 stages, persuasion ladder (lib/demo-officer.ts); objection rules (lib/officer-brain.ts); threat engine, 17 tactics, log-odds fusion (lib/threat.ts); scam check (lib/radar.ts); Money Lock and payment rules (lib/rules.ts, lib/payments.ts); Ruko Guard (lib/guard-assess.ts) | **AI** (classify, extract, generate; free model first, one cheap fallback; lib/ai/*); **Database** (Supabase, Mumbai, row-level security, signal codes, salted hashes, hash-chained evidence log); **Tools** (recorded voices, number risk, WhatsApp link, family alerts) | zod schema validation (retry once, then drop); confidence threshold 0.6; guard filter (lib/bots/guard.ts, guardAiReply); fallbacks on timeout, failure or offline; plain-language formatting | STOP takeover; word-by-word captions; tactic chips and pressure meter; the caller's face; family alert; payment pause |
+
+One live-call turn: speech → rules read it (µs) → if unclear and 3+ words, the AI classifies it with a confidence score (about 2.2 s; 3.2 s limit; below 0.6 ignored) → the state machine picks the move → the threat engine fuses the tactics → the guard checks the line → a recorded voice says it → captions, chips and the face update. Measured numbers: EVAL.md.
+
+Why code decides: predictable (a scammer cannot talk it out of its rules), testable (19 suites, simulated calls, the eval), explainable (every STOP names its tactics), and it works offline.
+
 **Job to be done:** When an older person is on a call with someone pretending to be police, customs or a bank, they want to know straight away that it is a scam and what to do next, so they hang up and do not transfer money.
 
 **Current workflow:** Phone rings → a "CBI officer" says "digital arrest" → fear, pressure, "don't tell anyone", "don't hang up" → the person doubts but has nobody to ask → transfers savings → family finds out later.

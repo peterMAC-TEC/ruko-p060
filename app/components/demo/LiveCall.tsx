@@ -376,15 +376,24 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         a.playbackRate = role === "officer" ? Math.min(1.04, 1 + urgencyRef.current * 0.007) : 1;
         activeClip = a;
         a.onended = next;
-        a.onerror = () => {
+        // A clip that fails to load is retried once; only then does the browser voice read the line. A clip that was
+        // stopped on purpose (hush, a newer line) is ignored, so nothing ever speaks twice.
+        const fail = () => {
+          if (a.dataset.failed || finished || activeClip !== a) return;
+          a.dataset.failed = "1";
+          if (!retried) {
+            retried = true;
+            k--;
+            setTimeout(next, 150);
+            return;
+          }
           if (k === 1) browserVoice();
           else finish("done");
         };
-        a.play().catch(() => {
-          if (k === 1) browserVoice();
-          else finish("done");
-        });
+        a.onerror = fail;
+        a.play().catch(fail);
       };
+      let retried = false;
       next();
     });
   }, []);

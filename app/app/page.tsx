@@ -5,7 +5,7 @@ import { Chip, TechBackdrop } from "@/components/tech/TechBackdrop";
 import { FeatureGrid, LiveCallCard } from "@/components/tech/FeatureGrid";
 import { flags } from "@/lib/flags";
 import { Reveal, RotatingWords, WordByWord } from "@/components/motion/motion";
-import { FactsStrip, HeroCaller, HowSaves, ProofPoints } from "@/components/tech/HomeSections";
+import { FactsStrip, HeroCaller, HowSaves, LossTicker, ProofPoints } from "@/components/tech/HomeSections";
 
 // The front door for judges: the live scam call first, then every other part of Ruko as a card, in any order.
 // Calm, large-type elder screens live elsewhere (/check, /companion, /family ...); this page is the control room.
@@ -47,6 +47,7 @@ export default function Home() {
           Scammers pose as police and keep older people on a call until they pay. Ruko listens for the pressure, steps in with one word, and brings the family in.
         </p>
 
+        <LossTicker />
         <Link
           href="/demo/live"
           className="press m-tap mt-6 inline-flex min-h-[72px] items-center gap-3 rounded-[18px] bg-[#38e1ff] px-8 text-[24px] font-semibold text-[#041016] shadow-[0_0_40px_rgba(56,225,255,0.35)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"

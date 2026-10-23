@@ -46,3 +46,16 @@ Each number on the Impact page has its source on screen: ₹22,845 crore lost to
 
 **What is not built?**
 Answering real calls, real bank integration, AI rewording of the officer, voice cloning (deliberately not built), a live second-language voice beyond browser speech, and the field trial.
+
+
+## Added 23 Oct: architecture and evaluation
+
+**Where exactly is the AI, and what does it decide?** It decides nothing. It reads unclear replies in the call (classify, with a confidence score), extracts warning signs from a photo or a description, and words the Companion's replies. The STOP, the call's moves, the risk score, the payment hold and every safety check are code. Press X during the call to see it turn by turn.
+
+**What if the AI is wrong or slow?** Below 0.6 confidence its reading is ignored; after 3.2 s it is abandoned; offline it is never asked. The rule-only path always runs. On our eval the hybrid fell back to rules on 5.3% of unclear replies.
+
+**How accurate is it?** On 66 synthetic replies in 11 classes: rules 75.8%, AI 93.9%, hybrid 90.9%. The hybrid is a little below AI alone because the rules answer first and occasionally misread (for example "I refuse to pay" read as "no money"); we chose speed and predictability. All data is ours and synthetic, not field data.
+
+**Can the AI make the scammer say something harmful?** Every line is checked by the guard. It blocked 22 of 22 adversarial outputs (OTP, PIN, card, Aadhaar, real agencies and officers, phone and account numbers, abuse, violence, claiming to be human) and allowed 5 of 5 safe ones. The spoken lines are recordings chosen by code.
+
+**Does Ruko raise false alarms?** On 20 genuine calls (doctor, family, courier, pension...), 0 STOPs and 0 warnings. On single scam lines, STOP precision was 100% and recall 20%, because STOP needs two signs; any warning caught 72%. In the app the check reads the whole call so far, which is how it reaches STOP.

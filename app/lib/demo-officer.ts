@@ -195,6 +195,8 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
   const raw = typeof said === "string" && !INTENTS_SET.has(said);
   const objection: Objection | null = raw ? (objectionOf(said) ?? hint) : null;
   const gave = raw ? extractName(said) : null;
+  // A name given now is used from the next turn on (the line for this turn is already chosen).
+  const nameBefore = state.name;
   if (gave && !state.name) state = { ...state, name: gave };
   // After the payment ask: the closing line once, then nothing more to say.
   if (state.stage >= PAYMENT) {
@@ -217,7 +219,7 @@ export function officerNext(state: OfficerState, said: string | Intent, elapsedM
     if (objection) {
       const rung = 3 - state.counterBudget + state.stage;
       const last = state.said[state.said.length - 1] ?? "";
-      const text = withName(objectionReply(objection, rung, lang, last), state.name, lang);
+      const text = withName(objectionReply(objection, rung, lang, last), nameBefore, lang);
       const tactic = OBJ_TACTIC[objection];
       const s: OfficerState = {
         ...state,

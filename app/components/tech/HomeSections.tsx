@@ -135,3 +135,31 @@ export function ProofPoints() {
     </section>
   );
 }
+
+/** ₹ lost since the page opened, at the average rate from the 2024 reported total (₹22,845 crore a year). Not live data. */
+const PER_SECOND = 22845e7 / (365 * 24 * 3600);
+export function LossTicker() {
+  const ok = useMotionOk();
+  const [secs, setSecs] = useState(0);
+  useEffect(() => {
+    if (!ok) return;
+    const t0 = performance.now();
+    const id = setInterval(() => setSecs((performance.now() - t0) / 1000), 100);
+    return () => clearInterval(id);
+  }, [ok]);
+  return (
+    <div className="mt-6 rounded-[18px] border border-white/10 bg-white/[0.03] px-5 py-4">
+      {ok ? (
+        <p className="text-[17px] text-white/75">
+          Since you opened this page, Indians have lost about{" "}
+          <span className="font-mono text-[26px] font-bold text-[#FFB000] tabular">₹{Math.round(secs * PER_SECOND).toLocaleString("en-IN")}</span> to cyber fraud.
+        </p>
+      ) : (
+        <p className="text-[17px] text-white/75">
+          Indians lose about <span className="font-mono text-[26px] font-bold text-[#FFB000]">₹7,200 every second</span> to cyber fraud.
+        </p>
+      )}
+      <p className="mt-1 text-[13px] text-white/45">An average from the 2024 reported total of ₹22,845 crore (Ministry of Home Affairs, via Scroll). Not live data.</p>
+    </div>
+  );
+}

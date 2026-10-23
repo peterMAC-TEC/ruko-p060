@@ -162,10 +162,10 @@ export function redactForAi(text: string): string {
   return text.replace(/\d[\d\s,.-]{2,}\d/g, "[number]").replace(/\b\d{3,}\b/g, "[number]").slice(0, 280);
 }
 
-/** A first name, if the person gave one ("my name is Asha", "main Ramesh hoon"). Kept in memory for the call only. */
+/** A first name, if the person gave one ("my name is Asha", "mera naam Ramesh hai"). Kept in memory for the call only. */
 export function extractName(text: string): string | null {
   const m =
-    /\b(?:my name is|this is|i am|i'm|myself|mera naam|mera nam|main)\s+([A-Z][a-z]{2,14})\b(?!\s+(?:not|scared|afraid|going|sure|just|very|so|a|an|the|hoon|hun|bol|from|calling|your))/i.exec(text) ??
+    /\b(?:my name is|myself|mera naam|mera nam)\s+([A-Z][a-z]{2,14})\b(?!\s+(?:not|scared|afraid|going|sure|just|very|so|a|an|the|hoon|hun|bol|from|calling|your))/i.exec(text) ??
     /\bnaam\s+([A-Z][a-z]{2,14})\s+(?:hai|hain)\b/i.exec(text);
   if (!m) return null;
   const n = m[1];
