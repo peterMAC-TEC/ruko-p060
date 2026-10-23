@@ -8,14 +8,15 @@ import { RukoWordmark } from "@/components/brand/RukoMark";
 // The control-room bar on the judge-facing pages: every part of Ruko one tap away, the live call pinned and lit.
 // It does not appear on the calm elder screens, the live call itself, or inside embedded phones.
 
-const SHOW_ON = ["/", "/demo", "/console", "/lab", "/impact", "/line", "/survey", "/phone", "/family", "/bank", "/setup"];
+const SHOW_ON = ["/", "/demo", "/architecture", "/eval", "/console", "/lab", "/impact", "/line", "/survey", "/phone", "/family", "/bank", "/setup"];
 export const NAV: [string, string][] = [
   ["/demo/live", "Live call"],
   ["/family", "Family phone"],
   ["/bank", "Mock bank"],
   ["/console", "Fraud desk"],
   ["/line", "Ruko Line"],
-  ["/demo/how", "Under the hood"],
+  ["/architecture", "Architecture"],
+  ["/eval", "Eval"],
 ];
 
 function Inner() {

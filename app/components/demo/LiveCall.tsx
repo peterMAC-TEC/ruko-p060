@@ -20,6 +20,9 @@ import { Confetti, MotionToggle } from "@/components/motion/motion";
 import { CallerFace, SilhouetteToShield } from "@/components/character/CallerFace";
 import { expressionFor, type CallerExpression } from "@/lib/caller-expression";
 import { TACTIC_WHY } from "@/lib/tactic-explain";
+import { checkCallerLine } from "@/lib/bots/guard";
+import { threatFromUsed, XRAY_KEY, type AiMode, type TurnTrace } from "@/lib/xray";
+import { XRayPanel } from "@/components/xray/XRayPanel";
 
 // The recorded clip that is playing now (if any), so "hush" can stop it as fast as it stops the browser voice.
 let activeClip: HTMLAudioElement | null = null;
@@ -96,6 +99,8 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [phase, setPhase] = useState<Phase>("consent");
   const [officerLine, setOfficerLine] = useState("");
   const [prevLine, setPrevLine] = useState("");
+  const [traces, setTraces] = useState<TurnTrace[]>([]);
+  const [xray, setXray] = useState(false);
   const [expression, setExpression] = useState<CallerExpression>("friendly");
   const lineRef = useRef("");
   const levelRef = useRef(0);
@@ -110,6 +115,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const [status, setStatus] = useState<"speaking" | "listening" | "thinking" | "">("");
   const [seconds, setSeconds] = useState(0);
   const [micOk, setMicOk] = useState(true);
+  const typedLast = useRef(false);
   // Voice first: the mic is tested before the call, the level is shown during it, and typing is only a fallback.
   const [micTest, setMicTest] = useState<"idle" | "asking" | "ok" | "blocked" | "none">("idle");
   const [level, setLevel] = useState(0);
@@ -392,6 +398,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         setYou(""); // your last words stay on screen while he answers, and clear when it is your turn again
       }
       setStatus("listening");
+      typedLast.current = false;
       const t0 = Date.now();
       let done = false;
       const finish = (t: string) => {
@@ -521,6 +528,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     setHud({ level: "clear", tactics: [], objection: null, source: null, reading: false });
     setPressure(0);
     setUsedIds([]);
+    setTraces([]);
     setExpression("friendly");
     let carry = false;
     let outcome = await say(turn.text, "officer", id);
@@ -536,6 +544,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       const tReply = Date.now();
       setStatus("thinking");
       setHud((h) => ({ ...h, reading: true, objection: objectionOf(reply) ?? h.objection }));
+      const r0 = performance.now();
       const intent = classify(reply);
       if (intent === "agree_secret") setAgreedSecret(true);
       urgencyRef.current = Math.max(0, state.stage);
@@ -548,7 +557,14 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       let hint: Objection | null = null;
       const rulesRead = objectionOf(reply);
       const wordCount = reply.trim().split(/\s+/).filter(Boolean).length;
+      const rulesMs = performance.now() - r0;
+      let aiMode: AiMode = offline.current ? "offline" : !aiWordingRef.current || aiFails >= 2 ? "off" : rulesRead ? "skipped_rules_knew" : "skipped_short";
+      let aiObj: string | null = null;
+      let aiState: string | null = null;
+      let aiConf: number | null = null;
+      let aiMs = 0;
       if (aiWordingRef.current && !offline.current && aiFails < 2 && !rulesRead && wordCount >= 3 && intent !== "stop_word" && intent !== "will_pay" && state.stage < 5) {
+        const a0 = performance.now();
         let filler: Promise<"done" | "stop" | "barged"> | null = null;
         const fillerTimer = setTimeout(() => {
           const f = FILLERS[(state.seed + convo.length) % FILLERS.length];
@@ -571,14 +587,27 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
             signal: ctrl.signal,
             body: JSON.stringify({ mode: "classify", turns: convo.slice(-6), stage: STAGES[Math.max(0, state.stage)], rung: 0, name: null, lang, objection: null }),
           });
-          const j = (await res.json()) as { source?: string; objection?: Objection | null };
+          const j = (await res.json()) as { source?: string; objection?: Objection | null; state?: string; confidence?: number };
           if (j.source === "ai") {
-            hint = j.objection ?? null;
+            aiObj = j.objection ?? null;
+            aiState = j.state ?? null;
+            aiConf = typeof j.confidence === "number" ? j.confidence : null;
+            // Code keeps the final say: a low-confidence reading is ignored and the rules stand.
+            if (aiConf !== null && aiConf < 0.6) aiMode = "low_confidence";
+            else {
+              hint = j.objection ?? null;
+              aiMode = "classified";
+            }
             aiFails = 0;
-          } else if (!res.ok) aiFails++;
+          } else {
+            aiMode = "failed";
+            if (!res.ok) aiFails++;
+          }
         } catch {
+          aiMode = ctrl.signal.aborted && !stopHit ? "timeout" : "failed";
           aiFails++;
         }
+        aiMs = performance.now() - a0;
         clearTimeout(fillerTimer);
         clearTimeout(abortTimer);
         clearInterval(stopWatch);
@@ -592,10 +621,42 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         }
         if (id !== run.current) return;
       }
+      const d0 = performance.now();
       turn = officerNext(state, reply, Date.now() - callStart.current, lang, hint);
+      const decisionMs = performance.now() - d0;
       state = turn.state;
       if (turn.kind === "end") return endCall("stop_word", state);
       const text = turn.text;
+      {
+        // X-Ray: what each step did this turn, as codes and timings only (the words are never kept).
+        const t0 = performance.now();
+        const threat = threatFromUsed(state.used);
+        const threatMs = performance.now() - t0;
+        const g0 = performance.now();
+        const verdict = checkCallerLine(text);
+        const recorded = clipPlan("officer", lang, text, liveManifest.current) !== null;
+        const guardMs = performance.now() - g0;
+        const tr: TurnTrace = {
+          n: convo.filter((c) => c.who === "person").length,
+          input: { via: !reply ? "silence" : typedLast.current ? "typed" : "voice", words: wordCount, ms: 0 },
+          rules: { intent, objection: rulesRead, ms: rulesMs },
+          ai: { mode: aiMode, objection: aiObj, state: aiState, confidence: aiConf, ms: aiMs },
+          decision: { kind: turn.kind, stage: turn.stage, move: turn.id, objectionUsed: turn.objection ?? null, ms: decisionMs },
+          threat: { ...threat, ms: threatMs },
+          guard: { ok: verdict.ok, why: verdict.why ?? null, recorded, ms: guardMs },
+          output: { caption: true, tacticsShown: Math.min(3, state.used.length), stopNow: rukoShouldStep(state) },
+          totalMs: Date.now() - tReply,
+        };
+        setTraces((t) => {
+          const next = [...t.slice(-19), tr];
+          try {
+            sessionStorage.setItem(XRAY_KEY, JSON.stringify(next));
+          } catch {
+            // Storage blocked: the X-Ray still works for this call.
+          }
+          return next;
+        });
+      }
       setExpression(expressionFor(STAGES[Math.max(0, state.stage)], turn.objection, turn.kind));
       const source = hint ? "ai" : "recorded";
       convo.push({ who: "officer", text });
@@ -613,6 +674,17 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
       outcome = await say(text, "officer", id);
     }
   }, [endCall, lang, listen, ruko, say, startRecognition]);
+
+  // X toggles the X-Ray (not while typing a reply).
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if (e.key === "x" || e.key === "X") setXray((v) => !v);
+    };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+  }, []);
 
   // ---- screens ----
   const consent = () => {
@@ -671,6 +743,7 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
     const t = typed.trim();
     if (!t) return;
     setTyped("");
+    typedLast.current = true;
     setYou(t);
     typedResolver.current?.(t);
   };
@@ -721,6 +794,11 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
         <Link href="/demo" onClick={stopEverything} className={`min-h-12 content-center text-[16px] underline underline-offset-4 ${live ? "text-white/70" : "text-ink-soft"}`}>
           All scenes
         </Link>
+        {live && (
+          <button onClick={() => setXray(true)} className="min-h-11 rounded-full border border-[#5b9dff]/60 px-3 font-mono text-[13px] font-semibold text-[#9cc2ff]">
+            X-Ray
+          </button>
+        )}
         <MotionToggle tone={live ? "dark" : "light"} />
         {phase !== "consent" && (
           <button onClick={endDemo} className={`min-h-12 rounded-full border px-4 text-[16px] font-semibold ${live ? "border-white/30 text-white" : "border-hair"}`}>
@@ -928,6 +1006,8 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           </details>
         </section>
       )}
+
+      {xray && <XRayPanel traces={traces} onClose={() => setXray(false)} />}
 
       {phase === "stop" && (
         <section className="m-fade fixed inset-0 z-50 overflow-y-auto bg-alarm text-white" role="alertdialog" aria-labelledby="live-stop">

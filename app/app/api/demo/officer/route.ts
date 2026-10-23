@@ -29,6 +29,7 @@ const Reply = z.object({
 const Classify = z.object({
   state: z.enum(["agreeing", "doubting", "refusing", "scared", "angry", "asking", "silent", "leaving"]),
   objection: z.enum([...OBJECTIONS, "none"]),
+  confidence: z.number().min(0).max(1),
 });
 
 export async function POST(req: Request) {
@@ -39,8 +40,9 @@ export async function POST(req: Request) {
   try {
     if (b.mode === "classify") {
       // The AI only reads what the person meant. The answer is a recorded line chosen by code.
+      const t0 = Date.now();
       const c = await runTask(Classify, { prompt: buildClassifyPrompt(b) });
-      return Response.json({ source: "ai", objection: c.objection === "none" ? null : c.objection, state: c.state });
+      return Response.json({ source: "ai", objection: c.objection === "none" ? null : c.objection, state: c.state, confidence: c.confidence, ms: Date.now() - t0, model: process.env.AI_PROVIDER ?? "gemini" });
     }
     const r = await runTask(Reply, { prompt: buildOfficerPrompt(b) });
     const verdict = guardAiReply(r.reply, b.stage);
