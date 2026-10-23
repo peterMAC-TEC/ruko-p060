@@ -987,7 +987,7 @@ const SCALE2: SlideDef = {
         <div style={{ display: "flex", gap: 56, marginTop: 34, alignItems: "flex-end" }}>
           <div>
             <p className="d-mono" style={{ fontSize: 20, fontWeight: 700, letterSpacing: "0.12em", margin: "0 0 8px" }}>DIGITAL-ARREST COMPLAINTS, INDIA</p>
-            <div style={{ display: "flex", gap: 26, alignItems: "flex-end", height: 470 }}>
+            <div style={{ display: "flex", gap: 26, alignItems: "flex-end", height: 420 }}>
               {bars.map((b, i) => (
                 <div key={b.y} style={{ textAlign: "center", width: 150 }}>
                   <p className="d-head" style={{ fontSize: 46, margin: "0 0 8px" }}>
@@ -1021,8 +1021,7 @@ const SCALE2: SlideDef = {
           </div>
         </div>
         <Source>
-          *2026: January to August. {SOURCES.daSC}. 2023: I4C data via ThePrint, 18 Feb 2026. {step >= 1 ? SOURCES.total + ". " : ""}
-          {step >= 2 ? "Pindrop, 12 Jun 2025. CNN, Feb 2024." : ""}
+          *2026: January to August. Digital arrest: I4C/MHA status report to the Supreme Court (Free Press Journal, 23 Oct 2026); 2023: I4C via ThePrint. All fraud: I4C/NCRP via The420.in (3 Jan 2026). Pindrop (12 Jun 2025). CNN (Feb 2024).
         </Source>
       </div>
     );
