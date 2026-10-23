@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ruko pitch brief</title>
+<style>
+  body { margin: 0; background: #fbf6ec; color: #14122b; font: 18px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 16px 18px 70px; }
+  h1 { font-size: 30px; line-height: 1.1; margin: 8px 0 6px; }
+  h2 { font-size: 23px; margin: 34px 0 8px; padding-top: 12px; border-top: 3px solid #14122b; }
+  h3 { font-size: 18px; margin: 18px 0 4px; }
+  nav a { display: inline-block; margin: 4px 8px 4px 0; padding: 6px 12px; border-radius: 999px; background: #14122b; color: #ffb000; text-decoration: none; font-weight: 700; font-size: 15px; }
+  .q { font-weight: 700; margin: 16px 0 2px; }
+  .a { margin: 0 0 4px; }
+  .say { background: #fff3d1; border-left: 5px solid #ffb000; border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+  .box { background: #fff; border: 1px solid #e4dccb; border-radius: 10px; padding: 10px 14px; margin: 8px 0; }
+  .warn { border-left: 5px solid #e8202a; }
+  .tbl { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 15px; min-width: 520px; }
+  th, td { border: 1px solid #e4dccb; padding: 7px 8px; text-align: left; vertical-align: top; }
+  th { background: #14122b; color: #fff; }
+  td.us { background: #fff3d1; font-weight: 700; }
+  ul { padding-left: 22px; margin: 6px 0; }
+  li { margin: 3px 0; }
+  .slide { font: 700 14px ui-monospace, monospace; background: #14122b; color: #ffb000; padding: 2px 8px; border-radius: 6px; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #12111f; color: #f4efe4; }
+    h2 { border-top-color: #f4efe4; }
+    .say { background: #2e2712; }
+    .box, td { background: #1b1a2e; border-color: #2d2b45; }
+    td.us { background: #2e2712; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>Ruko pitch brief</h1>
+<p>Read before you pitch. Four parts: your 30-second answer, how to defend Ruko, how it's different, and what it needs. Then a slide-by-slide guide to the deck.</p>
+<nav>
+  <a href="#defend">Defend</a><a href="#different">Different</a><a href="#needs">Needs</a><a href="#deck">Deck guide</a>
+</nav>
+
+<h2 id="short">The 30-second answer</h2>
+<p class="say">Scammers posing as police keep older people on video until they pay. Awareness fails because panic beats knowledge. Ruko doesn't try to win the argument. It protects the moment the money moves, in three layers: the family sets it up before, a big STOP during the call, and at the money the payment waits for the family's code word. AI reads and words; code decides. It's live, it works on any phone, and banks can plug in through an API.</p>
+
+<h2 id="defend">1. Defend yourself: hard questions, short answers</h2>
+
+<h3>About the product</h3>
+<p class="q">"Is this a real product or a mock-up?"</p>
+<p class="a">It's live at ruko-seven.vercel.app and works end to end: the call, the STOP, the family alert, the payment pause, the family's decision. Two parts are simulated, and I say so on screen: the scam call is a role-play inside the app, and the bank is a practice bank.</p>
+
+<p class="q">"Can Ruko hear my real phone calls?"</p>
+<p class="a">No, and that's on purpose. No interception, no recording. It acts on what can be done safely: the number calling (Ruko Line and the Android call screening grade the number, never the audio), what the person tells Ruko, and the payment.</p>
+
+<p class="q">"Then how does it help on a real call?"</p>
+<p class="a">Three ways. The family sets it up beforehand, so the decision is made calmly. The person can open "Is this a scam?" or get a warning about the number, and gets one action: hang up. And the payment itself waits for the family, which works even if the person is fully convinced.</p>
+
+<p class="q">"Can it stop a real payment today?"</p>
+<p class="a">Not yet. That needs a bank or payment app to call our Ruko Guard API before moving money. The API is built and tested against the practice bank. That's why banks are our customer.</p>
+
+<p class="q">"Will a panicking person even use it?" (our mentor's question)</p>
+<p class="a">We don't rely on them. The family sets it up in advance, the family is alerted without the person doing anything, and the payment waits for the family. The person needs to do one thing at most: hang up.</p>
+
+<h3>About the AI</h3>
+<p class="q">"Where is the AI? This looks like rules."</p>
+<p class="a">AI reads and words; code decides. The AI understands unclear replies (with a confidence score), pulls scam signs out of what someone says or a photo, and writes calm guidance. The decisions (STOP, risk score, payment hold) are code, because they must be predictable, testable and explainable. A bank can't accept "the model felt it was a scam".</p>
+
+<p class="q">"Why not let the AI decide? It's smarter."</p>
+<p class="a">A scammer can talk a model round; they can't talk code round. And we measured it: the AI adds real value (75.8% understood with rules alone, 90.9% with AI), but it only fills gaps. Below 0.6 confidence or after 3.2 seconds, we ignore it.</p>
+
+<p class="q">"Could the AI make the fake caller say something harmful?"</p>
+<p class="a">Every line passes a safety check: no OTP, PIN, card or Aadhaar requests, no real agencies or officers, no long numbers, no violence or abuse. It blocked all 22 unsafe test outputs. And the caller speaks recorded lines chosen by code.</p>
+
+<p class="q">"What if the internet or the AI is down?"</p>
+<p class="a">It runs rule-only, offline, with no glitch. The whole demo works without AI.</p>
+
+<h3>About evidence</h3>
+<p class="q">"How do you know it works?"</p>
+<p class="a">Three levels. Over 500 automated checks. An evaluation on a test set we wrote: 90.9% of replies understood, 22/22 unsafe outputs blocked, zero false alarms on 20 genuine calls. And the next step is a field test with 10 older adults, comparing calls with and without Ruko. I won't claim field results we don't have yet.</p>
+
+<p class="q">"Your test data is yours. Isn't that biased?"</p>
+<p class="a">Yes, it's synthetic and written by us, and we label it that way. That's exactly why the field test is next. The eval proves the safety rules hold and the AI adds value. It doesn't prove real-world impact yet.</p>
+
+<p class="q">"Won't it cry wolf on genuine calls?"</p>
+<p class="a">On 20 genuine calls (doctor, family, courier, pension), zero false STOPs. STOP needs two warning signs, not one, and the family can mark a false alarm, which feeds back.</p>
+
+<h3>About privacy and safety</h3>
+<p class="q">"What data do you keep?"</p>
+<p class="a">Signal codes only: which tactics, which stage, whether the person stopped. No audio, no transcripts, no bank passwords. Numbers and accounts are stored as salted hashes, with row-level security, and there's a separate consent for each purpose.</p>
+
+<p class="q">"Isn't a fake scammer bot dangerous?"</p>
+<p class="a">It's a consented role-play only. A consent screen comes before every call, saying "RUKO" ends it instantly, it never asks for anything real, and money only moves on a practice bank with a big MOCK BANK banner.</p>
+
+<h3>About the business</h3>
+<p class="q">"Who pays?"</p>
+<p class="a">Banks and payment apps, per protected account, through the Ruko Guard API: it cuts their fraud losses, and it matches the RBI's draft proposals (a one-hour delay above ₹10,000, a trusted person for customers 70+, a kill switch). Families get core protection free, with a paid family plan bought by adult children. Telcos and insurers come later. These are hypotheses: next we test them with a bank conversation and a family survey.</p>
+
+<p class="q">"How big is the opportunity?"</p>
+<p class="a">About ₹22,845 crore was lost to cyber fraud in India in 2024. Senior citizens alone lost about ₹4,005 crore in 2025. I'm not quoting a market size I can't source.</p>
+
+<p class="q">"Why would a bank use you instead of building it?"</p>
+<p class="a">We bring the whole loop the bank can't easily build: the family set up in advance, the code word, the call-time warning. The bank only has to call one API before moving money.</p>
+
+<div class="box warn"><b>If you don't know an answer:</b> "I don't know yet. Here's how we'd find out." Never guess a number.</div>
+
+<h2 id="different">2. How Ruko is different</h2>
+<div class="tbl">
+<table>
+<tr><th>What exists</th><th>What it does</th><th>The gap</th></tr>
+<tr><td>Awareness campaigns, 1930</td><td>Teach people; report after the loss</td><td>Panic beats knowledge. 1930 comes after the money has gone.</td></tr>
+<tr><td>Google's call scam detection</td><td>Warns on newer Pixel phones; off by default</td><td>Most Indian elders don't own those phones. No family, no payment step.</td></tr>
+<tr><td>Caller-ID and spam apps</td><td>Label known spam numbers</td><td>A new number, or a convincing call, gets through. Nothing protects the payment.</td></tr>
+<tr><td>UPI Circle</td><td>Lets one person delegate spending to others</td><td>It's not family approval of the elder's own payment.</td></tr>
+<tr><td>DoT Fraud Risk Indicator</td><td>Rates numbers for banks</td><td>Built for institutions, with no public API. It doesn't involve the elder or the family.</td></tr>
+<tr><td class="us">Ruko</td><td class="us">Before, during, and at the money</td><td class="us">Any phone, Hinglish, the family in the loop, elder-first screens, and the payment waits.</td></tr>
+</table>
+</div>
+<p class="say">Everyone else tries to spot the scam. Ruko assumes the scammer may win the argument, and protects the moment that matters: the money.</p>
+<h3>Five things only Ruko does together</h3>
+<ul>
+<li><b>Works on any phone:</b> an installable web app, no new hardware.</li>
+<li><b>Family first:</b> set up by the family, alerts the family, needs the family's code word to approve a payment.</li>
+<li><b>Protects the payment:</b> cooling-off, trusted-person approval, a kill switch, and a bank API.</li>
+<li><b>Safe AI:</b> AI reads and words; code decides; it works offline.</li>
+<li><b>Built for elders:</b> big text, one action per screen, English and Hinglish, never shaming.</li>
+</ul>
+
+<h2 id="needs">3. What Ruko needs</h2>
+<h3>To work for a family today</h3>
+<ul>
+<li>The family sets it up once: about five minutes, with a code word and trusted contacts.</li>
+<li>The elder adds the web app to their phone's home screen.</li>
+<li>Nothing else: no bank passwords, no call recording, no new phone.</li>
+</ul>
+<h3>To stop real money</h3>
+<ul>
+<li>A bank or payment app calls the Ruko Guard API before moving money, and shows the "waiting for your family" step.</li>
+<li>Bank sign-off: legal review, a data agreement, and security testing.</li>
+</ul>
+<h3>To warn on real calls</h3>
+<ul>
+<li>The Android call-screening app, which grades the number before it rings. Its logic is built and tested; it hasn't been run on a real phone yet.</li>
+<li>The user grants Android's call-screening role. Ruko never gets the call audio.</li>
+</ul>
+<h3>To prove it</h3>
+<ul>
+<li>A field test with 10 older adults and their families: role-played calls with and without Ruko. North star: the share who stop before paying.</li>
+<li>Consent and data handling that follow India's DPDP Act: consent for each purpose, delete on request, signal codes only.</li>
+</ul>
+<h3>What it deliberately does not need</h3>
+<ul>
+<li>Call interception or recording, access to bank accounts, or AI making decisions.</li>
+</ul>
+
+<h2 id="deck">4. Deck guide, slide by slide</h2>
+<p>Deck: ruko-seven.vercel.app/deck. Press F for fullscreen, P for speaker notes.</p>
+
+<h3><span class="slide">1</span> Problem</h3>
+<p class="say">"This is the CBI. Do not hang up. Do not tell your family." That's how it starts, and older adults lose their savings before their family knows.</p>
+<p class="a"><b>If asked "who exactly?":</b> adults 65 to 85 with savings or a pension, and their adult children.</p>
+
+<h3><span class="slide">2</span> Current state</h3>
+<p class="say">The call, fear, isolation, the transfer, and the family finds out days later. Nobody steps in before the money moves.</p>
+<p class="a"><b>If asked "what about 1930?":</b> it's essential, but it comes after the loss. We act before.</p>
+
+<h3><span class="slide">3</span> Opportunity</h3>
+<p class="say">Complaints doubled to over 1.2 lakh in 2024, about 340 a day, with about ₹1,935 crore lost. Senior citizens lost about ₹4,005 crore in 2025.</p>
+<p class="a"><b>If asked "isn't it falling?":</b> early 2025 data suggests a fall, so awareness helps. We think AI voices could reverse it. That's our hypothesis, and we label it.</p>
+
+<h3><span class="slide">4</span> Solution</h3>
+<p class="say">Three layers: the family before, STOP during, and the money waits. We don't rely on a panicking person.</p>
+<p class="a"><b>If asked "what if they're fully convinced?":</b> that's exactly what layer three is for.</p>
+
+<h3><span class="slide">5</span> AI thinking</h3>
+<p class="say">AI understands what rules miss: 75.8% to 90.9%. And code keeps it safe: 22/22 unsafe outputs blocked, zero false alarms.</p>
+<p class="a"><b>If asked "is this real data?":</b> no, it's a synthetic test set we wrote, labelled on the slide. The field test is next.</p>
+
+<h3><span class="slide">6</span> Architecture</h3>
+<p class="say">Inputs, AI model, logic, tools, outputs. The AI reads and words, and code decides. Signal codes only, and it works offline.</p>
+<p class="a"><b>If asked to prove it:</b> open the live call, press X. That's the real trace of each turn.</p>
+
+<h3><span class="slide">7</span> Impact</h3>
+<p class="say">A warning in seconds, before the money moves, not days after. Any phone. Banks plug in through one API.</p>
+<p class="a"><b>If asked "how many people helped?":</b> none measured yet. The field test with 10 older adults is next.</p>
+
+<h3><span class="slide">8</span> Business and close</h3>
+<p class="say">Banks pay per protected account; families get the core free. Either way, the money didn't move. Ruko protects the moment that matters.</p>
+<p class="a"><b>If asked "what's the price?":</b> not set yet. We'll set it after the bank pilot conversation.</p>
+
+<div class="box warn"><b>Never claim:</b> real users tested, real payments stopped, real calls listened to, or a market size. Say "next" or "pending" instead.</div>
+</main>
+</body>
+</html>
