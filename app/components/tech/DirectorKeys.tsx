@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 // Director mode: keyboard shortcuts for the presenter, on every page.
 //   1 home · 2 live call · 3 architecture · 4 family phone · 5 mock bank · 6 eval
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 const GO: Record<string, string> = { "1": "/", "2": "/demo/live", "3": "/architecture", "4": "/family", "5": "/bank", "6": "/eval" };
 
-export function DirectorKeys() {
+function Keys() {
   const router = useRouter();
   const path = usePathname() ?? "";
   // The deck has its own keys.
@@ -72,5 +72,13 @@ export function DirectorKeys() {
         </div>
       )}
     </>
+  );
+}
+
+export function DirectorKeys() {
+  return (
+    <Suspense fallback={null}>
+      <Keys />
+    </Suspense>
   );
 }
