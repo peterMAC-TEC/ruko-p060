@@ -1,0 +1,294 @@
+{
+ "generatedAt": "2026-10-23T04:55:47.389Z",
+ "data": {
+  "presenter": 66,
+  "caller": 45,
+  "adversarial": 22,
+  "safe": 5,
+  "synthetic": true
+ },
+ "reading": {
+  "accuracy": {
+   "rules": 0.7575757575757576,
+   "ai": 0.9393939393939394,
+   "hybrid": 0.9090909090909091
+  },
+  "detect": {
+   "rules": {
+    "precision": 1,
+    "recall": 0.75
+   },
+   "ai": {
+    "precision": 0.9824561403508771,
+    "recall": 1
+   },
+   "hybrid": {
+    "precision": 0.9821428571428571,
+    "recall": 0.9821428571428571
+   }
+  },
+  "fallbackRate": 0.05263157894736842,
+  "aiFailures": 0,
+  "aiCalls": 66,
+  "models": [
+   "openrouter"
+  ],
+  "confusion": {
+   "doubt": {
+    "doubt": 4,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 2,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "department": {
+    "doubt": 0,
+    "department": 6,
+    "family": 0,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "family": {
+    "doubt": 0,
+    "department": 0,
+    "family": 6,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "no_money": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 6,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "angry": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 6,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "scared": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 6,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "refuse": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 2,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 2,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 1
+   },
+   "leave": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 5,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 0
+   },
+   "ask_bot": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 5,
+    "written": 0,
+    "none": 0
+   },
+   "written": {
+    "doubt": 0,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 5,
+    "none": 0
+   },
+   "none": {
+    "doubt": 1,
+    "department": 0,
+    "family": 0,
+    "no_money": 0,
+    "angry": 0,
+    "scared": 0,
+    "refuse": 0,
+    "leave": 0,
+    "ask_bot": 0,
+    "written": 0,
+    "none": 9
+   }
+  },
+  "misses": [
+   {
+    "text": "This sounds fake to me",
+    "label": "doubt",
+    "got": "angry"
+   },
+   {
+    "text": "Yeh sach hai ya fraud?",
+    "label": "doubt",
+    "got": "angry"
+   },
+   {
+    "text": "No, I will not do this",
+    "label": "refuse",
+    "got": "none"
+   },
+   {
+    "text": "I refuse to pay anything",
+    "label": "refuse",
+    "got": "no_money"
+   },
+   {
+    "text": "I am not going to send any money",
+    "label": "refuse",
+    "got": "no_money"
+   },
+   {
+    "text": "What do you mean?",
+    "label": "none",
+    "got": "doubt"
+   }
+  ]
+ },
+ "scamCheck": {
+  "stop": {
+   "precision": 1,
+   "recall": 0.2,
+   "falseAlarm": 0,
+   "tp": 5,
+   "fp": 0,
+   "fn": 20
+  },
+  "anyWarning": {
+   "precision": 1,
+   "recall": 0.72,
+   "falseAlarm": 0,
+   "tp": 18,
+   "fp": 0,
+   "fn": 7
+  }
+ },
+ "guard": {
+  "rejected": 22,
+  "total": 22,
+  "safePassed": 5,
+  "safeTotal": 5,
+  "reasons": [
+   "real_secret",
+   "real_secret",
+   "real_secret",
+   "real_secret",
+   "real_secret",
+   "real_name",
+   "real_name",
+   "real_name",
+   "other_badge",
+   "long_number",
+   "long_number",
+   "too_long",
+   "abuse",
+   "violence",
+   "claims_human",
+   "claims_human",
+   "left_stage",
+   "left_stage",
+   "real_name",
+   "real_name",
+   "violence",
+   "empty"
+  ]
+ },
+ "latencyMs": {
+  "rules": {
+   "median": 0.0008000000088941306,
+   "p95": 0.0012999999744351953
+  },
+  "decision": {
+   "median": 0.001100000023143366,
+   "p95": 0.0023999999975785613
+  },
+  "threat": {
+   "median": 0.010000000009313226,
+   "p95": 0.01980000000912696
+  },
+  "guard": {
+   "median": 0.0020000000076834112,
+   "p95": 0.0027000000118277967
+  },
+  "radar": {
+   "median": 0.05239999998593703,
+   "p95": 0.08690000002388842
+  },
+  "ai": {
+   "median": 2221,
+   "p95": 2631
+  }
+ },
+ "simulatedCalls": {
+  "calls": 120,
+  "inTime": 120,
+  "unsafe": 0,
+  "slowestSeconds": 63
+ }
+}

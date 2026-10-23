@@ -1,0 +1,596 @@
+{
+ "Is this even real?": {
+  "objection": "doubt",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 2590,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:21.543Z"
+ },
+ "How do I know you are really from the police?": {
+  "objection": "doubt",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 2417,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:23.961Z"
+ },
+ "This sounds fake to me": {
+  "objection": "doubt",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 1805,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:25.766Z"
+ },
+ "Mujhe aap par bharosa nahi hai": {
+  "objection": "doubt",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 2162,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:27.928Z"
+ },
+ "Yeh sach hai ya fraud?": {
+  "objection": "doubt",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 2009,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:29.937Z"
+ },
+ "Prove that you are an officer": {
+  "objection": "doubt",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 2355,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:32.292Z"
+ },
+ "Which department did you say?": {
+  "objection": "department",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 1923,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:34.215Z"
+ },
+ "What office are you calling from?": {
+  "objection": "department",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 1893,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:36.108Z"
+ },
+ "Kaun si department se ho aap?": {
+  "objection": "department",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 1876,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:37.984Z"
+ },
+ "Which police station is this?": {
+  "objection": "department",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 1979,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:39.963Z"
+ },
+ "Tell me the name of your unit": {
+  "objection": "department",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2036,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:41.999Z"
+ },
+ "Aap kis branch se bol rahe hain?": {
+  "objection": "department",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2182,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:44.181Z"
+ },
+ "Let me call my son first": {
+  "objection": "family",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2339,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:46.520Z"
+ },
+ "I will ask my daughter": {
+  "objection": "family",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2301,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:48.822Z"
+ },
+ "Main apne bete se baat karungi": {
+  "objection": "family",
+  "confidence": 1,
+  "state": "scared",
+  "ms": 2488,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:51.310Z"
+ },
+ "My husband handles these things, talk to him": {
+  "objection": "family",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 2361,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:53.671Z"
+ },
+ "I want to talk to my lawyer": {
+  "objection": "family",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2355,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:56.026Z"
+ },
+ "Ghar walon se pooch ke bataungi": {
+  "objection": "family",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2631,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:53:58.657Z"
+ },
+ "I don't have that much money": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 1833,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:00.490Z"
+ },
+ "Mere paas itne paise nahi hain": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 1951,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:02.441Z"
+ },
+ "I am a pensioner, I cannot pay fifty thousand": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 2384,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:04.825Z"
+ },
+ "My account has very little in it": {
+  "objection": "no_money",
+  "confidence": 0.9,
+  "state": "scared",
+  "ms": 2742,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:07.568Z"
+ },
+ "Paisa nahi hai mere paas": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 2478,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:10.046Z"
+ },
+ "I can't afford this": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 1988,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:12.035Z"
+ },
+ "This is nonsense!": {
+  "objection": "angry",
+  "confidence": 1,
+  "state": "angry",
+  "ms": 1854,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:13.889Z"
+ },
+ "Stop shouting at me": {
+  "objection": "angry",
+  "confidence": 1,
+  "state": "angry",
+  "ms": 1858,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:15.747Z"
+ },
+ "Bakwas band karo": {
+  "objection": "angry",
+  "confidence": 1,
+  "state": "angry",
+  "ms": 2221,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:17.968Z"
+ },
+ "You are a fraud": {
+  "objection": "doubt",
+  "confidence": 0.95,
+  "state": "angry",
+  "ms": 2366,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:20.334Z"
+ },
+ "How dare you threaten an old woman": {
+  "objection": "angry",
+  "confidence": 1,
+  "state": "angry",
+  "ms": 2358,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:22.692Z"
+ },
+ "Shut up and listen to me": {
+  "objection": "angry",
+  "confidence": 1,
+  "state": "angry",
+  "ms": 1953,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:24.645Z"
+ },
+ "Please don't arrest me": {
+  "objection": "scared",
+  "confidence": 1,
+  "state": "scared",
+  "ms": 1743,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:26.388Z"
+ },
+ "I am very scared": {
+  "objection": "scared",
+  "confidence": 1,
+  "state": "scared",
+  "ms": 1978,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:28.366Z"
+ },
+ "Mujhe dar lag raha hai": {
+  "objection": "scared",
+  "confidence": 1,
+  "state": "scared",
+  "ms": 2448,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:30.814Z"
+ },
+ "Please help me sir, I am alone at home": {
+  "objection": "scared",
+  "confidence": 1,
+  "state": "scared",
+  "ms": 2426,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:33.240Z"
+ },
+ "I have never done anything wrong, please believe me": {
+  "objection": "scared",
+  "confidence": 0.95,
+  "state": "scared",
+  "ms": 2418,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:35.658Z"
+ },
+ "Ghabrahat ho rahi hai": {
+  "objection": "scared",
+  "confidence": 1,
+  "state": "scared",
+  "ms": 2666,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:38.324Z"
+ },
+ "No, I will not do this": {
+  "objection": "refuse",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 5556,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:43.880Z"
+ },
+ "I refuse to pay anything": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 2056,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:45.936Z"
+ },
+ "Main kuch nahi karungi": {
+  "objection": "refuse",
+  "confidence": 0.95,
+  "state": "refusing",
+  "ms": 2588,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:48.525Z"
+ },
+ "I am not going to send any money": {
+  "objection": "no_money",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 1958,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:50.483Z"
+ },
+ "Nahi, bilkul nahi": {
+  "objection": "refuse",
+  "confidence": 1,
+  "state": "refusing",
+  "ms": 2565,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:53.048Z"
+ },
+ "I am hanging up now": {
+  "objection": "leave",
+  "confidence": 1,
+  "state": "leaving",
+  "ms": 1947,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:54.995Z"
+ },
+ "Goodbye": {
+  "objection": "leave",
+  "confidence": 1,
+  "state": "leaving",
+  "ms": 1933,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:56.928Z"
+ },
+ "Main phone rakh rahi hoon": {
+  "objection": "leave",
+  "confidence": 1,
+  "state": "leaving",
+  "ms": 2328,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:54:59.256Z"
+ },
+ "I am cutting the call": {
+  "objection": "leave",
+  "confidence": 1,
+  "state": "leaving",
+  "ms": 2327,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:01.584Z"
+ },
+ "Bye, don't call me again": {
+  "objection": "leave",
+  "confidence": 1,
+  "state": "leaving",
+  "ms": 2223,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:03.807Z"
+ },
+ "Are you a bot?": {
+  "objection": "ask_bot",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2306,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:06.113Z"
+ },
+ "Am I talking to a real person?": {
+  "objection": "ask_bot",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2180,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:08.293Z"
+ },
+ "Kya aap robot ho?": {
+  "objection": "ask_bot",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2397,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:10.691Z"
+ },
+ "Is this a recording?": {
+  "objection": "ask_bot",
+  "confidence": 1,
+  "state": "doubting",
+  "ms": 2051,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:12.742Z"
+ },
+ "Are you an AI?": {
+  "objection": "ask_bot",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2384,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:15.126Z"
+ },
+ "Send me this in writing": {
+  "objection": "written",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2285,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:17.411Z"
+ },
+ "Email me the notice": {
+  "objection": "written",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2434,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:19.845Z"
+ },
+ "Likhit mein bhejiye": {
+  "objection": "written",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2011,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:21.856Z"
+ },
+ "I want an official letter": {
+  "objection": "written",
+  "confidence": 1,
+  "state": "asking",
+  "ms": 2350,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:24.206Z"
+ },
+ "Post the documents to my house": {
+  "objection": "written",
+  "confidence": 0.95,
+  "state": "asking",
+  "ms": 2009,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:26.215Z"
+ },
+ "Okay": {
+  "objection": null,
+  "confidence": 1,
+  "state": "agreeing",
+  "ms": 2276,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:28.491Z"
+ },
+ "Haan ji": {
+  "objection": null,
+  "confidence": 1,
+  "state": "agreeing",
+  "ms": 1911,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:30.402Z"
+ },
+ "What do you mean?": {
+  "objection": "doubt",
+  "confidence": 0.8,
+  "state": "asking",
+  "ms": 2010,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:32.413Z"
+ },
+ "Yes, I am listening": {
+  "objection": null,
+  "confidence": 1,
+  "state": "agreeing",
+  "ms": 2476,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:34.889Z"
+ },
+ "Theek hai": {
+  "objection": null,
+  "confidence": 1,
+  "state": "agreeing",
+  "ms": 2006,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:36.895Z"
+ },
+ "My OTP is 482913": {
+  "objection": null,
+  "confidence": 0.9,
+  "state": "agreeing",
+  "ms": 2028,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:38.923Z"
+ },
+ "My card number is 4111 1111 1111 1111": {
+  "objection": null,
+  "confidence": 0.9,
+  "state": "agreeing",
+  "ms": 2114,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:41.037Z"
+ },
+ "Hmm": {
+  "objection": null,
+  "confidence": 0.9,
+  "state": "silent",
+  "ms": 2186,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:43.223Z"
+ },
+ "Tell me more about the case": {
+  "objection": null,
+  "confidence": 0.95,
+  "state": "asking",
+  "ms": 2103,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:45.326Z"
+ },
+ "Accha, phir?": {
+  "objection": null,
+  "confidence": 0.95,
+  "state": "asking",
+  "ms": 1939,
+  "ok": true,
+  "model": "openrouter",
+  "at": "2026-10-23T04:55:47.265Z"
+ }
+}
