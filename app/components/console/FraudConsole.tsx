@@ -170,18 +170,18 @@ function HeldCard({ row, now, onDecide }: { row: Row; now: number; onDecide: (id
 
   return (
     <article className={`overflow-hidden rounded-[20px] border bg-[#0a1118] shadow-[0_0_40px_rgba(255,77,61,0.08)] ${row.duress ? "border-2 border-signal" : "border-signal/40"}`}>
-      <div className="flex flex-wrap items-start justify-between gap-6 p-6">
+      <div className="flex flex-wrap items-start justify-between gap-6 p-5 sm:p-6">
         <div>
-          <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.18em] text-signal">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-[12px] uppercase tracking-[0.14em] text-signal">
             <span className="size-2 animate-pulse rounded-full bg-signal" />
             {row.duress ? "Held · duress PIN · customer sees 'processing'" : `Held · cooling off ${mm}:${ss}`}
             {row.seeded && <span className="rounded bg-white/10 px-1.5 text-white/60">Seeded</span>}
           </div>
-          <div className="mt-3 font-mono text-[44px] leading-none tracking-tight">{inr(row.amount)}</div>
+          <div className="mt-3 font-mono text-[36px] leading-none tracking-tight sm:text-[44px]">{inr(row.amount)}</div>
           <div className="mt-3 text-[17px]">
             {row.elder_name} → <span className="font-bold">{row.payee}</span>
           </div>
-          <div className="font-mono text-[13px] text-white/50">{row.payee_account}</div>
+          <div className="font-mono text-[13px] break-all text-white/50">{row.payee_account}</div>
           <div className="mt-3 flex flex-wrap gap-2 font-mono text-[11px] uppercase tracking-wider">
             <span className="rounded border border-white/20 px-1.5 py-0.5 text-white/70">{row.channel.replace("_", " ")}</span>
             {row.needs_approval && (
