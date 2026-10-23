@@ -98,7 +98,10 @@
 <p class="a">Banks and payment apps, per protected account, through the Ruko Guard API: it cuts their fraud losses, and it matches the RBI's draft proposals (a one-hour delay above ₹10,000, a trusted person for customers 70+, a kill switch). Families get core protection free, with a paid family plan bought by adult children. Telcos and insurers come later. These are hypotheses: next we test them with a bank conversation and a family survey.</p>
 
 <p class="q">"How big is the opportunity?"</p>
-<p class="a">About ₹22,845 crore was lost to cyber fraud in India in 2024. Senior citizens alone lost about ₹4,005 crore in 2025. I'm not quoting a market size I can't source.</p>
+<p class="a">India logged 21.8 lakh financial cyber-fraud complaints in 2025, up from 19.2 lakh, with about ₹19,813 crore reported lost (I4C data). Senior citizens alone lost about ₹4,005 crore in 2025. I'm not quoting a market size I can't source.</p>
+
+<p class="q">"Digital arrest is falling. Why build this now?"</p>
+<p class="a">It fell from 1,23,672 complaints in 2024 to 58,239 in 2025, so awareness helps. But there are already over 21,900 in 2026 up to August, with ₹647 crore lost (the Centre's report to the Supreme Court). And our assumption is that AI brings a new wave: it makes faking any voice or face cheap, on phones and laptops. Pindrop saw deepfake fraud attempts rise 1,300% in 2024, and a Hong Kong firm lost about 25 million dollars to one deepfake video call. Ruko doesn't depend on spotting the fake, so it still works when the fake is perfect.</p>
 
 <p class="q">"Why would a bank use you instead of building it?"</p>
 <p class="a">We bring the whole loop the bank can't easily build: the family set up in advance, the code word, the call-time warning. The bank only has to call one API before moving money.</p>
@@ -114,10 +117,10 @@
 <tr><td>Caller-ID and spam apps</td><td>Label known spam numbers</td><td>A new number, or a convincing call, gets through. Nothing protects the payment.</td></tr>
 <tr><td>UPI Circle</td><td>Lets one person delegate spending to others</td><td>It's not family approval of the elder's own payment.</td></tr>
 <tr><td>DoT Fraud Risk Indicator</td><td>Rates numbers for banks</td><td>Built for institutions, with no public API. It doesn't involve the elder or the family.</td></tr>
-<tr><td class="us">Ruko</td><td class="us">Before, during, and at the money</td><td class="us">Any phone, Hinglish, the family in the loop, elder-first screens, and the payment waits.</td></tr>
+<tr><td class="us">Ruko</td><td class="us">Before, during, and at the money</td><td class="us">Any phone or laptop browser, Hinglish, the family in the loop, elder-first screens, and the payment waits. It doesn't need to spot the fake, so a perfect AI voice still can't move the money.</td></tr>
 </table>
 </div>
-<p class="say">Everyone else tries to spot the scam. Ruko assumes the scammer may win the argument, and protects the moment that matters: the money.</p>
+<p class="say">Everyone else tries to spot the scam. As AI makes fakes perfect, spotting gets harder every month. Ruko assumes the scammer may win the argument, and protects the moment that matters: the money.</p>
 <h3>Five things only Ruko does together</h3>
 <ul>
 <li><b>Works on any phone:</b> an installable web app, no new hardware.</li>
@@ -165,9 +168,9 @@
 <p class="say">The call, fear, isolation, the transfer, and the family finds out days later. Nobody steps in before the money moves.</p>
 <p class="a"><b>If asked "what about 1930?":</b> it's essential, but it comes after the loss. We act before.</p>
 
-<h3><span class="slide">3</span> Opportunity</h3>
-<p class="say">Complaints doubled to over 1.2 lakh in 2024, about 340 a day, with about ₹1,935 crore lost. Senior citizens lost about ₹4,005 crore in 2025.</p>
-<p class="a"><b>If asked "isn't it falling?":</b> early 2025 data suggests a fall, so awareness helps. We think AI voices could reverse it. That's our hypothesis, and we label it.</p>
+<h3><span class="slide">3</span> Opportunity and why now</h3>
+<p class="say">Digital-arrest complaints doubled to 1.2 lakh in 2024, fell in 2025, and there are already 21,900 more this year. Fraud overall keeps rising: 21.8 lakh complaints in 2025. And AI makes faking anyone cheap.</p>
+<p class="a"><b>If asked "is the AI wave proven?":</b> it's our assumption, labelled on the slide. The evidence so far: deepfake fraud attempts up 1,300% in 2024 (Pindrop), and Deloitte projects generative-AI fraud losses in the US rising from $12.3 billion in 2023 to $40 billion by 2027.</p>
 
 <h3><span class="slide">4</span> Solution</h3>
 <p class="say">Three layers: the family before, STOP during, and the money waits. We don't rely on a panicking person.</p>
@@ -188,6 +191,18 @@
 <h3><span class="slide">8</span> Business and close</h3>
 <p class="say">Banks pay per protected account; families get the core free. Either way, the money didn't move. Ruko protects the moment that matters.</p>
 <p class="a"><b>If asked "what's the price?":</b> not set yet. We'll set it after the bank pilot conversation.</p>
+
+<h2 id="sources">Sources for the numbers</h2>
+<ul>
+<li>Digital arrest 2024, 2025 and Jan–Aug 2026: I4C and MHA status report to the Supreme Court, <a href="https://www.freepressjournal.in/tech/digital-arrest-fraud-over-21900-complaints-involving-647-crore-registered-in-2026-centre-tells-supreme-court">Free Press Journal, 23 Oct 2026</a>.</li>
+<li>All cyber fraud 2024 and 2025 (complaints and losses): I4C/NCRP data, <a href="https://the420.in/india-cyber-fraud-losses-i4c-data-statewise-investment-scams/">The420.in, 3 Jan 2026</a>.</li>
+<li>Senior citizens 2025: MHA reply in the Rajya Sabha, <a href="https://newsable.asianetnews.com/india/senior-citizens-women-lost-rs-7-769-crore-to-cyber-fraud-in-2025-articleshow-u9oad8w">Asianet Newsable</a>.</li>
+<li>Deepfake attempts +1,300% (2024): <a href="https://www.prnewswire.com/news-releases/pindrops-2025-voice-intelligence--security-report-reveals-1-300-surge-in-deepfake-fraud-302479482.html">Pindrop report, 12 Jun 2025</a>.</li>
+<li>$12.3B to $40B generative-AI fraud (US, projection): <a href="https://www.deloitte.com/us/en/insights/industry/financial-services/deepfake-banking-fraud-risk-on-the-rise.html">Deloitte, 29 May 2024</a>.</li>
+<li>$25M deepfake video call: Hong Kong police, reported by CNN, Feb 2024.</li>
+<li>47% of Indian adults and AI voice scams: <a href="https://www.mcafee.com/en-in/consumer-corporate/newsroom/press-releases/2023/20231108.html">McAfee, 2023</a>.</li>
+<li>Note: sources disagree on 2025 digital-arrest figures (ThePrint reported 17,264 cases from a different I4C cut). We use the Supreme Court report.</li>
+</ul>
 
 <div class="box warn"><b>Never claim:</b> real users tested, real payments stopped, real calls listened to, or a market size. Say "next" or "pending" instead.</div>
 </main>

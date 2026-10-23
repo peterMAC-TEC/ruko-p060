@@ -220,7 +220,7 @@ const ALL: SlideDef[] = [
           </div>
         </div>
         <Source>
-          {SOURCES.daCases}. {SOURCES.seniors}. {step >= 2 ? SOURCES.da2025 + "." : ""}
+          {SOURCES.daSC}. {SOURCES.seniors}.
         </Source>
       </div>
     ),
@@ -965,4 +965,68 @@ const CLOSE: SlideDef = {
 
 const byId = (id: string) => ALL.find((x) => x.id === id)!;
 /** The organisers asked for 6 to 8 slides: Problem, Current state, Opportunity, Solution, AI thinking, Architecture, Impact. */
-export const DECK: SlideDef[] = [byId("hook"), CURRENT, byId("scale"), byId("layers"), byId("proof"), byId("arch"), IMPACT, CLOSE];
+
+/** 3 ─ OPPORTUNITY AND WHY NOW: the newest sourced numbers, and the AI wave (labelled as our assumption). */
+const SCALE2: SlideDef = {
+  id: "scale",
+  builds: 2,
+  theme: "paper",
+  render: (step) => {
+    const bars = [
+      { y: "2023", v: 60676, h: 200, c: "var(--ink)" },
+      { y: "2024", v: 123672, h: 400, c: "var(--red)" },
+      { y: "2025", v: 58239, h: 190, c: "var(--ink)" },
+      { y: "2026*", v: 21900, h: 72, c: "var(--amber)" },
+    ];
+    return (
+      <div style={PAD}>
+        <Kicker>3 · Opportunity · and why now</Kicker>
+        <H size={104}>
+          <Words text="Awareness dented it. AI will bring it back." />
+        </H>
+        <div style={{ display: "flex", gap: 56, marginTop: 34, alignItems: "flex-end" }}>
+          <div>
+            <p className="d-mono" style={{ fontSize: 20, fontWeight: 700, letterSpacing: "0.12em", margin: "0 0 8px" }}>DIGITAL-ARREST COMPLAINTS, INDIA</p>
+            <div style={{ display: "flex", gap: 26, alignItems: "flex-end", height: 470 }}>
+              {bars.map((b, i) => (
+                <div key={b.y} style={{ textAlign: "center", width: 150 }}>
+                  <p className="d-head" style={{ fontSize: 46, margin: "0 0 8px" }}>
+                    <Count to={b.v} delay={200 + i * 200} />
+                    {b.y === "2026*" ? "+" : ""}
+                  </p>
+                  <div className="a-rise" style={{ ...d(150 + i * 200), height: b.h, background: b.c, border: "4px solid var(--ink)", transformOrigin: "bottom" }} />
+                  <p className="d-mono" style={{ fontSize: 22, marginTop: 10, fontWeight: 700 }}>{b.y}</p>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: 24, margin: "10px 0 0" }}>
+              Lost: <b>₹1,935 cr</b> (2024) · <b>₹1,211 cr</b> (2025) · <b>₹647 cr</b> (2026*)
+            </p>
+          </div>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
+            <B n={1} step={step}>
+              <div className="d-box" style={{ padding: "20px 26px" }}>
+                <p className="d-head" style={{ fontSize: 66, margin: 0 }}>21.8 lakh</p>
+                <p style={{ fontSize: 26, margin: "4px 0 0" }}>cyber-fraud complaints in 2025, up from 19.2 lakh. About ₹19,800 crore lost.</p>
+              </div>
+            </B>
+            <B n={2} step={step}>
+              <div style={{ border: "4px solid var(--blue)", boxShadow: "10px 10px 0 var(--blue)", background: "#fff", padding: "20px 26px" }}>
+                <p className="d-mono" style={{ fontSize: 20, fontWeight: 800, color: "var(--blue)", margin: 0, letterSpacing: "0.1em" }}>OUR ASSUMPTION: AI MAKES FAKING ANYONE CHEAP</p>
+                <p style={{ fontSize: 26, margin: "8px 0 0", lineHeight: 1.3 }}>
+                  <b>+1,300%</b> deepfake fraud attempts (2024). <b>$25M</b> lost to one deepfake video call, on a laptop.
+                </p>
+              </div>
+            </B>
+          </div>
+        </div>
+        <Source>
+          *2026: January to August. {SOURCES.daSC}. {step >= 1 ? SOURCES.total + ". " : ""}
+          {step >= 2 ? "Pindrop, 12 Jun 2025. CNN, Feb 2024." : ""}
+        </Source>
+      </div>
+    );
+  },
+};
+
+export const DECK: SlideDef[] = [byId("hook"), CURRENT, SCALE2, byId("layers"), byId("proof"), byId("arch"), IMPACT, CLOSE];

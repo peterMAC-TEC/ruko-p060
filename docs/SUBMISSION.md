@@ -28,3 +28,10 @@ RBI discussion paper on payment friction (reported April 2026, a draft); DoT's F
 
 ## Honest limits
 The call is simulated inside the app (a web app cannot ring a real phone). The bank is a mock; no real money moves. The eval data is synthetic and ours. No field-test results exist yet; the protocol is ready (10 older adults, with and without Ruko).
+
+## Updated figures (23 Oct 2026), with sources
+
+- Digital arrest, India: 1,23,672 complaints and ₹1,935 crore lost (2024); 58,239 and ₹1,211 crore (2025); over 21,900 and ₹647 crore (Jan to Aug 2026). I4C and MHA status report to the Supreme Court, reported by Free Press Journal, 23 Oct 2026. (ThePrint, 18 Feb 2026, reported a different I4C cut for 2025: 17,264 cases, ₹644 crore; 2023: 60,676 cases.)
+- All financial cyber fraud: 19.19 lakh complaints, ₹22,849 crore (2024); 21.78 lakh complaints, ₹19,813 crore (2025). I4C/NCRP data, reported by The420.in, 3 Jan 2026. About ₹6,300 a second in 2025 (our arithmetic).
+- Senior citizens, 2025: 1,03,488 complaints, about ₹4,005 crore (MHA reply, Rajya Sabha, via Asianet Newsable).
+- The AI wave (our assumption, with evidence): deepfake fraud attempts +1,300% in 2024 and synthetic voice calls +173% from Q1 to Q4 2024 (Pindrop, 12 Jun 2025); generative-AI fraud losses in the US projected to rise from $12.3 billion (2023) to $40 billion (2027) (Deloitte, 29 May 2024); a Hong Kong finance worker paid out about US$25 million after a deepfake video call (Hong Kong police, CNN, Feb 2024). AI makes faking a voice or a face cheap on phones and laptops; Ruko does not depend on spotting the fake, so it still protects the payment when the fake is perfect.

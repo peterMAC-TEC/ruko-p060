@@ -3,15 +3,14 @@
 import { CountUp } from "@/components/motion/motion";
 
 // Why this matters: published figures, each with its source on screen. Checked 22 Oct 2026 against the sources named.
-// Only figures that could be confirmed are here. "AI could make scams rise again" is our hypothesis, not a measured trend.
+// Only figures that could be confirmed are here. "AI will make these scams rise again" is our assumption, supported by the deepfake trend figures but not a measured Indian trend.
 
 export const FACTS: Array<{ big: string; count?: { prefix?: string; to: number; suffix?: string }; text: string; source: string; href: string }> = [
   {
-    big: "₹22,845 crore",
-    count: { prefix: "₹", to: 22845, suffix: " crore" },
-    text: "lost to cyber fraud in India in 2024, up from ₹7,465 crore in 2023.",
-    source: "Ministry of Home Affairs reply in Parliament, July 2025 (via Scroll)",
-    href: "https://scroll.in/latest/1084796/indians-lost-rs-22845-crore-to-cyber-fraud-in-2024-a-206-rise-from-previous-year-centre",
+    big: "21.8 lakh complaints",
+    text: "of financial cyber fraud in India in 2025, up from 19.2 lakh in 2024, with about ₹19,813 crore reported lost (₹22,849 crore in 2024).",
+    source: "I4C / National Cyber Crime Reporting Portal data, reported by The420.in, 3 Jan 2026",
+    href: "https://the420.in/india-cyber-fraud-losses-i4c-data-statewise-investment-scams/",
   },
   {
     big: "1,03,488 complaints",
@@ -21,10 +20,22 @@ export const FACTS: Array<{ big: string; count?: { prefix?: string; to: number; 
     href: "https://newsable.asianetnews.com/india/senior-citizens-women-lost-rs-7-769-crore-to-cyber-fraud-in-2025-articleshow-u9oad8w",
   },
   {
-    big: "60,676 → 1,23,672",
-    text: "digital-arrest cases reported in India, 2023 to 2024: about double in a year, with about ₹1,935 crore lost in 2024.",
-    source: "Government reply in Parliament (via Outlook Money and Inc42)",
-    href: "https://www.outlookmoney.com/banking/digital-arrests-and-cyber-crimes-under-watch-over-781-lakh-sim-cards-blocked-by-feb",
+    big: "21,900+ in 2026",
+    text: "digital-arrest complaints from January to August 2026 (₹647 crore lost), after 1,23,672 in 2024 (₹1,935 crore) and 58,239 in 2025 (₹1,211 crore).",
+    source: "I4C and MHA status report to the Supreme Court, reported by Free Press Journal, 23 Oct 2026",
+    href: "https://www.freepressjournal.in/tech/digital-arrest-fraud-over-21900-complaints-involving-647-crore-registered-in-2026-centre-tells-supreme-court",
+  },
+  {
+    big: "+1,300%",
+    text: "rise in deepfake fraud attempts in 2024, and synthetic voice calls up 173% from the first to the last quarter of 2024.",
+    source: "Pindrop Voice Intelligence & Security Report, 12 Jun 2025",
+    href: "https://www.prnewswire.com/news-releases/pindrops-2025-voice-intelligence--security-report-reveals-1-300-surge-in-deepfake-fraud-302479482.html",
+  },
+  {
+    big: "$40 billion",
+    text: "projected generative-AI-enabled fraud losses in the US by 2027, up from $12.3 billion in 2023 (32% a year).",
+    source: "Deloitte Center for Financial Services, 29 May 2024",
+    href: "https://www.deloitte.com/us/en/insights/industry/financial-services/deepfake-banking-fraud-risk-on-the-rise.html",
   },
   {
     big: "47%",
