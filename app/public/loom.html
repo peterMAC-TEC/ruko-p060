@@ -52,6 +52,7 @@
   .do li::before { content: "▸ "; color: var(--red); font-weight: 700; }
   .say { background: var(--say-bg); border-radius: 10px; padding: 10px 12px; font-size: 19px; line-height: 1.45; }
   .say::before { content: "SAY"; display: block; font: 700 11px var(--f-mono); letter-spacing: 0.14em; color: var(--soft); margin-bottom: 2px; }
+  .shot { display: block; width: 46%; max-width: 220px; border-radius: 14px; border: 1px solid var(--line); margin: 4px 0 10px; }
   .tip { font-size: 15px; color: var(--soft); margin: 8px 0 0; }
   kbd { font-family: var(--f-mono); font-size: 13px; border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 6px; padding: 1px 6px; background: var(--paper); }
   .lines { display: grid; gap: 6px; margin: 6px 0 8px; }
@@ -77,7 +78,7 @@
   </div>
 
   <h1>Ruko Loom run sheet</h1>
-  <p class="lede">About 5½ minutes. Each card says what to do and what to say. The timer moves the highlight for you.</p>
+  <p class="lede">About 6½ minutes. Each card says what to tap, what to look for, and what to say. Tap Start when Loom starts: the timer highlights where you should be.</p>
 
   <h2>Before you record</h2>
   <ul class="check" id="setup">
@@ -88,102 +89,142 @@
     <li><label><input type="checkbox" id="c5"><span>Remember: family code word <b>mango</b> · practice bank PIN <b>1234</b>.</span></label></li>
   </ul>
 
-  <h2>The run</h2>
+  <h2>Rehearse once first (10 minutes)</h2>
+  <ul class="check" id="rehearse">
+    <li><label><input type="checkbox" id="r1"><span>Do the whole run below once <b>without recording</b>, reading the SAY boxes aloud.</span></label></li>
+    <li><label><input type="checkbox" id="r2"><span>In the live call, try your four replies once so you know how he answers.</span></label></li>
+    <li><label><input type="checkbox" id="r3"><span>Practise <kbd>X</kbd> in the call: click empty space first, then press <kbd>X</kbd>.</span></label></li>
+    <li><label><input type="checkbox" id="r4"><span>Afterwards press <kbd>R</kbd> on the app to reset, and go back to deck slide 1.</span></label></li>
+  </ul>
+
+  <h2>The run · about 6½ minutes</h2>
 
   <section class="beat" data-at="0" id="b1">
-    <div class="t">0:00 – 0:35 · Tab 1, deck slide 1</div>
-    <h3>The problem</h3>
-    <ul class="do"><li>Start on the deck, slide 1. Look at the camera.</li></ul>
-    <p class="say">Hi, I'm Aditya. This is Ruko, which means "stop" in Hindi. It's for ForgeX problem P060: grandparents losing their savings to fake digital-arrest calls. The call goes like this: "This is the CBI. Your Aadhaar is linked to a crime. Do not hang up. Do not tell your family." They keep you on video for hours until you pay.</p>
+    <div class="t">0:00 – 0:30 · Tab 1, deck slide 1</div>
+    <h3>Who you are, and the problem</h3>
+    <ul class="do"><li>Camera on. Look at the lens, not the screen.</li></ul>
+    <p class="say">Hi, I'm Aditya. This is Ruko, which means "stop" in Hindi. It's for ForgeX problem P060: grandparents losing their savings to fake digital-arrest calls. It starts like this: "This is the CBI. Your Aadhaar is linked to a crime. Do not hang up. Do not tell your family." They keep you on video for hours until you pay.</p>
   </section>
 
-  <section class="beat" data-at="35" id="b2">
-    <div class="t">0:35 – 1:05 · press <kbd>→</kbd> twice (slides 2, 3)</div>
-    <h3>Today, and how big it is</h3>
-    <p class="say">Today nobody steps in before the money moves. There's awareness, and 1930 after the loss. Digital-arrest complaints doubled in a year, to over 1.2 lakh in 2024, with about 1,935 crore rupees lost.</p>
+  <section class="beat" data-at="30" id="b2">
+    <div class="t">0:30 – 1:00 · press <kbd>→</kbd> twice (slides 2, 3)</div>
+    <h3>How it's handled today, and how big it is</h3>
+    <p class="tip" style="margin-top:0">Look for: the five red-and-white boxes, then the two tall bars.</p>
+    <p class="say">Today, nobody steps in before the money moves. There's awareness, and 1930 after the loss. Digital-arrest complaints doubled in a year, to over 1.2 lakh in 2024, and about 1,935 crore rupees were lost.</p>
   </section>
 
-  <section class="beat" data-at="65" id="b3">
-    <div class="t">1:05 – 1:25 · press <kbd>→</kbd> (slide 4)</div>
+  <section class="beat" data-at="60" id="b3">
+    <div class="t">1:00 – 1:20 · press <kbd>→</kbd> (slide 4)</div>
     <h3>The idea: three layers</h3>
-    <p class="say">Our mentor asked whether a panicking person will take the right action. We don't rely on them. The family sets Ruko up before. During the call, one big STOP. And at the money, the payment waits for the family. Let me show you, live.</p>
+    <p class="tip" style="margin-top:0">Look for: the traffic light. Point at each card as you say it.</p>
+    <p class="say">Our mentor asked whether someone in panic will do the right thing. We don't rely on them. Before the call, the family sets Ruko up. During the call, one big STOP. At the money, the payment waits for the family. Let me show you each layer, live.</p>
   </section>
 
-  <section class="beat" data-at="85" id="b4">
-    <div class="t">1:25 – 1:40 · switch to Tab 2</div>
-    <h3>Start the live call</h3>
+  <section class="beat" data-at="80" id="b4">
+    <div class="t">1:20 – 1:35 · switch to Tab 2, press <kbd>1</kbd></div>
+    <h3>The live product</h3>
+    <p class="tip" style="margin-top:0">Look for: the headline, the rupee counter ticking up, the cyan button.</p>
+    <p class="say">This is Ruko, live at ruko-seven dot vercel dot app. It works on any phone, as an app you add to the home screen. While we've been talking, that counter shows roughly how much India loses to cyber fraud.</p>
+  </section>
+
+  <section class="beat" data-at="95" id="b5">
+    <div class="t">1:35 – 2:05 · Layer 1: before the call</div>
+    <h3>The family sets it up</h3>
     <ul class="do">
-      <li>Press <kbd>2</kbd> (or tap <b>Take a live scam call</b>).</li>
-      <li>Tap <b>I understand</b>. Phone rings. Tap <b>Answer</b>, allow the mic.</li>
+      <li>Press <kbd>4</kbd> (Family phone). In the phone, tap <b>Set up Ruko for Mum or Dad</b>.</li>
+      <li>Tap <b>Next</b> once to show <b>Choose your family code word</b>.</li>
     </ul>
-    <p class="say">I'm going to play a 72-year-old. A fake officer is calling. Everything is role-play: nothing is recorded and no real money moves.</p>
+    <p class="say">Layer one happens calmly, in advance. The daughter, Priya, sets Ruko up for her mother in five small steps: install it, choose a family code word, print a one-line rule card, a practice call, and a test alert. The code word matters later.</p>
   </section>
 
-  <section class="beat" data-at="100" id="b5">
-    <div class="t">1:40 – 2:40 · talk to him (new replies)</div>
+  <section class="beat" data-at="125" id="b6">
+    <div class="t">2:05 – 2:20 · Layer 2: press <kbd>2</kbd></div>
+    <h3>Start the live call</h3>
+    <img class="shot" src="/deck/1-ring.png" alt="The ringing screen" onerror="this.remove()">
+    <ul class="do">
+      <li>Tap <b>I understand</b>. The phone rings. Tap <b>Answer</b> and allow the microphone.</li>
+    </ul>
+    <p class="say">Layer two, during the call. I'll play a 72-year-old. A fake officer is calling. It's all role-play: nothing is recorded, and no real money moves.</p>
+  </section>
+
+  <section class="beat" data-at="140" id="b7">
+    <div class="t">2:20 – 3:20 · talk to him with new replies</div>
     <h3>Resist him, in your own words</h3>
-    <ul class="do"><li>Wait for <b>"your turn, speak now"</b>, then say one line. Use replies like these:</li></ul>
+    <img class="shot" src="/deck/2-call.png" alt="The call screen with the caller's face" onerror="this.remove()">
+    <ul class="do"><li>Wait for <b>"your turn, speak now"</b>. Say one line, then let him answer. Try:</li></ul>
     <div class="lines">
       <span>"Which police station are you calling from?"</span>
       <span>"My son is a lawyer. I'll call him first."</span>
       <span>"I only have my pension. I can't pay this."</span>
       <span>"Are you a real person?"</span>
     </div>
-    <ul class="do"><li>While he answers, point at the panel: <b>Ruko is listening</b>, the pressure meter, the tactic chips, <b>AI read your meaning</b>.</li></ul>
-    <p class="say">He adapts to every objection, like a real caller. Below, Ruko reads the call: the pressure rising, and each tactic he uses: fake authority, secrecy, urgency.</p>
+    <ul class="do"><li>While he talks, scroll a little and point at <b>Ruko is listening</b>: the pressure meter, the tactic chips, <b>AI read your meaning</b>.</li></ul>
+    <p class="say">Watch his face: friendly at first, then stern, then urgent. He answers every objection, like a real caller. Underneath, Ruko reads the call: the pressure rising, and each trick he uses, like fake authority and secrecy.</p>
   </section>
 
-  <section class="beat" data-at="160" id="b6">
-    <div class="t">2:40 – 3:00 · in the call: press <kbd>X</kbd></div>
-    <h3>X-Ray: the architecture, live</h3>
+  <section class="beat" data-at="200" id="b8">
+    <div class="t">3:20 – 3:45 · press <kbd>X</kbd> in the call</div>
+    <h3>X-Ray: how it really works</h3>
     <ul class="do">
-      <li>Click an empty part of the page first (not the typing box), then press <kbd>X</kbd>.</li>
-      <li>Point along the five boxes. Press <kbd>X</kbd> again to return.</li>
+      <li>Click empty space (not the typing box), press <kbd>X</kbd>. Or tap <b>X-Ray</b> at the top.</li>
+      <li>Move your mouse along the five boxes, left to right. Press <kbd>X</kbd> to go back.</li>
     </ul>
-    <p class="say">This is X-Ray. Every turn goes from input, to the AI, which only reads what I meant, to code, which decides the next move and the risk score, to a safety check on every line. AI reads and words. Code decides.</p>
+    <p class="say">This is X-Ray: what happened inside Ruko on my last reply. Input, then the AI, which only reads what I meant and gives a confidence score, then code, which decides the next move and the risk, then a safety check on every line. AI reads and words. Code decides.</p>
   </section>
 
-  <section class="beat" data-at="180" id="b7">
-    <div class="t">3:00 – 3:15 · keep talking until STOP</div>
+  <section class="beat" data-at="225" id="b9">
+    <div class="t">3:45 – 4:00 · keep talking until STOP</div>
     <h3>The STOP</h3>
-    <ul class="do"><li>When he asks for ₹50,000, the red <b>STOP</b> lands. Pause on it.</li></ul>
-    <p class="say">The moment he asks for money, Ruko's own code says STOP. Not the AI. His cap falls off: "Fake officer". And my family has been told.</p>
+    <img class="shot" src="/deck/3-stop.png" alt="The red STOP screen" onerror="this.remove()">
+    <ul class="do"><li>If it's slow, say "okay" twice. When he asks for ₹50,000 the red <b>STOP</b> lands. Pause two seconds.</li></ul>
+    <p class="say">The moment he asks for money, Ruko's own code says STOP. Not the AI. His cap falls off: fake officer. And the family has already been told, silently.</p>
   </section>
 
-  <section class="beat" data-at="195" id="b8">
-    <div class="t">3:15 – 3:55 · tap "I still want to pay"</div>
+  <section class="beat" data-at="240" id="b10">
+    <div class="t">4:00 – 4:50 · Layer 3: tap "I still want to pay"</div>
     <h3>Even if they pay, the money waits</h3>
     <ul class="do">
-      <li>Mock bank opens with ₹50,000 filled in. Tap <b>Confirm</b>, follow it, PIN <b>1234</b>.</li>
+      <li>The mock bank opens with ₹50,000 filled in. Tap <b>Confirm</b>, follow it, PIN <b>1234</b>.</li>
       <li>It pauses. Tap <b>Show the family phone here</b>.</li>
-      <li>On Priya's phone: tap <b>Approve</b> with no word, then type a wrong word: refused. Then tap <b>Say no</b>.</li>
+      <li>On Priya's phone: tap <b>Approve</b> with no word: refused. Type <b>tiger</b>, tap <b>Approve</b>: refused.</li>
+      <li>Tap <b>Say no</b>. The elder's screen says <b>Payment blocked. Money did not move.</b></li>
     </ul>
-    <p class="say">Say the scammer convinced me completely and I still pay. Money Lock pauses it and asks my daughter Priya. Even if the scammer sounds exactly like me, approving needs our family code word. She says no, and the money did not move.</p>
+    <p class="say">Layer three, at the money. Say the scammer has fully convinced me and I still pay. Money Lock pauses it and asks Priya. Even if the scammer sounds exactly like me, approving needs the family code word, the one she chose in setup. She says no. The money did not move.</p>
   </section>
 
-  <section class="beat" data-at="235" id="b9">
-    <div class="t">3:55 – 4:10 · tap "See the result"</div>
+  <section class="beat" data-at="290" id="b11">
+    <div class="t">4:50 – 5:05 · tap "See the result"</div>
     <h3>The result</h3>
-    <p class="say">Here's what happened: how far the call got, what the caller tried, and that no money moved. This is demo data, labelled on screen.</p>
+    <p class="tip" style="margin-top:0">Look for: the line that draws itself, "Money moved: No", the "Demo data" label.</p>
+    <p class="say">Here's the record: how far the call got, what the caller tried, and that no money moved. It's labelled demo data, because it is.</p>
   </section>
 
-  <section class="beat" data-at="250" id="b10">
-    <div class="t">4:10 – 4:30 · press <kbd>6</kbd> (Eval)</div>
+  <section class="beat" data-at="305" id="b12">
+    <div class="t">5:05 – 5:35 · top bar: Ruko Line</div>
+    <h3>Stopping it before the phone even rings</h3>
+    <ul class="do">
+      <li>Tap <b>"Officer" says you are under digital arrest</b> on the left. Watch the right side screen it.</li>
+    </ul>
+    <p class="say">And Ruko can work before the phone rings. A new number calls; Ruko grades it, a calm assistant asks who it is, and decides: put it through, take a message, or block. This one gets blocked, and the family is told.</p>
+  </section>
+
+  <section class="beat" data-at="335" id="b13">
+    <div class="t">5:35 – 5:55 · press <kbd>6</kbd> (Eval)</div>
     <h3>The numbers</h3>
-    <p class="say">We measured it on a synthetic test set we wrote. With AI, Ruko reads 90.9% of replies right, against 75.8% with rules alone. The safety check blocked all 22 unsafe AI outputs, and there were zero false alarms on genuine calls.</p>
+    <p class="say">We measured it on a test set we wrote. With AI, Ruko understands 90.9% of replies, against 75.8% with rules alone. The safety check blocked all 22 unsafe AI outputs, and there were zero false alarms on genuine calls.</p>
   </section>
 
-  <section class="beat" data-at="270" id="b11">
-    <div class="t">4:30 – 4:45 · tap Fraud desk in the top bar</div>
-    <h3>The bank's view</h3>
-    <p class="say">This is what a bank's fraud team would see: the paused payment, and the Ruko Guard decision. Banks and payment apps are who pays for Ruko, through this API. Families get core protection free.</p>
+  <section class="beat" data-at="355" id="b14">
+    <div class="t">5:55 – 6:10 · top bar: Fraud desk</div>
+    <h3>The bank's view, and the business</h3>
+    <p class="say">This is what a bank's fraud team sees: the paused payment and the Ruko Guard decision. Banks and payment apps pay for Ruko through this API, because it cuts their fraud losses. Families get the core protection free.</p>
   </section>
 
-  <section class="beat" data-at="285" id="b12">
-    <div class="t">4:45 – 5:15 · Tab 1, press <kbd>End</kbd> (last slide)</div>
+  <section class="beat" data-at="370" id="b15">
+    <div class="t">6:10 – 6:40 · Tab 1, press <kbd>End</kbd> (last slide)</div>
     <h3>Close</h3>
-    <p class="say">Next: a field test with ten older adults, and a pilot with one bank. Either way, the money didn't move. Ruko doesn't try to win the argument with a scammer. It protects the moment that matters. Try it at ruko-seven.vercel.app. Thank you.</p>
-    <p class="tip">Stop Loom. If you're under 5:00, linger on X-Ray or the family phone next time.</p>
+    <p class="say">Next, a field test with ten older adults, and a pilot with one bank. Either way, the money didn't move. Ruko doesn't try to win the argument with a scammer. It protects the moment that matters. Try it at ruko-seven dot vercel dot app. Thank you.</p>
+    <p class="tip">Stop Loom. Watch it back once before you submit.</p>
   </section>
 
   <h2>If something goes wrong</h2>
@@ -191,7 +232,7 @@
     <tr><td>Mic not picking you up</td><td>Tap <b>Type instead</b> and type the line. Say "I'll type it".</td></tr>
     <tr><td>No sound from him</td><td>Read his caption aloud. The captions carry the call.</td></tr>
     <tr><td>X does nothing</td><td>You're in the typing box. Click empty space, then <kbd>X</kbd>, or tap the <b>X-Ray</b> button at the top.</td></tr>
-    <tr><td>STOP takes too long</td><td>Say "okay" twice: he moves to the money faster.</td></tr>
+    <tr><td>STOP takes too long</td><td>Say "okay" twice: he moves to the money faster. Or tap <b>End call</b>, then <kbd>2</kbd> for a new call.</td></tr>
     <tr><td>Bank or family stuck</td><td>Press <kbd>R</kbd> (reset), then <kbd>2</kbd>, and run the call again.</td></tr>
     <tr><td>You fluff a line</td><td>Pause two seconds and say it again. Trim it later in Loom.</td></tr>
   </table>
@@ -251,7 +292,7 @@
       window.scrollTo(0, 0);
     });
     // Remember the setup ticks on this phone only.
-    document.querySelectorAll("#setup input").forEach(function (box) {
+    document.querySelectorAll("#setup input, #rehearse input").forEach(function (box) {
       try { box.checked = localStorage.getItem("ruko-loom-" + box.id) === "1"; } catch (e) {}
       box.addEventListener("change", function () { try { localStorage.setItem("ruko-loom-" + box.id, box.checked ? "1" : "0"); } catch (e) {} });
     });
