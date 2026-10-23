@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 // Director mode: keyboard shortcuts for the presenter, on every page.
@@ -12,6 +12,9 @@ const GO: Record<string, string> = { "1": "/", "2": "/demo/live", "3": "/archite
 
 export function DirectorKeys() {
   const router = useRouter();
+  const path = usePathname() ?? "";
+  // The deck has its own keys.
+  const off = path.startsWith("/deck");
   const [toast, setToast] = useState("");
   const [help, setHelp] = useState(false);
   useEffect(() => {
@@ -22,6 +25,7 @@ export function DirectorKeys() {
       timer = setTimeout(() => setToast(""), 1800);
     };
     const k = (e: KeyboardEvent) => {
+      if (off) return;
       const el = e.target as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.isContentEditable)) return;
       if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -52,7 +56,7 @@ export function DirectorKeys() {
       window.removeEventListener("keydown", k);
       clearTimeout(timer);
     };
-  }, [router]);
+  }, [router, off]);
   return (
     <>
       {toast && (

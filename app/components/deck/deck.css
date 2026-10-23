@@ -1,0 +1,349 @@
+/* The pitch deck's "SIGNAL" identity: Indian road signs and hand-painted signage, editorial poster type, and a blueprint
+   layer for the technical slides. Each colour has one job. Only transform, opacity and SVG stroke are animated.
+   Motion levels: data-fx="max" (everything), "calm" (gentle fades only), "off" (static final states). */
+.deck-root {
+  --paper: #fbf6ec;
+  --ink: #14122b;
+  --marigold: #ffb000;
+  --red: #e8202a;
+  --amber: #ff7a00;
+  --green: #00a86b;
+  --blue: #1f6feb;
+  --e: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.deck-stage {
+  width: 1920px;
+  height: 1080px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background: var(--paper);
+  color: var(--ink);
+  overflow: hidden;
+  font-family: var(--f-body), system-ui, sans-serif;
+}
+.deck-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: radial-gradient(rgba(20, 18, 43, 0.12) 1px, transparent 1.2px);
+  background-size: 14px 14px;
+  mix-blend-mode: multiply;
+}
+.deck-blueprint {
+  background-color: #0b1d3a;
+  color: #fff;
+  background-image: linear-gradient(rgba(31, 111, 235, 0.28) 1px, transparent 1px), linear-gradient(90deg, rgba(31, 111, 235, 0.28) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.d-head {
+  font-family: var(--f-head), Impact, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+.d-mono {
+  font-family: var(--f-mono), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+}
+.d-hindi {
+  font-family: var(--f-hindi), serif;
+}
+.d-box {
+  border: 4px solid var(--ink);
+  box-shadow: 10px 10px 0 var(--ink);
+  background: #fff;
+}
+.d-source {
+  font-family: var(--f-mono), ui-monospace, monospace;
+  font-size: 17px;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
+}
+.d-stamp {
+  display: inline-block;
+  font-family: var(--f-mono), monospace;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  border: 6px solid currentColor;
+  border-radius: 10px;
+  padding: 10px 22px;
+  transform: rotate(var(--rot, -6deg));
+  /* ink texture: a little patchy */
+  -webkit-mask-image: radial-gradient(circle at 30% 40%, #000 60%, rgba(0, 0, 0, 0.82) 61%), radial-gradient(circle at 75% 70%, #000 55%, rgba(0, 0, 0, 0.85) 56%);
+  mask-image: radial-gradient(circle at 30% 40%, #000 60%, rgba(0, 0, 0, 0.82) 61%);
+}
+
+/* ---- builds: parts of a slide that appear on click ---- */
+.bld {
+  transition: opacity 450ms var(--e), transform 450ms var(--e);
+}
+.bld[data-on="0"] {
+  opacity: 0;
+  transform: translateY(26px);
+}
+[data-fx="off"] .bld {
+  transition: none;
+}
+[data-fx="calm"] .bld[data-on="0"] {
+  transform: none;
+}
+
+/* ---- keyframes ---- */
+@keyframes d-rise {
+  from {
+    opacity: 0;
+    transform: translateY(45%) rotate(4deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes d-slam {
+  0% {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes d-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes d-draw {
+  from {
+    stroke-dashoffset: var(--len, 1000);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes d-stamp {
+  0% {
+    opacity: 0;
+    transform: rotate(-16deg) scale(2.2);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(var(--rot, -6deg)) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(var(--rot, -6deg)) scale(1);
+  }
+}
+@keyframes d-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-140px) scale(1.15);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(8px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes d-ring {
+  from {
+    opacity: 0.7;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+@keyframes d-buzz {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+  20% {
+    transform: translateX(-6px) rotate(-1.5deg);
+  }
+  40% {
+    transform: translateX(6px) rotate(1.5deg);
+  }
+  60% {
+    transform: translateX(-4px) rotate(-1deg);
+  }
+  80% {
+    transform: translateX(4px) rotate(1deg);
+  }
+}
+@keyframes d-fall {
+  0% {
+    transform: none;
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(520px) rotate(var(--r, 20deg));
+    opacity: 0;
+  }
+}
+@keyframes d-crack {
+  0%,
+  100% {
+    transform: none;
+  }
+  30% {
+    transform: translateX(-4px) rotate(-1deg);
+  }
+  60% {
+    transform: translateX(4px) rotate(1deg);
+  }
+}
+@keyframes d-weight {
+  from {
+    font-variation-settings: "wght" 100;
+  }
+  to {
+    font-variation-settings: "wght" 900;
+  }
+}
+@keyframes d-packet {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--dist, 1500px));
+    opacity: 0;
+  }
+}
+@keyframes d-glow {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@keyframes d-light {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ---- animation classes, by motion level ---- */
+[data-fx="max"] .a-rise {
+  display: inline-block;
+  animation: d-rise 0.85s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-slam {
+  display: inline-block;
+  animation: d-slam 0.7s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-fade {
+  animation: d-fade 0.6s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-draw {
+  stroke-dasharray: var(--len, 1000);
+  animation: d-draw 1.1s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-stamp {
+  animation: d-stamp 0.55s var(--spring) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-drop {
+  animation: d-drop 0.75s var(--spring) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-ring {
+  animation: d-ring 1.2s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-ring-loop {
+  animation: d-ring 2.2s var(--e) infinite;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-buzz {
+  animation: d-buzz 0.5s ease-in-out 4;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-fall {
+  animation: d-fall 1.1s cubic-bezier(0.55, 0, 1, 0.45) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-crack {
+  animation: d-crack 0.4s ease-in-out 2;
+}
+[data-fx="max"] .a-weight {
+  animation: d-weight 1.2s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-packet {
+  animation: d-packet 1.8s cubic-bezier(0.45, 0, 0.2, 1) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+[data-fx="max"] .a-glow {
+  animation: d-glow 2.4s ease-in-out infinite;
+}
+[data-fx="max"] .a-light {
+  animation: d-light 0.5s var(--e) both;
+  animation-delay: calc(var(--d, 0) * 1ms);
+}
+/* CALM: everything just fades in */
+[data-fx="calm"] :is(.a-rise, .a-slam, .a-fade, .a-stamp, .a-drop, .a-light, .a-weight) {
+  animation: d-fade 0.5s ease-out both;
+}
+[data-fx="calm"] .a-draw {
+  stroke-dasharray: none;
+}
+[data-fx="calm"] :is(.a-ring, .a-ring-loop, .a-packet, .a-buzz, .a-crack, .a-glow) {
+  display: none;
+}
+[data-fx="calm"] .a-fall {
+  opacity: 0;
+}
+/* OFF: the final state, nothing moves */
+[data-fx="off"] :is(.a-ring, .a-ring-loop, .a-packet) {
+  display: none;
+}
+[data-fx="off"] .a-fall {
+  opacity: 0;
+}
+.deck-root[data-fx="off"] *,
+.deck-root[data-fx="off"] *::before,
+.deck-root[data-fx="off"] *::after {
+  animation: none !important;
+}
+
+/* slide transitions (View Transitions where supported) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 380ms;
+}

@@ -11,7 +11,9 @@
     "check:ai": "tsx --conditions=react-server --env-file=.env.local scripts/check-ai-live.ts public/samples/fake-warrant.png",
     "demo:offline": "node scripts/demo-offline.mjs",
     "sim": "tsx scripts/sim.ts",
-    "eval": "tsx scripts/eval.ts"
+    "eval": "tsx scripts/eval.ts",
+    "deck:pdf": "node scripts/deck-export.mjs",
+    "deck:notes": "tsx scripts/deck-notes.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.132.1",
@@ -39,6 +41,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "puppeteer-core": "^24.43.1",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"
