@@ -973,10 +973,10 @@ const SCALE2: SlideDef = {
   theme: "paper",
   render: (step) => {
     const bars = [
-      { y: "2023", v: 60676, h: 200, c: "var(--ink)" },
-      { y: "2024", v: 123672, h: 400, c: "var(--red)" },
-      { y: "2025", v: 58239, h: 190, c: "var(--ink)" },
-      { y: "2026*", v: 21900, h: 72, c: "var(--amber)" },
+      { y: "2023", v: 60676, h: 162, c: "var(--ink)" },
+      { y: "2024", v: 123672, h: 330, c: "var(--red)" },
+      { y: "2025", v: 58239, h: 155, c: "var(--ink)" },
+      { y: "2026*", v: 21900, h: 58, c: "var(--amber)" },
     ];
     return (
       <div style={PAD}>
@@ -1021,7 +1021,7 @@ const SCALE2: SlideDef = {
           </div>
         </div>
         <Source>
-          *2026: January to August. {SOURCES.daSC}. {step >= 1 ? SOURCES.total + ". " : ""}
+          *2026: January to August. {SOURCES.daSC}. 2023: I4C data via ThePrint, 18 Feb 2026. {step >= 1 ? SOURCES.total + ". " : ""}
           {step >= 2 ? "Pindrop, 12 Jun 2025. CNN, Feb 2024." : ""}
         </Source>
       </div>
