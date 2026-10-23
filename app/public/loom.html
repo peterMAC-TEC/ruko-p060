@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="robots" content="noindex">
+<title>Ruko Loom Run Sheet</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders:opsz,wght@10..72,800;10..72,900&family=Atkinson+Hyperlegible+Next:wght@400;700&family=Martian+Mono:wght@500;700&display=swap">
+<style>
+  /* Layout: one narrow column you read on a phone propped beside the laptop, a sticky timer, one card per beat. */
+  :root {
+    --paper: #fbf6ec;
+    --ink: #14122b;
+    --soft: #5b5872;
+    --line: #e4dccb;
+    --card: #ffffff;
+    --marigold: #ffb000;
+    --red: #e8202a;
+    --green: #00875a;
+    --say-bg: #fff3d1;
+    --f-head: "Big Shoulders", Impact, "Arial Narrow", sans-serif;
+    --f-body: "Atkinson Hyperlegible Next", system-ui, sans-serif;
+    --f-mono: "Martian Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --paper: #12111f; --ink: #f4efe4; --soft: #a9a5bd; --line: #2d2b45; --card: #1b1a2e; --say-bg: #2e2712; --green: #3ccf91; color-scheme: dark; }
+  }
+  :root[data-theme="dark"] { --paper: #12111f; --ink: #f4efe4; --soft: #a9a5bd; --line: #2d2b45; --card: #1b1a2e; --say-bg: #2e2712; --green: #3ccf91; color-scheme: dark; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 18px; line-height: 1.5; }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--ink); }
+  .wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px 64px; }
+  .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ink); color: var(--paper); margin: 0 calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding: 10px max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); display: flex; align-items: center; gap: 12px; }
+  .clock { font-family: var(--f-mono); font-weight: 700; font-size: 26px; font-variant-numeric: tabular-nums; min-width: 4.2em; }
+  .now { flex: 1; min-width: 0; font-size: 14px; line-height: 1.25; opacity: 0.9; }
+  .now b { display: block; font-size: 16px; color: var(--marigold); }
+  .bar button { font: 700 15px var(--f-body); border: 0; border-radius: 999px; padding: 10px 14px; min-height: 44px; cursor: pointer; }
+  .go { background: var(--marigold); color: #14122b; }
+  .reset { background: transparent; color: var(--paper); border: 1px solid rgba(251, 246, 236, 0.4) !important; }
+  h1 { font-family: var(--f-head); font-weight: 900; text-transform: uppercase; font-size: 44px; line-height: 0.95; margin: 22px 0 6px; text-wrap: balance; }
+  .lede { color: var(--soft); margin: 0 0 18px; }
+  h2 { font-family: var(--f-head); font-weight: 800; text-transform: uppercase; font-size: 28px; margin: 30px 0 10px; letter-spacing: 0.01em; }
+  .label { font-family: var(--f-mono); font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--soft); }
+  ul.check { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+  ul.check label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; cursor: pointer; }
+  ul.check input { width: 22px; height: 22px; margin-top: 2px; accent-color: var(--green); flex: none; }
+  ul.check input:checked + span { color: var(--soft); text-decoration: line-through; }
+  .url { font-family: var(--f-mono); font-size: 14px; word-break: break-all; background: var(--card); border: 1px solid var(--line); border-radius: 8px; padding: 2px 6px; }
+  .beat { background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--line); border-radius: 14px; padding: 14px 16px; margin: 12px 0; scroll-margin-top: 90px; transition: border-color 200ms; }
+  .beat.on { border-left-color: var(--marigold); box-shadow: 0 0 0 2px var(--marigold); }
+  .beat.done { opacity: 0.55; }
+  .t { font-family: var(--f-mono); font-weight: 700; font-size: 14px; color: var(--soft); font-variant-numeric: tabular-nums; }
+  .beat h3 { font-size: 21px; margin: 2px 0 8px; line-height: 1.25; text-wrap: balance; }
+  .do { margin: 0 0 8px; padding-left: 0; list-style: none; display: grid; gap: 4px; }
+  .do li::before { content: "▸ "; color: var(--red); font-weight: 700; }
+  .say { background: var(--say-bg); border-radius: 10px; padding: 10px 12px; font-size: 19px; line-height: 1.45; }
+  .say::before { content: "SAY"; display: block; font: 700 11px var(--f-mono); letter-spacing: 0.14em; color: var(--soft); margin-bottom: 2px; }
+  .tip { font-size: 15px; color: var(--soft); margin: 8px 0 0; }
+  kbd { font-family: var(--f-mono); font-size: 13px; border: 1px solid var(--line); border-bottom-width: 3px; border-radius: 6px; padding: 1px 6px; background: var(--paper); }
+  .lines { display: grid; gap: 6px; margin: 6px 0 8px; }
+  .lines span { font-family: var(--f-mono); font-size: 14px; background: var(--paper); border: 1px dashed var(--line); border-radius: 8px; padding: 6px 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  td { padding: 8px 6px; border-top: 1px solid var(--line); vertical-align: top; }
+  td:first-child { font-weight: 700; width: 42%; }
+  .facts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .fact { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+  .fact b { font-family: var(--f-head); font-size: 30px; display: block; line-height: 1; }
+  .fact span { font-size: 14px; color: var(--soft); }
+  .warn { border-left: 6px solid var(--red); padding: 10px 14px; background: var(--card); border-radius: 12px; font-size: 16px; }
+  button:focus-visible, input:focus-visible { outline: 3px solid var(--marigold); outline-offset: 2px; }
+  @media (prefers-reduced-motion: reduce) { .beat { transition: none; } }
+</style>
+
+<div class="wrap">
+  <div class="bar" role="region" aria-label="Timer">
+    <span class="clock" id="clock">0:00</span>
+    <span class="now" id="now"><b>Ready</b>Tap Start the moment Loom starts recording.</span>
+    <button class="go" id="go" type="button">Start</button>
+    <button class="reset" id="reset" type="button">Reset</button>
+  </div>
+
+  <h1>Ruko Loom run sheet</h1>
+  <p class="lede">About 5½ minutes. Each card says what to do and what to say. The timer moves the highlight for you.</p>
+
+  <h2>Before you record</h2>
+  <ul class="check" id="setup">
+    <li><label><input type="checkbox" id="c1"><span>Laptop: <b>Chrome or Edge</b>, full screen. Notifications off. Volume up. <b>Headphones on</b>.</span></label></li>
+    <li><label><input type="checkbox" id="c2"><span>Tab 1: <span class="url">ruko-seven.vercel.app/deck</span> on slide 1.</span></label></li>
+    <li><label><input type="checkbox" id="c3"><span>Tab 2: <span class="url">ruko-seven.vercel.app/demo</span>. Leave <b>Fixed script</b> off (the officer adapts to new replies). Press <kbd>R</kbd> to reset the demo.</span></label></li>
+    <li><label><input type="checkbox" id="c4"><span>Loom: record <b>full screen + camera + microphone</b>. Do one 30-second test and play it back.</span></label></li>
+    <li><label><input type="checkbox" id="c5"><span>Remember: family code word <b>mango</b> · practice bank PIN <b>1234</b>.</span></label></li>
+  </ul>
+
+  <h2>The run</h2>
+
+  <section class="beat" data-at="0" id="b1">
+    <div class="t">0:00 – 0:35 · Tab 1, deck slide 1</div>
+    <h3>The problem</h3>
+    <ul class="do"><li>Start on the deck, slide 1. Look at the camera.</li></ul>
+    <p class="say">Hi, I'm Aditya. This is Ruko, which means "stop" in Hindi. It's for ForgeX problem P060: grandparents losing their savings to fake digital-arrest calls. The call goes like this: "This is the CBI. Your Aadhaar is linked to a crime. Do not hang up. Do not tell your family." They keep you on video for hours until you pay.</p>
+  </section>
+
+  <section class="beat" data-at="35" id="b2">
+    <div class="t">0:35 – 1:05 · press <kbd>→</kbd> twice (slides 2, 3)</div>
+    <h3>Today, and how big it is</h3>
+    <p class="say">Today nobody steps in before the money moves. There's awareness, and 1930 after the loss. Digital-arrest complaints doubled in a year, to over 1.2 lakh in 2024, with about 1,935 crore rupees lost.</p>
+  </section>
+
+  <section class="beat" data-at="65" id="b3">
+    <div class="t">1:05 – 1:25 · press <kbd>→</kbd> (slide 4)</div>
+    <h3>The idea: three layers</h3>
+    <p class="say">Our mentor asked whether a panicking person will take the right action. We don't rely on them. The family sets Ruko up before. During the call, one big STOP. And at the money, the payment waits for the family. Let me show you, live.</p>
+  </section>
+
+  <section class="beat" data-at="85" id="b4">
+    <div class="t">1:25 – 1:40 · switch to Tab 2</div>
+    <h3>Start the live call</h3>
+    <ul class="do">
+      <li>Press <kbd>2</kbd> (or tap <b>Take a live scam call</b>).</li>
+      <li>Tap <b>I understand</b>. Phone rings. Tap <b>Answer</b>, allow the mic.</li>
+    </ul>
+    <p class="say">I'm going to play a 72-year-old. A fake officer is calling. Everything is role-play: nothing is recorded and no real money moves.</p>
+  </section>
+
+  <section class="beat" data-at="100" id="b5">
+    <div class="t">1:40 – 2:40 · talk to him (new replies)</div>
+    <h3>Resist him, in your own words</h3>
+    <ul class="do"><li>Wait for <b>"your turn, speak now"</b>, then say one line. Use replies like these:</li></ul>
+    <div class="lines">
+      <span>"Which police station are you calling from?"</span>
+      <span>"My son is a lawyer. I'll call him first."</span>
+      <span>"I only have my pension. I can't pay this."</span>
+      <span>"Are you a real person?"</span>
+    </div>
+    <ul class="do"><li>While he answers, point at the panel: <b>Ruko is listening</b>, the pressure meter, the tactic chips, <b>AI read your meaning</b>.</li></ul>
+    <p class="say">He adapts to every objection, like a real caller. Below, Ruko reads the call: the pressure rising, and each tactic he uses: fake authority, secrecy, urgency.</p>
+  </section>
+
+  <section class="beat" data-at="160" id="b6">
+    <div class="t">2:40 – 3:00 · in the call: press <kbd>X</kbd></div>
+    <h3>X-Ray: the architecture, live</h3>
+    <ul class="do">
+      <li>Click an empty part of the page first (not the typing box), then press <kbd>X</kbd>.</li>
+      <li>Point along the five boxes. Press <kbd>X</kbd> again to return.</li>
+    </ul>
+    <p class="say">This is X-Ray. Every turn goes from input, to the AI, which only reads what I meant, to code, which decides the next move and the risk score, to a safety check on every line. AI reads and words. Code decides.</p>
+  </section>
+
+  <section class="beat" data-at="180" id="b7">
+    <div class="t">3:00 – 3:15 · keep talking until STOP</div>
+    <h3>The STOP</h3>
+    <ul class="do"><li>When he asks for ₹50,000, the red <b>STOP</b> lands. Pause on it.</li></ul>
+    <p class="say">The moment he asks for money, Ruko's own code says STOP. Not the AI. His cap falls off: "Fake officer". And my family has been told.</p>
+  </section>
+
+  <section class="beat" data-at="195" id="b8">
+    <div class="t">3:15 – 3:55 · tap "I still want to pay"</div>
+    <h3>Even if they pay, the money waits</h3>
+    <ul class="do">
+      <li>Mock bank opens with ₹50,000 filled in. Tap <b>Confirm</b>, follow it, PIN <b>1234</b>.</li>
+      <li>It pauses. Tap <b>Show the family phone here</b>.</li>
+      <li>On Priya's phone: tap <b>Approve</b> with no word, then type a wrong word: refused. Then tap <b>Say no</b>.</li>
+    </ul>
+    <p class="say">Say the scammer convinced me completely and I still pay. Money Lock pauses it and asks my daughter Priya. Even if the scammer sounds exactly like me, approving needs our family code word. She says no, and the money did not move.</p>
+  </section>
+
+  <section class="beat" data-at="235" id="b9">
+    <div class="t">3:55 – 4:10 · tap "See the result"</div>
+    <h3>The result</h3>
+    <p class="say">Here's what happened: how far the call got, what the caller tried, and that no money moved. This is demo data, labelled on screen.</p>
+  </section>
+
+  <section class="beat" data-at="250" id="b10">
+    <div class="t">4:10 – 4:30 · press <kbd>6</kbd> (Eval)</div>
+    <h3>The numbers</h3>
+    <p class="say">We measured it on a synthetic test set we wrote. With AI, Ruko reads 90.9% of replies right, against 75.8% with rules alone. The safety check blocked all 22 unsafe AI outputs, and there were zero false alarms on genuine calls.</p>
+  </section>
+
+  <section class="beat" data-at="270" id="b11">
+    <div class="t">4:30 – 4:45 · tap Fraud desk in the top bar</div>
+    <h3>The bank's view</h3>
+    <p class="say">This is what a bank's fraud team would see: the paused payment, and the Ruko Guard decision. Banks and payment apps are who pays for Ruko, through this API. Families get core protection free.</p>
+  </section>
+
+  <section class="beat" data-at="285" id="b12">
+    <div class="t">4:45 – 5:15 · Tab 1, press <kbd>End</kbd> (last slide)</div>
+    <h3>Close</h3>
+    <p class="say">Next: a field test with ten older adults, and a pilot with one bank. Either way, the money didn't move. Ruko doesn't try to win the argument with a scammer. It protects the moment that matters. Try it at ruko-seven.vercel.app. Thank you.</p>
+    <p class="tip">Stop Loom. If you're under 5:00, linger on X-Ray or the family phone next time.</p>
+  </section>
+
+  <h2>If something goes wrong</h2>
+  <table>
+    <tr><td>Mic not picking you up</td><td>Tap <b>Type instead</b> and type the line. Say "I'll type it".</td></tr>
+    <tr><td>No sound from him</td><td>Read his caption aloud. The captions carry the call.</td></tr>
+    <tr><td>X does nothing</td><td>You're in the typing box. Click empty space, then <kbd>X</kbd>, or tap the <b>X-Ray</b> button at the top.</td></tr>
+    <tr><td>STOP takes too long</td><td>Say "okay" twice: he moves to the money faster.</td></tr>
+    <tr><td>Bank or family stuck</td><td>Press <kbd>R</kbd> (reset), then <kbd>2</kbd>, and run the call again.</td></tr>
+    <tr><td>You fluff a line</td><td>Pause two seconds and say it again. Trim it later in Loom.</td></tr>
+  </table>
+
+  <h2>Keys</h2>
+  <p class="tip" style="margin-top:0"><kbd>1</kbd> home · <kbd>2</kbd> live call · <kbd>3</kbd> architecture · <kbd>4</kbd> family phone · <kbd>5</kbd> mock bank · <kbd>6</kbd> eval · <kbd>X</kbd> X-Ray (in the call) · <kbd>R</kbd> reset · <kbd>?</kbd> help · in the deck: <kbd>→</kbd> next, <kbd>F</kbd> fullscreen</p>
+
+  <h2>Numbers, if asked</h2>
+  <div class="facts">
+    <div class="fact"><b>1,23,672</b><span>digital-arrest complaints, 2024 (from 60,676 in 2023)</span></div>
+    <div class="fact"><b>₹1,935 cr</b><span>lost to digital arrest, 2024</span></div>
+    <div class="fact"><b>90.9%</b><span>replies read right with AI (75.8% rules only)</span></div>
+    <div class="fact"><b>22/22</b><span>unsafe AI outputs blocked · 0% false STOPs</span></div>
+  </div>
+  <p class="warn" style="margin-top:16px"><b>Don't say:</b> that real people were tested (field results are pending), that it stops real bank payments (it's a mock bank), or that it listens to real calls (it doesn't).</p>
+</div>
+
+<script>
+  (function () {
+    var beats = Array.prototype.slice.call(document.querySelectorAll(".beat"));
+    var clock = document.getElementById("clock");
+    var now = document.getElementById("now");
+    var go = document.getElementById("go");
+    var t0 = null, paused = 0, timer = null, lastOn = null;
+    function fmt(s) { return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }
+    function tick() {
+      var s = Math.floor((Date.now() - t0) / 1000);
+      clock.textContent = fmt(s);
+      var cur = null;
+      beats.forEach(function (b) { if (s >= Number(b.dataset.at)) cur = b; });
+      beats.forEach(function (b) {
+        b.classList.toggle("on", b === cur);
+        b.classList.toggle("done", Number(b.dataset.at) < Number(cur ? cur.dataset.at : -1));
+      });
+      if (cur) {
+        now.innerHTML = "<b>" + cur.querySelector("h3").textContent + "</b>" + cur.querySelector(".t").textContent;
+        if (cur !== lastOn) {
+          lastOn = cur;
+          var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          cur.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+        }
+      }
+    }
+    go.addEventListener("click", function () {
+      if (timer) {
+        clearInterval(timer); timer = null; paused = Date.now() - t0; go.textContent = "Resume";
+      } else {
+        t0 = Date.now() - paused; timer = setInterval(tick, 250); tick(); go.textContent = "Pause";
+        if (navigator.wakeLock) navigator.wakeLock.request("screen").catch(function () {});
+      }
+    });
+    document.getElementById("reset").addEventListener("click", function () {
+      clearInterval(timer); timer = null; paused = 0; t0 = null; lastOn = null;
+      clock.textContent = "0:00"; go.textContent = "Start";
+      now.innerHTML = "<b>Ready</b>Tap Start the moment Loom starts recording.";
+      beats.forEach(function (b) { b.classList.remove("on", "done"); });
+      window.scrollTo(0, 0);
+    });
+    // Remember the setup ticks on this phone only.
+    document.querySelectorAll("#setup input").forEach(function (box) {
+      try { box.checked = localStorage.getItem("ruko-loom-" + box.id) === "1"; } catch (e) {}
+      box.addEventListener("change", function () { try { localStorage.setItem("ruko-loom-" + box.id, box.checked ? "1" : "0"); } catch (e) {} });
+    });
+  })();
+</script>
+
+</html>
