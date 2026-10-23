@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ruko interview prep</title>
+<style>
+  body { margin: 0; background: #fbf6ec; color: #14122b; font: 18px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 680px; margin: 0 auto; padding: 16px 18px 70px; }
+  h1 { font-size: 30px; line-height: 1.1; margin: 8px 0 6px; }
+  h2 { font-size: 22px; margin: 32px 0 6px; padding-top: 12px; border-top: 3px solid #14122b; }
+  nav a { display: inline-block; margin: 4px 6px 4px 0; padding: 6px 11px; border-radius: 999px; background: #14122b; color: #ffb000; text-decoration: none; font-weight: 700; font-size: 14px; }
+  details { background: #fff; border: 1px solid #e4dccb; border-radius: 10px; margin: 8px 0; padding: 0 14px; }
+  summary { font-weight: 700; padding: 12px 0; cursor: pointer; list-style: none; }
+  summary::before { content: "＋ "; color: #e8202a; }
+  details[open] summary::before { content: "－ "; }
+  details p { margin: 0 0 12px; }
+  .say { background: #fff3d1; border-left: 5px solid #ffb000; border-radius: 8px; padding: 10px 12px; margin: 8px 0; }
+  .box { background: #fff; border: 1px solid #e4dccb; border-radius: 10px; padding: 10px 14px; margin: 8px 0; }
+  .warn { border-left: 5px solid #e8202a; }
+  .you { border-left: 5px solid #1f6feb; }
+  ul { padding-left: 22px; margin: 6px 0; }
+  li { margin: 3px 0; }
+  a { color: inherit; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #12111f; color: #f4efe4; }
+    h2 { border-top-color: #f4efe4; }
+    details, .box { background: #1b1a2e; border-color: #2d2b45; }
+    .say { background: #2e2712; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>Ruko interview prep</h1>
+<p>Tap a question to see the answer. Answers are short on purpose: say them, then stop. If they want more, they'll ask.</p>
+
+<div class="box">
+<b>Your files</b>
+<ul>
+<li>PowerPoint: <a href="/Ruko-Pitch-Deck.pptx">ruko-seven.vercel.app/Ruko-Pitch-Deck.pptx</a></li>
+<li>PDF: <a href="/Ruko-Pitch-Deck.pdf">ruko-seven.vercel.app/Ruko-Pitch-Deck.pdf</a></li>
+<li>Live deck: <a href="/deck">ruko-seven.vercel.app/deck</a></li>
+<li>Live app: <a href="/">ruko-seven.vercel.app</a></li>
+</ul>
+</div>
+
+<nav>
+<a href="#rules">3 rules</a><a href="#you">About you</a><a href="#problem">Problem</a><a href="#product">Product</a><a href="#ai">AI</a><a href="#safety">Safety</a><a href="#evidence">Evidence</a><a href="#market">Market</a><a href="#biz">Business</a><a href="#future">Future</a><a href="#curve">Curveballs</a>
+</nav>
+
+<h2 id="rules">Three rules for the interview</h2>
+<ul>
+<li><b>Answer first, then the reason.</b> "No. Here's why…" beats a long build-up.</li>
+<li><b>Be honest about limits.</b> Judges trust "not yet, here's the plan" more than a stretch.</li>
+<li><b>Never guess a number.</b> Say: "I don't have that number. Here's how I'd find it."</li>
+</ul>
+<p class="say">If you blank: "Ruko doesn't try to win the argument with a scammer. It protects the moment the money moves." Then answer.</p>
+
+<h2 id="you">About you and how you built it</h2>
+<div class="box you">The blue notes below are for you to fill in with your own words. Judges can tell a rehearsed story from a real one, so use yours.</div>
+
+<details><summary>Tell us about yourself and why this problem.</summary>
+<p><b>Your words.</b> A strong shape: one sentence about you, one about a moment that made this real (someone you know, or a story you read), then: "I picked P060 because the loss happens in minutes and the family only finds out later. That felt fixable."</p></details>
+
+<details><summary>You're not a developer. Did you really build this?</summary>
+<p>Yes, with AI as my engineering partner. I used Claude Code to write the code. I made the product decisions: who it's for, what Ruko must never do, what the AI may and may not decide, and what to cut. I tested every flow on the live site and kept a decision log of every choice.</p></details>
+
+<details><summary>How did you use AI to build it?</summary>
+<p>Two ways. To build: Claude Code wrote and tested the code from my decisions. In the product: AI reads unclear replies and warning signs, and writes calm wording, but code makes every decision. I treated AI the same way in both: useful, but never the one in charge of safety.</p></details>
+
+<details><summary>What part are you proudest of?</summary>
+<p>The rule that AI reads and code decides. It's why I can show 22 out of 22 unsafe AI outputs blocked, and why the STOP never waits for the AI. Also: the payment waits for the family's code word, so even a perfect fake voice can't move the money.</p></details>
+
+<details><summary>What was the hardest part?</summary>
+<p>Making the fake caller realistic without making him dangerous. He has to persuade like a real scammer, but he can never ask for a real OTP, name a real agency, or claim to be human. Every line goes through a safety check, and saying "RUKO" ends the call at once.</p></details>
+
+<details><summary>What would you do differently?</summary>
+<p>I'd run a small test with two or three real older adults much earlier. I built a lot before getting real feedback. The field-test protocol is ready; that's my first step now.</p></details>
+
+<details><summary>How long did it take? Who's on the team?</summary>
+<p>About two weeks, solo, building with AI. <b>Your words</b> on who you'd add first, for example: someone with banking or fraud-operations experience for the bank pilot.</p></details>
+
+<h2 id="problem">The problem</h2>
+
+<details><summary>Isn't this just awareness? People already know about scams.</summary>
+<p>They do know, and they still pay. Panic beats knowledge: the caller adds authority, secrecy and a deadline. So Ruko doesn't rely on the person remembering in the moment. It protects the payment itself.</p></details>
+
+<details><summary>Digital arrest fell in 2025. Is this problem going away?</summary>
+<p>It fell from 1,23,672 complaints in 2024 to 58,239 in 2025, so awareness helps. But there are already over 21,900 this year up to August, with ₹647 crore lost (the Centre's report to the Supreme Court). Fraud overall rose to 21.8 lakh complaints in 2025. And AI makes faking anyone cheap, so I expect a new wave. That's my assumption, and I label it as one.</p></details>
+
+<details><summary>Why older adults? Everyone gets scammed.</summary>
+<p>They have savings, they're less at ease with UPI, and these calls target them on purpose. Senior citizens filed 1,03,488 fraud complaints in 2025 and lost about ₹4,005 crore. The same design (family, code word, payment pause) works for anyone, but I started where the harm is concentrated.</p></details>
+
+<details><summary>Who is the user: the elder or the family?</summary>
+<p>Both. The family sets it up and gets the alerts; they're also who pays for the family plan. The elder sees only simple screens with one action at a time.</p></details>
+
+<h2 id="product">The product</h2>
+
+<details><summary>Is the call real? Can Ruko hear my calls?</summary>
+<p>No. The scam call in the demo is a role-play inside the app. Ruko never intercepts or records calls; that's a deliberate privacy choice. In real life it acts on the calling number, on what the person tells it, and on the payment.</p></details>
+
+<details><summary>Then how does it help during a real call?</summary>
+<p>Three ways. The family has set it up beforehand, so the decision is made calmly. The person gets a warning about the number, or uses "Is this a scam?", and sees one action: hang up. And if they still pay, the payment waits for the family.</p></details>
+
+<details><summary>Will an elder in panic even open the app?</summary>
+<p>Maybe not, and that's the point of our design. The family is alerted without the elder doing anything, and the payment waits for the family. The elder needs to do one thing at most: hang up.</p></details>
+
+<details><summary>Can it stop a real payment today?</summary>
+<p>No. That needs a bank or payment app to call our Ruko Guard API before moving money. The API is built and tested on a practice bank. That's why banks are our customer.</p></details>
+
+<details><summary>What if the scammer uses WhatsApp or a video call?</summary>
+<p>The number check doesn't help there, but the other layers do: the family alert, the "Is this a scam?" check (which reads what they said, or a screenshot), and the payment pause. The money still has to move through a bank.</p></details>
+
+<details><summary>Elders won't install an app.</summary>
+<p>The family installs it, in about five minutes: it's a web app added to the home screen, no app store needed. And the strongest layer, the payment pause, works through the bank even if the elder never opens Ruko.</p></details>
+
+<details><summary>What if the family member is unreachable?</summary>
+<p>The payment stays paused (the cooling-off) until someone checks. You can set up more than one trusted person. And the elder can turn on a kill switch that pauses all payments.</p></details>
+
+<details><summary>What if the code word leaks, or the scammer gets it?</summary>
+<p>The family can change it any time. It's stored only as a scrambled hash, never as plain text. And approving still happens on the family member's own phone, so the scammer would need the word and the family's phone.</p></details>
+
+<details><summary>What if a family member is the one scamming the elder?</summary>
+<p>A real risk. That's why approvals are logged in a tamper-evident record, there's a cooling-off delay, more than one trusted person is possible, and the bank still applies its own rules. Ruko adds checks; it doesn't remove the bank's.</p></details>
+
+<details><summary>Hindi and other languages?</summary>
+<p>Today: English and Hinglish, with Hindi in places. Other Indian languages are next. The rules and the design don't change by language, only the words.</p></details>
+
+<h2 id="ai">The AI</h2>
+
+<details><summary>Where exactly is the AI? This looks like rules.</summary>
+<p>AI reads and words; code decides. The AI understands unclear replies with a confidence score, pulls scam signs out of what someone says or a photo, and writes calm guidance. The STOP, the risk score and the payment hold are code, because they must be predictable and explainable to a bank.</p></details>
+
+<details><summary>Why not let the AI decide? It's smarter.</summary>
+<p>A scammer can talk a model round; they can't talk code round. And a bank can't accept "the model felt it was a scam". We measured the AI's value: 75.8% of replies understood with rules alone, 90.9% with AI. So the AI fills the gaps, and code stays in charge.</p></details>
+
+<details><summary>Then is the AI just decoration?</summary>
+<p>No, it does a real job: it handles phrasings no rule was written for, like "that sounds fishy to me, sir". On our test set that's the jump from 75.8% to 90.9%. It also reads screenshots and messages people share.</p></details>
+
+<details><summary>Which model do you use, and what does it cost?</summary>
+<p>A free model first, with one low-cost model as a backup, through OpenRouter, and any provider can be swapped in with one setting. Most replies never reach the AI, because the rules already understand them. I don't have a per-user cost figure yet.</p></details>
+
+<details><summary>What if the AI is slow, wrong or down?</summary>
+<p>Below 0.6 confidence its reading is ignored; after 3.2 seconds it's abandoned; offline it's never asked. The rule-only path always runs, and the whole demo works with no internet.</p></details>
+
+<details><summary>Can the AI make the fake caller say something harmful?</summary>
+<p>Every line goes through a safety check: no OTP, PIN, card or Aadhaar requests, no real agencies or officers, no phone numbers, no abuse. It blocked 22 out of 22 unsafe test outputs. And the caller speaks recorded lines chosen by code.</p></details>
+
+<h2 id="safety">Safety and privacy</h2>
+
+<details><summary>What data do you keep?</summary>
+<p>Signal codes only: which tactics, which stage, whether the person stopped. No audio, no transcripts, no bank passwords. Phone numbers and accounts are stored as scrambled hashes, with access rules on every table, and a separate consent for each purpose.</p></details>
+
+<details><summary>Does it follow India's data protection law?</summary>
+<p>It's designed around the DPDP Act's ideas: consent for each purpose, collect the minimum, delete on request. Before any real launch it needs a proper legal review. I won't claim certification I don't have.</p></details>
+
+<details><summary>Isn't a fake scammer bot dangerous?</summary>
+<p>It only runs as a role-play, after a consent screen, and saying "RUKO" ends it instantly. It never asks for anything real, and money only moves on a practice bank with a big MOCK BANK banner.</p></details>
+
+<details><summary>What if Ruko misses a scam? Who's liable?</summary>
+<p>Ruko is an extra layer, not a guarantee. The bank keeps its own checks and liability. That's another reason code decides: every decision can be explained afterwards.</p></details>
+
+<details><summary>Won't it cry wolf and annoy people?</summary>
+<p>On 20 genuine calls in our test set (doctor, family, courier, pension) there were zero false STOPs, because STOP needs two warning signs, not one. Families can mark a false alarm, and that feeds back.</p></details>
+
+<h2 id="evidence">Evidence</h2>
+
+<details><summary>How do you know it works?</summary>
+<p>Three levels. Over 500 automated checks. An evaluation on a test set we wrote: 90.9% of replies understood, 22 out of 22 unsafe outputs blocked, zero false alarms. And next, a field test with 10 older adults, comparing calls with and without Ruko.</p></details>
+
+<details><summary>Your test data is yours. Isn't that biased?</summary>
+<p>Yes. It's synthetic and written by us, and it's labelled that way everywhere. It proves the safety rules hold and that the AI adds value. It doesn't prove real-world impact; the field test does that next.</p></details>
+
+<details><summary>Have real older adults used it?</summary>
+<p>Not yet. The protocol is ready: 10 older adults and their families, role-played scam calls, with and without Ruko. The main measure is the share who stop before paying.</p></details>
+
+<details><summary>What's your main metric?</summary>
+<p>The share of role-played scam calls where the person stops before paying. Second: whether the money moved, because Money Lock can still hold it even if they press Pay. And the false-alarm rate on genuine calls.</p></details>
+
+<h2 id="market">Competition and market</h2>
+
+<details><summary>Google already detects scam calls. Why you?</summary>
+<p>Google's detection runs on newer Pixel phones and is off by default. Most Indian elders don't have those phones. It also doesn't bring in the family or protect the payment. Ruko works on any phone, in Hinglish, with the family, at the money.</p></details>
+
+<details><summary>Truecaller and spam apps already flag scam numbers.</summary>
+<p>They label known spam numbers. A new number, or a convincing call, still gets through, and nothing protects the payment. Ruko assumes the scammer may win the argument.</p></details>
+
+<details><summary>Banks already have fraud teams. Why would they need you?</summary>
+<p>Banks see the transaction, not the call or the family. We bring what they can't easily build: the family set up in advance, the code word and the call-time warning. They only need to call one API before moving money.</p></details>
+
+<details><summary>What's your moat? Someone can copy this.</summary>
+<p>The design is copyable; the trust isn't. The moat is the family network that's already set up, bank integrations once they're live, and the evidence from field tests. And honestly, if banks copy the idea, more elders are protected. That's the goal.</p></details>
+
+<details><summary>How big is the market?</summary>
+<p>I won't quote a market size I can't source. What I can say: 21.8 lakh fraud complaints and about ₹19,813 crore lost in 2025, and seniors alone lost about ₹4,005 crore. The bank pilot will tell me what banks will pay.</p></details>
+
+<h2 id="biz">Business model</h2>
+
+<details><summary>Who pays?</summary>
+<p>Banks and payment apps, per protected account, through the Ruko Guard API, because it cuts their fraud losses and matches the RBI's draft proposals. Families get core protection free, with a paid family plan bought by adult children. Telcos and insurers later.</p></details>
+
+<details><summary>What's the price?</summary>
+<p>Not set yet. I'll set it after the bank pilot conversation and a family willingness-to-pay survey. Those are my next two tests.</p></details>
+
+<details><summary>The RBI paper is only a draft. What if it never becomes a rule?</summary>
+<p>Then banks still have the fraud losses, which is the real reason to buy. The draft shows where regulation is heading. Our rules are settings a bank can change, so we fit whatever is final.</p></details>
+
+<details><summary>How do you reach elders?</summary>
+<p>Through their adult children first: a five-minute setup and a shareable rule card. Then through banks, who can offer Ruko to customers aged 70 and over.</p></details>
+
+<h2 id="future">What's next</h2>
+
+<details><summary>What happens in the next 30 and 90 days?</summary>
+<p>30 days: the field test with 10 older adults, the Android call-screening app on real phones, and a first bank conversation. 90 days: a Ruko Guard API pilot with one bank or payment app.</p></details>
+
+<details><summary>What's your biggest risk?</summary>
+<p>That banks don't integrate, because without them Ruko can't stop a real payment. That's why the bank pilot conversation is my first business step, and why the family layer still helps on its own.</p></details>
+
+<details><summary>If we gave you resources, what would you do first?</summary>
+<p>Run the field test properly with real older adults and their families. Real evidence is what unlocks banks.</p></details>
+
+<h2 id="curve">Curveballs</h2>
+
+<details><summary>"Convince me in one sentence."</summary>
+<p class="say">Even when the scammer wins the argument, Ruko makes sure the money doesn't move.</p></details>
+
+<details><summary>"What's the weakest part of your project?"</summary>
+<p>No field results yet, and no real bank connected. Both are the next steps, and I've built everything they need: the test protocol and the bank API.</p></details>
+
+<details><summary>"Isn't AI making the problem worse? Why use AI at all?"</summary>
+<p>Yes, AI makes faking voices cheap. That's exactly why Ruko doesn't rely on spotting the fake. We use AI only to understand people better, and keep every decision in code.</p></details>
+
+<details><summary>"What did you learn?"</summary>
+<p><b>Your words.</b> One honest example: "That the safest design doesn't ask a scared person to make the right decision."</p></details>
+
+<details><summary>A question you can't answer.</summary>
+<p class="say">"I don't know yet. Here's how I'd find out…" Then one concrete step.</p></details>
+
+<div class="box warn"><b>Never claim:</b> real users tested, real payments stopped, real calls listened to, certifications, prices, or a market size. Say "next" or "pending" instead.</div>
+</main>
+</body>
+</html>
