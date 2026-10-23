@@ -10,7 +10,7 @@ function Inner() {
   const path = usePathname() ?? "/";
   const embed = useSearchParams().get("embed");
   if (embed || path.startsWith("/demo/live") || path.startsWith("/pitch")) return null;
-  const dark = path === "/" || path === "/demo" || path.startsWith("/demo/how") || path.startsWith("/architecture") || path.startsWith("/eval");
+  const dark = path === "/" || path === "/demo" || path.startsWith("/demo/how") || path.startsWith("/architecture") || path.startsWith("/eval") || path.startsWith("/line") || path.startsWith("/console") || path.startsWith("/family");
   return (
     <footer className={`mt-auto border-t px-6 py-5 text-center text-[15px] ${dark ? "border-white/10 bg-[#060a10] text-white/60" : "border-hair text-ink-soft"}`}>
       Demo prototype. No real money moves. Scam help:{" "}

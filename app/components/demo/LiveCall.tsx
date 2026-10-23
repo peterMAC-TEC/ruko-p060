@@ -709,6 +709,8 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
   const answer = () => {
     stopRing.current?.();
     stopRing.current = null;
+    // The microphone starts with the call: no separate test step. If it is blocked, the call carries on with typing.
+    if (micTest !== "ok" && canListen) void testMic();
     setPhase("call");
     void runCall();
   };
@@ -835,25 +837,15 @@ export function LiveCall({ elderId, demo, trusted }: { elderId: string; demo: bo
           <p className="mt-4 text-[19px] leading-snug">
             {en ? "You play the older person. You will talk to him, out loud, like a real call. Use Chrome or Edge, with the volume up." : "Aap buzurg ka role karenge. Aap usse zor se baat karenge, bilkul asli call ki tarah. Chrome ya Edge mein, awaaz badhakar."}
           </p>
-          <div className="mt-4 rounded-[18px] border border-hair p-4">
-            <p className="text-[19px] font-semibold">{en ? "Your microphone" : "Aapka microphone"}</p>
-            {!canListen && <p className="mt-1 text-[17px] text-ink-soft">{en ? "This browser cannot listen. Open this page in Chrome or Edge to talk. You can still type your replies." : "Yeh browser sun nahi sakta. Baat karne ke liye Chrome ya Edge mein kholiye. Aap jawab likh bhi sakte hain."}</p>}
-            {micTest === "ok" ? (
-              <>
-                <div className="mt-3 h-4 overflow-hidden rounded-full bg-paper-2" role="meter" aria-label="Microphone level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(level * 100)}>
-                  <div className="h-full rounded-full bg-ink transition-[width] duration-100" style={{ width: `${Math.round(level * 100)}%` }} />
-                </div>
-                <p className={`mt-3 text-[19px] font-semibold ${heardYou ? "text-safe" : ""}`}>{heardYou ? (en ? "✓ I can hear you." : "✓ Main aapko sun sakta hoon.") : en ? "Say hello. The bar should move." : "Hello boliye. Bar hilna chahiye."}</p>
-              </>
-            ) : (
-              <button onClick={() => void testMic()} disabled={micTest === "asking"} className="mt-3 min-h-[64px] w-full rounded-[18px] border border-ink text-[20px] font-semibold disabled:opacity-40">
-                {micTest === "asking" ? (en ? "Waiting for permission…" : "Permission ka intezaar…") : en ? "Test my microphone" : "Mera microphone test kijiye"}
-              </button>
-            )}
-            {micTest === "blocked" && <p className="mt-3 text-[17px] leading-snug text-alarm" role="alert">{en ? "The browser blocked the microphone. Tap the lock icon next to the web address, allow the microphone, and press the test again. Or just type your replies." : "Browser ne microphone roka hai. Web address ke paas lock icon dabaiye, microphone allow kijiye, aur phir test dabaiye. Ya jawab likhiye."}</p>}
-            {micTest === "none" && <p className="mt-3 text-[17px] leading-snug text-alarm" role="alert">{en ? "No microphone was found on this computer. You can type your replies." : "Is computer par microphone nahi mila. Aap jawab likh sakte hain."}</p>}
-            <p className="mt-3 text-[15px] text-ink-soft">{en ? "Tip: use headphones if you can. Then the voice of the caller does not leak back into your microphone." : "Tip: ho sake to headphones lagaiye. Tab caller ki awaaz aapke microphone mein wapas nahi jaayegi."}</p>
-          </div>
+          <p className="mt-3 text-[16px] leading-snug text-ink-soft">
+            {canListen
+              ? en
+                ? "When you answer, allow the microphone if the browser asks. Headphones help: then his voice does not leak into your microphone."
+                : "Call uthane par browser poochhe to microphone allow kijiye. Headphones best hain."
+              : en
+                ? "This browser cannot listen. Use Chrome or Edge to talk; you can still type your replies."
+                : "Yeh browser sun nahi sakta. Chrome ya Edge use kijiye; aap jawab likh bhi sakte hain."}
+          </p>
           <label className="mt-4 flex min-h-12 items-start gap-3 text-[16px] leading-snug text-ink-soft">
             <input type="checkbox" checked={aiWording} onChange={(e) => setAiWording(e.target.checked)} className="mt-1 size-5 shrink-0" />
             <span>{en ? "AI reads what you mean, so he answers even unusual replies. His voice stays the one recorded voice." : "AI samajhta hai aap kya keh rahe hain, isliye woh anokhe jawab ka bhi uttar deta hai. Awaaz wahi recorded awaaz rehti hai."}</span>

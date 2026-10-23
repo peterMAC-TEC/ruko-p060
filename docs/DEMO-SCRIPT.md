@@ -7,7 +7,7 @@ One call, one decision, two endings. The scene is **/demo/live** ("Live call"). 
 1. **Browser:** use **Microsoft Edge** on the laptop. Edge has the natural Indian voices built in (free), so the officer sounds far more human than in other browsers. Volume up. Allow the microphone when asked.
 2. **Open two tabs:** `https://ruko-seven.vercel.app/demo` (the hub) and, as a backup, the offline copy `http://localhost:3300/demo` (start it at home with `npm --prefix app run demo:offline`).
 3. **Reset:** on the hub tap **Reset** (clears old payments and alerts).
-3b. **Microphone:** on the first screen of **Live call** tap **Test my microphone** and allow it. Say hello: the bar moves and it says "I can hear you". **Headphones are best**: with speakers the caller's voice can leak back into the microphone. You talk to him out loud, like a real call; **Mute mic** and **Type instead** are there if the room is too noisy.
+3b. **Microphone:** there is no separate test now. When you tap **Answer**, the browser asks for the microphone once: allow it. **Headphones are best** (with speakers the caller's voice can leak into the microphone). **Mute mic** and **Type instead** are on the call screen if the room is noisy.
 4. **Family phone:** on a second phone open `https://ruko-seven.vercel.app/family?embed=1` (it is Priya's phone, with the alerts). If the second phone fails, use the on-screen "Show the family phone here" button in the bank step.
 5. **Do one practice run** with sound. Keep the volume where the room can hear it.
 6. **Know the two words:** code word **mango**, practice bank PIN **1234**.

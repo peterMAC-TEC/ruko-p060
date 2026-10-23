@@ -2,7 +2,6 @@
 
 import { Ban, Check, Inbox } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { RukoWordmark } from "@/components/brand/RukoMark";
 import { inr } from "@/lib/i18n";
 import type { Transfer } from "@/lib/types";
 import { MuleWatch, ThreatPanel } from "./ThreatPanel";
@@ -63,80 +62,105 @@ export function FraudConsole() {
   const stopped = rows.filter((r) => r.status === "blocked" || r.status === "cancelled");
   const savedAmount = stopped.reduce((n, r) => n + r.amount, 0);
 
+  const guardCount = rows.filter((r) => r.reasons.some((x) => x.code.startsWith("guard_decision_"))).length;
+  const clock = now ? new Date(now).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }) : "--:--:--";
+
   return (
-    <div className="min-h-[100dvh] bg-night text-white">
-      <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-6 py-4">
-        <div className="flex items-baseline gap-3">
-          <RukoWordmark tone="light" />
-          <span className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">Fraud desk · Sahyog Bank</span>
-        </div>
-        <div className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.18em]">
-          <span className={`size-2 rounded-full ${live ? "animate-pulse bg-mint" : "bg-signal"}`} />
-          <span className={live ? "text-mint" : "text-signal"}>{live ? "Live" : "Offline"}</span>
+    <div
+      className="relative min-h-[100dvh] bg-[#060a10] text-white"
+      style={{ backgroundImage: "linear-gradient(rgba(120,200,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(120,200,255,0.05) 1px, transparent 1px)", backgroundSize: "40px 40px" }}
+    >
+      {/* the operations bar */}
+      <header className="border-b border-white/10 bg-[#060a10]/80 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="text-[22px] font-bold tracking-tight">Fraud desk</h1>
+            <span className="font-mono text-[12px] tracking-[0.16em] text-white/45 uppercase">Sahyog Bank · practice</span>
+            <span className="rounded-full border border-[#fbbf24]/40 bg-[#fbbf24]/10 px-2.5 py-0.5 font-mono text-[11px] tracking-wide text-[#fbbf24] uppercase">Demo data</span>
+          </div>
+          <div className="flex items-center gap-4 font-mono text-[12px] tracking-[0.14em] uppercase">
+            <span className="text-white/45 tabular">{clock} IST</span>
+            <span className="flex items-center gap-2">
+              <span className={`size-2 rounded-full ${live ? "bg-[#4ade80] motion-safe:animate-pulse" : "bg-[#ff4d3d]"}`} />
+              <span className={live ? "text-[#4ade80]" : "text-[#ff8a7d]"}>{live ? "Live · polling 1.5 s" : "Offline"}</span>
+            </span>
+          </div>
         </div>
       </header>
 
-      <section className="grid grid-cols-2 gap-px bg-white/10 sm:grid-cols-4">
-        <Stat label="Held now" value={String(held.length)} accent={held.length > 0} />
-        <Stat label="Flagged total" value={String(rows.filter((r) => r.flagged).length)} />
-        <Stat label="Stopped" value={String(stopped.length)} />
-        <Stat label="Money kept safe" value={inr(savedAmount)} />
-      </section>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+        {/* key numbers */}
+        <section className="grid grid-cols-2 gap-3 lg:grid-cols-5" aria-label="Key numbers">
+          <Stat label="Held now" value={String(held.length)} tone={held.length > 0 ? "red" : "plain"} sub={held.length > 0 ? "needs a decision" : "queue clear"} />
+          <Stat label="Flagged" value={String(rows.filter((r) => r.flagged).length)} sub="all time" />
+          <Stat label="Stopped" value={String(stopped.length)} tone={stopped.length > 0 ? "green" : "plain"} sub="blocked or cancelled" />
+          <Stat label="Money kept safe" value={inr(savedAmount)} tone={savedAmount > 0 ? "green" : "plain"} sub="practice bank" />
+          <Stat label="Ruko Guard checks" value={String(guardCount)} tone="cyan" sub="decisions asked for" />
+        </section>
 
-      <main className="mx-auto max-w-5xl px-6 py-8">
-        <h2 className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">Queue</h2>
-        {held.length === 0 && (
-          <div className="mt-4 flex flex-col items-center rounded-2xl border border-dashed border-white/12 px-6 py-12 text-center text-white/40">
-            <Inbox className="size-8" strokeWidth={1.6} />
-            <p className="mt-3">No held transfers. Flagged payments appear here the moment they&apos;re attempted.</p>
-          </div>
-        )}
-        <div className="mt-4 space-y-4">
-          {held.map((r) => (
-            <HeldCard key={r.id} row={r} now={now} onDecide={decide} />
-          ))}
-        </div>
-
-        {atRisk.length > 0 && (
-          <>
-            <h2 className="mt-12 font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">Threat engine · customers at risk</h2>
-            <div className="mt-4 space-y-4">
-              {atRisk.map(([id, name]) => (
-                <ThreatPanel key={id} elderId={id} name={name} />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_1fr]">
+          {/* left: the queue and what was decided */}
+          <div className="min-w-0">
+            <SectionTitle>Payment queue</SectionTitle>
+            {held.length === 0 && (
+              <div className="relative mt-3 overflow-hidden rounded-[18px] border border-white/10 bg-white/[0.03] px-6 py-12 text-center">
+                <span aria-hidden className="m-scan pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#38e1ff] to-transparent" />
+                <Inbox className="mx-auto size-8 text-white/35" strokeWidth={1.6} />
+                <p className="mt-3 text-[16px] text-white/55">Monitoring payments. Flagged payments appear here the moment they are attempted.</p>
+              </div>
+            )}
+            <div className="mt-3 space-y-4">
+              {held.map((r) => (
+                <HeldCard key={r.id} row={r} now={now} onDecide={decide} />
               ))}
             </div>
-          </>
-        )}
 
-        <div className="mt-12">
-          <MuleWatch />
+            {decided.length > 0 && (
+              <>
+                <SectionTitle className="mt-8">Decided</SectionTitle>
+                <ul className="mt-3 divide-y divide-white/10 overflow-hidden rounded-[18px] border border-white/10 bg-white/[0.02]">
+                  {decided.map((r) => (
+                    <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-[15px]">
+                      <span className="min-w-0">
+                        <span className="font-mono">{inr(r.amount)}</span> → {r.payee}
+                        <span className="ml-2 text-white/40">{r.elder_name}</span>
+                      </span>
+                      <StatusPill status={r.status} />
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {atRisk.length > 0 && (
+              <>
+                <SectionTitle className="mt-8">Threat engine · customers at risk</SectionTitle>
+                <div className="mt-3 space-y-4">
+                  {atRisk.map(([id, name]) => (
+                    <ThreatPanel key={id} elderId={id} name={name} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* right: intelligence */}
+          <aside className="min-w-0 space-y-6">
+            <MuleWatch />
+            <GuardLog rows={rows} />
+          </aside>
         </div>
 
-        <GuardLog rows={rows} />
-
-        {decided.length > 0 && (
-          <>
-            <h2 className="mt-12 font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">Decided</h2>
-            <ul className="mt-3 divide-y divide-white/10 rounded-2xl border border-white/10">
-              {decided.map((r) => (
-                <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3 text-[15px]">
-                  <span>
-                    <span className="font-mono">{inr(r.amount)}</span> → {r.payee}
-                    <span className="ml-2 text-white/40">{r.elder_name}</span>
-                  </span>
-                  <StatusPill status={r.status} />
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-
-        <p className="mt-12 font-mono text-[11px] leading-relaxed text-white/35">
-          Call-signal reasons appear only for customers who shared those signals with consent. Rows marked SEEDED are demo data.
+        <p className="mt-10 font-mono text-[11px] leading-relaxed text-white/35">
+          Call-signal reasons appear only for customers who shared those signals with consent. Rows marked SEEDED are demo data. No real bank is connected.
         </p>
-      </main>
+      </div>
     </div>
   );
+}
+
+function SectionTitle({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <h2 className={`font-mono text-[12px] tracking-[0.18em] text-[#38e1ff] uppercase ${className}`}>{children}</h2>;
 }
 
 function HeldCard({ row, now, onDecide }: { row: Row; now: number; onDecide: (id: string, a: "release" | "block") => void }) {
@@ -145,7 +169,7 @@ function HeldCard({ row, now, onDecide }: { row: Row; now: number; onDecide: (id
   const ss = String(Math.floor((left % 60_000) / 1000)).padStart(2, "0");
 
   return (
-    <article className={`overflow-hidden rounded-2xl border bg-night-2 ${row.duress ? "border-2 border-signal" : "border-signal/40"}`}>
+    <article className={`overflow-hidden rounded-[20px] border bg-[#0a1118] shadow-[0_0_40px_rgba(255,77,61,0.08)] ${row.duress ? "border-2 border-signal" : "border-signal/40"}`}>
       <div className="flex flex-wrap items-start justify-between gap-6 p-6">
         <div>
           <div className="flex items-center gap-3 font-mono text-[12px] uppercase tracking-[0.18em] text-signal">
@@ -168,6 +192,11 @@ function HeldCard({ row, now, onDecide }: { row: Row; now: number; onDecide: (id
         <ScoreDial score={row.score} />
       </div>
 
+      {row.hold_until && !row.duress && (
+        <div className="h-1 bg-white/10" aria-hidden>
+          <div className="h-full bg-signal transition-[width] duration-1000" style={{ width: `${Math.min(100, (left / Math.max(1, Date.parse(row.hold_until) - Date.parse(row.created_at))) * 100)}%` }} />
+        </div>
+      )}
       <ul className="space-y-2 border-t border-white/10 px-6 py-4">
         {row.reasons.map((reason) => (
           <li key={reason.code} className="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-[15px]">
@@ -179,17 +208,17 @@ function HeldCard({ row, now, onDecide }: { row: Row; now: number; onDecide: (id
         ))}
       </ul>
 
-      <div className="flex gap-3 border-t border-white/10 bg-night-3/50 px-6 py-4">
+      <div className="flex gap-3 border-t border-white/10 bg-white/[0.03] px-6 py-4">
         <button
           onClick={() => onDecide(row.id, "block")}
-          className="flex items-center gap-2 rounded-lg bg-signal px-5 py-2.5 font-bold text-night hover:brightness-110"
+          className="m-tap flex min-h-11 items-center gap-2 rounded-[12px] bg-signal px-5 font-bold text-night hover:brightness-110"
         >
           <Ban className="size-4" strokeWidth={2.6} />
           Block
         </button>
         <button
           onClick={() => onDecide(row.id, "release")}
-          className="flex items-center gap-2 rounded-lg border border-white/20 px-5 py-2.5 hover:border-white/50"
+          className="m-tap flex min-h-11 items-center gap-2 rounded-[12px] border border-white/20 px-5 hover:border-white/50"
         >
           <Check className="size-4" strokeWidth={2.6} />
           Release
@@ -226,11 +255,16 @@ function ScoreDial({ score }: { score: number }) {
   );
 }
 
-function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+function Stat({ label, value, sub, tone = "plain" }: { label: string; value: string; sub?: string; tone?: "plain" | "red" | "green" | "cyan" }) {
+  const c = tone === "red" ? "#ff6b5c" : tone === "green" ? "#4ade80" : tone === "cyan" ? "#38e1ff" : "#ffffff";
   return (
-    <div className="bg-night px-6 py-5">
-      <div className="font-mono text-[11px] uppercase tracking-[0.2em] text-white/45">{label}</div>
-      <div className={`mt-1 font-mono text-[28px] ${accent ? "text-signal" : ""}`}>{value}</div>
+    <div className="relative overflow-hidden rounded-[16px] border border-white/10 bg-white/[0.035] px-5 py-4">
+      <span aria-hidden className="absolute inset-x-0 top-0 h-0.5" style={{ background: c, opacity: tone === "plain" ? 0.15 : 0.8 }} />
+      <div className="font-mono text-[11px] tracking-[0.18em] text-white/50 uppercase">{label}</div>
+      <div className="mt-1 font-mono text-[30px] leading-tight font-bold tabular" style={{ color: c }}>
+        {value}
+      </div>
+      {sub && <div className="text-[13px] text-white/45">{sub}</div>}
     </div>
   );
 }
@@ -255,8 +289,8 @@ function StatusPill({ status }: { status: Transfer["status"] }) {
 function GuardLog({ rows }: { rows: Row[] }) {
   const guarded = rows.filter((r) => r.reasons.some((x) => x.code.startsWith("guard_decision_"))).slice(0, 10);
   return (
-    <section className="mt-12" aria-labelledby="guard-log">
-      <h2 id="guard-log" className="font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">
+    <section className="rounded-[18px] border border-white/10 bg-white/[0.03] p-5" aria-labelledby="guard-log">
+      <h2 id="guard-log" className="font-mono text-[12px] uppercase tracking-[0.18em] text-[#38e1ff]">
         Ruko Guard · decisions the bank asked for <span className="ml-2 rounded bg-white/10 px-1.5 text-white/60">Demo data, practice bank</span>
       </h2>
       {guarded.length === 0 ? (

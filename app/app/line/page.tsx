@@ -9,8 +9,8 @@ export const metadata: Metadata = { title: "Ruko Line" };
 
 export default function LinePage({ searchParams }: PageProps<"/line">) {
   return (
-    <div className="min-h-[100dvh] bg-white">
-      <Suspense fallback={<div className="min-h-[100dvh] bg-white" />}>
+    <div className="min-h-[100dvh] bg-[#060a10]">
+      <Suspense fallback={<div className="min-h-[100dvh] bg-[#060a10]" />}>
         <Line searchParams={searchParams} />
       </Suspense>
     </div>

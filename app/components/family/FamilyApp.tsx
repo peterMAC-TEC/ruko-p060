@@ -2,7 +2,6 @@
 
 import { Bell, BellRing, Check, MessageSquareQuote, Phone, ShieldAlert, ShieldCheck, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { RukoWordmark } from "@/components/brand/RukoMark";
 import { KillSwitch } from "@/components/bank/KillSwitch";
 import { FAMILY_LINE, type ElderStatus } from "@/lib/companion";
 import type { AlertStatus } from "@/lib/types";
@@ -62,11 +61,14 @@ export function FamilyApp({
   elderIds = [],
   embed = false,
   demo = false,
+  framed = false,
 }: {
   memberId: string;
   elderIds?: string[];
   embed?: boolean;
   demo?: boolean;
+  /** Shown inside the phone frame on the stage: fill the frame, not the window. */
+  framed?: boolean;
 }) {
   const [rows, setRows] = useState<Row[] | null>(null);
   const [approvals, setApprovals] = useState<ApprovalRow[]>([]);
@@ -195,30 +197,36 @@ export function FamilyApp({
   const earlier = rows?.filter((a) => a.status !== "sent") ?? [];
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-paper text-[18px] text-ink">
-      <header className="flex items-center justify-between px-6 pt-4 pb-3">
-        <RukoWordmark />
+    <div className={`flex flex-col bg-[#f4f6f8] text-[18px] text-ink ${framed ? "min-h-[640px]" : "min-h-[100dvh]"}`}>
+      <header className="flex items-center justify-between px-5 pt-3 pb-3">
+        <div className="flex items-center gap-2.5">
+          <span className="grid size-10 place-items-center rounded-full bg-[#14122B] text-[17px] font-bold text-white" aria-hidden>
+            {(memberFirst ?? "P")[0]}
+          </span>
+          <div className="leading-tight">
+            <p className="text-[16px] font-bold">Ruko Family</p>
+            <p className="text-[13px] text-ink-soft">{memberFirst ? `${memberFirst}'s phone` : demo ? "Priya's phone" : "Family phone"}</p>
+          </div>
+        </div>
         <button
           onClick={arm}
-          className={`flex min-h-10 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold ${armed ? "text-ink-soft shadow-soft" : "bg-ink text-white"}`}
+          className={`flex min-h-11 items-center gap-1.5 rounded-full px-4 text-[14px] font-semibold ${armed ? "bg-white text-ink-soft shadow-soft" : "bg-[#14122B] text-white"}`}
         >
           {armed ? <Check className="size-4" strokeWidth={3} /> : <Bell className="size-4" strokeWidth={2.4} />}
           {armed ? "Sound on" : "Turn on sound"}
         </button>
       </header>
 
-      <main className="flex flex-1 flex-col gap-6 px-6 pt-2 pb-8">
-        {rows === null && <div className="h-48 animate-pulse rounded-[20px] bg-paper-2" />}
+      <main className="flex flex-1 flex-col gap-4 px-4 pt-1 pb-6">
+        {rows === null && <div className="h-48 animate-pulse rounded-[24px] bg-white" />}
 
         {open && (
-          <section className="flex flex-1 flex-col animate-in fade-in duration-300" role="alert">
+          <section className="m-stop-in flex flex-1 flex-col rounded-[26px] border-2 border-alarm bg-white p-5 shadow-[0_10px_40px_rgba(217,45,32,0.15)]" role="alert">
             <p className="flex items-center gap-2 text-[14px] font-semibold tracking-[0.16em] text-alarm uppercase">
               <BellRing className="size-4" strokeWidth={2.2} />
               Scam alert · {ago(open.ts, now)}
             </p>
-            <span className="mt-8 block size-4 animate-pulse rounded-full bg-alarm ring-[8px] ring-alarm/15" />
-
-            <h1 className="display mt-6 text-[40px] leading-[1.05]">{open.message}</h1>
+            <h1 className="display mt-4 text-[34px] leading-[1.08]">{open.message}</h1>
             {open.elder_status && FAMILY_LINE[open.elder_status] && (
               <p className={`mt-5 text-[22px] leading-snug ${open.elder_status === "needs_help" || open.elder_status === "paid" ? "font-semibold text-alarm" : "text-ink-soft"}`} role="status">
                 {open.elder_name?.split(" ")[0] ?? "They"} {FAMILY_LINE[open.elder_status]}
@@ -229,7 +237,7 @@ export function FamilyApp({
               <a
                 href={!embed && open.elder_phone ? `tel:${open.elder_phone.replace(/\s/g, "")}` : undefined}
                 onClick={() => ack(open.id, "ack_calling")}
-                className="flex min-h-[76px] cursor-pointer items-center justify-center gap-3 rounded-[18px] bg-alarm text-[23px] font-semibold text-white"
+                className="m-tap flex min-h-[72px] cursor-pointer items-center justify-center gap-3 rounded-[18px] bg-alarm text-[22px] font-semibold text-white shadow-[0_8px_24px_rgba(217,45,32,0.3)]"
               >
                 <Phone className="size-6" strokeWidth={2} />
                 Call {open.elder_name?.split(" ")[0] ?? "them"} now
@@ -280,7 +288,7 @@ export function FamilyApp({
                 <MessageSquareQuote className="size-4" />
                 What to say
               </h2>
-              <ol className="display mt-3 space-y-3 text-[24px] leading-[1.2]">
+              <ol className="display mt-3 space-y-3 rounded-[18px] bg-[#f4f6f8] p-4 text-[21px] leading-[1.25]">
                 {SCRIPT.map((line) => (
                   <li key={line}>&ldquo;{line}&rdquo;</li>
                 ))}
@@ -292,7 +300,7 @@ export function FamilyApp({
         {rows && !open && (
           <>
             {demo && (
-              <p className="self-start rounded-full bg-paper-2 px-3 py-1 text-[14px] font-semibold text-ink-soft">Demo: Priya&apos;s phone</p>
+              <p className="self-start rounded-full bg-white px-3 py-1 text-[13px] font-semibold text-ink-soft shadow-soft">Demo data: Priya&apos;s phone</p>
             )}
             {approvals
               .filter((a) => (a.status === "pending" && a.transfer?.status === "held") || decided[a.id])
@@ -315,19 +323,24 @@ export function FamilyApp({
                 </button>
               </section>
             )}
-            <section className="animate-in fade-in duration-300">
-              <span className="flex size-14 items-center justify-center rounded-full shadow-soft">
-                <ShieldCheck className="size-7" strokeWidth={1.8} />
-              </span>
-              <h1 className="display mt-5 text-[46px] leading-none">All quiet{memberFirst ? `, ${memberFirst}` : ""}</h1>
-              <p className="mt-1 text-ink-soft">
+            <section className="m-fade rounded-[26px] bg-white p-5 shadow-[0_6px_24px_rgba(20,18,43,0.06)]">
+              <div className="flex items-center justify-between">
+                <span className="flex size-12 items-center justify-center rounded-full bg-safe-soft text-safe">
+                  <ShieldCheck className="size-6" strokeWidth={2} />
+                </span>
+                <span className="flex items-center gap-1.5 rounded-full bg-safe-soft px-3 py-1 text-[13px] font-bold tracking-wide text-safe uppercase">
+                  <span className="size-2 rounded-full bg-safe" aria-hidden /> Protected
+                </span>
+              </div>
+              <h1 className="display mt-4 text-[40px] leading-none">All quiet{memberFirst ? `, ${memberFirst}` : ""}</h1>
+              <p className="mt-2 text-[17px] leading-snug text-ink-soft">
                 If Ruko thinks your family member may be on a scam call, you&apos;ll get an alert here with one button to call
                 them.
               </p>
               {!armed && (
                 <button
                   onClick={arm}
-                  className="mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-ink text-[18px] font-bold text-white"
+                  className="m-tap mt-5 flex min-h-14 w-full items-center justify-center gap-2 rounded-[16px] bg-[#14122B] text-[18px] font-bold text-white"
                 >
                   <Bell className="size-5" strokeWidth={2.4} />
                   Turn on alert sound
@@ -336,7 +349,7 @@ export function FamilyApp({
             </section>
 
             {!embed && (
-              <a href="/setup" className="flex min-h-16 items-center justify-between rounded-[18px] border border-hair px-5 text-[19px] font-semibold">
+              <a href="/setup" className="m-tap flex min-h-16 items-center justify-between rounded-[20px] bg-white px-5 text-[18px] font-semibold shadow-[0_6px_24px_rgba(20,18,43,0.06)]">
                 Set up Ruko for Mum or Dad
                 <span aria-hidden>→</span>
               </a>
@@ -345,7 +358,7 @@ export function FamilyApp({
             {earlier.length > 0 && (
               <section>
                 <h2 className="text-[15px] font-bold text-ink-soft">Earlier</h2>
-                <ul className="mt-3 divide-y divide-ink/6 rounded-3xl bg-white px-5 shadow-soft">
+                <ul className="mt-3 divide-y divide-ink/6 rounded-[22px] bg-white px-5 shadow-[0_6px_24px_rgba(20,18,43,0.06)]">
                   {earlier.map((a) => (
                     <li key={a.id} className="py-4">
                       <div className="text-[16px]">{a.message}</div>
@@ -399,8 +412,8 @@ function ApprovalCard({
   if (!t) return null;
   const risky = t.scam;
   return (
-    <section className={`rounded-[28px] p-6 shadow-soft ${risky ? "bg-alarm-soft" : "bg-white"}`}>
-      <div className="text-[13px] font-bold uppercase tracking-[0.14em] text-ink-soft">Needs your OK</div>
+    <section className={`m-fade rounded-[26px] border-2 p-5 shadow-[0_10px_40px_rgba(20,18,43,0.08)] ${risky ? "border-alarm bg-white" : "border-transparent bg-white"}`}>
+      <div className="inline-flex items-center gap-1.5 rounded-full bg-[#fff4d6] px-3 py-1 text-[12px] font-bold tracking-[0.12em] text-warn uppercase">Payment paused · needs your OK</div>
       <p className="mt-2 text-[22px] font-bold leading-snug">
         {first} wants to send {inr(t.amount)} to {t.payee}
       </p>
@@ -408,7 +421,7 @@ function ApprovalCard({
         {t.channel.toUpperCase()} · {t.payee_account}
       </p>
       {t.reasons.length > 0 && (
-        <div className="mt-4 rounded-2xl bg-white/70 p-4">
+        <div className="mt-4 rounded-[16px] bg-[#f4f6f8] p-4">
           <p className={`font-bold ${risky ? "text-alarm" : "text-ink"}`}>
             {risky ? `Ruko also sees scam signs. Call ${first} before you decide.` : "Worth knowing"}
           </p>

@@ -218,8 +218,8 @@ export function MuleWatch() {
   }, []);
   if (!data) return null;
   return (
-    <section className="rounded-2xl border border-white/12 bg-night-2 p-6">
-      <h2 className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.2em] text-white/50">
+    <section className="rounded-[18px] border border-white/10 bg-white/[0.03] p-5">
+      <h2 className="flex items-center gap-2 font-mono text-[12px] uppercase tracking-[0.18em] text-[#38e1ff]">
         <Network className="size-4" /> Mule watch · destination accounts
       </h2>
       {data.clusters.length === 0 ? (
