@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Ruko tech brief</title>
+<style>
+  body { margin: 0; background: #fbf6ec; color: #14122b; font: 18px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 16px 18px 70px; }
+  h1 { font-size: 30px; line-height: 1.1; margin: 8px 0 6px; }
+  h2 { font-size: 22px; margin: 34px 0 8px; padding-top: 12px; border-top: 3px solid #14122b; }
+  h3 { font-size: 19px; margin: 20px 0 6px; }
+  nav a { display: inline-block; margin: 4px 6px 4px 0; padding: 6px 11px; border-radius: 999px; background: #14122b; color: #ffb000; text-decoration: none; font-weight: 700; font-size: 14px; }
+  .say { background: #fff3d1; border-left: 5px solid #ffb000; border-radius: 8px; padding: 10px 12px; margin: 10px 0; }
+  .box { background: #fff; border: 1px solid #e4dccb; border-radius: 10px; padding: 10px 14px; margin: 10px 0; }
+  .warn { border-left: 5px solid #e8202a; }
+  .wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: 16px; background: #fff; }
+  th, td { border: 1px solid #e4dccb; padding: 7px 9px; text-align: left; vertical-align: top; }
+  th { background: #14122b; color: #fff; }
+  .flow { display: grid; gap: 6px; margin: 10px 0; }
+  .step { background: #fff; border: 2px solid #14122b; border-radius: 10px; padding: 8px 12px; }
+  .step b { display: block; font-size: 13px; letter-spacing: .1em; color: #e8202a; }
+  .arrow { text-align: center; font-weight: 700; color: #5b5872; }
+  .tag { display: inline-block; font-size: 13px; font-weight: 700; padding: 1px 7px; border-radius: 6px; }
+  .ok { background: #d9f2df; color: #0d5a23; }
+  .mock { background: #ffe7c2; color: #7a4a00; }
+  .no { background: #fde0e0; color: #8a1010; }
+  ul, ol { padding-left: 22px; margin: 6px 0; }
+  li { margin: 3px 0; }
+  a { color: inherit; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #12111f; color: #f4efe4; }
+    h2 { border-top-color: #f4efe4; }
+    .box, .step, table { background: #1b1a2e; border-color: #2d2b45; }
+    th, td { border-color: #2d2b45; }
+    .step { border-color: #f4efe4; }
+    .say { background: #2e2712; }
+    .arrow { color: #a9a5bd; }
+  }
+</style>
+</head>
+<body>
+<main>
+<h1>Ruko tech brief</h1>
+<p>What Ruko is built with today, how it works inside, what AI does, what you'd plug in to make it real, and how it would run once live.</p>
+
+<nav>
+<a href="#short">In short</a><a href="#arch">Architecture</a><a href="#today">Tools today</a><a href="#ai">AI in Ruko</a><a href="#built">How it was built</a><a href="#real">Real vs demo</a><a href="#plug">To go live</a><a href="#run">Running live</a><a href="#say">How to say it</a>
+</nav>
+
+<h2 id="short">In short</h2>
+<div class="say">Ruko is one web app (Next.js on Vercel) with a database (Supabase) and an AI model behind a swappable connector. AI reads and words; plain code decides. To make it fully real, three things plug in: a bank or payment app calling our Ruko Guard API, a way to send alerts (SMS or WhatsApp), and the Android call-screening app on real phones.</div>
+
+<h2 id="arch">The architecture: five boxes</h2>
+<p>Same five boxes as the deck. Follow one reply through it:</p>
+<div class="flow">
+<div class="step"><b>1 · INPUT</b>What the person says (browser speech-to-text or typing), their yes/no answers, a screenshot, the calling number, or a payment request.</div>
+<div class="arrow">↓</div>
+<div class="step"><b>2 · AI / MODEL</b>Only if the rules can't understand it: the AI reads the meaning and returns a label with a confidence score. Below 0.6, or after 3.2 seconds, it's ignored.</div>
+<div class="arrow">↓</div>
+<div class="step"><b>3 · LOGIC (code decides)</b>Rules, the scam-stage tracker, the threat score (17 tactics), Money Lock's payment rules, and Ruko Guard's decision. STOP comes from here, never from the AI.</div>
+<div class="arrow">↓</div>
+<div class="step"><b>4 · TOOLS</b>Database (Supabase), recorded voices, the number-risk check, family alerts, the evidence log, and the bank API.</div>
+<div class="arrow">↓</div>
+<div class="step"><b>5 · OUTPUT</b>A big STOP, a family alert, a paused payment waiting for the code word, and the X-Ray trace that shows why.</div>
+</div>
+<p>Safety net around everything: a guard filter checks every AI line, and if the AI is slow, down or offline, the rule-only path still works.</p>
+<p>See it live: <a href="/architecture">ruko-seven.vercel.app/architecture</a>, and press <b>X</b> during the live call for X-Ray.</p>
+
+<h2 id="today">Tools in Ruko today</h2>
+<div class="wrap"><table>
+<tr><th>Job</th><th>Tool</th><th>Why</th></tr>
+<tr><td>The app (screens + server)</td><td>Next.js 16, React 19, TypeScript</td><td>One project holds the phone app and the server code.</td></tr>
+<tr><td>Looks</td><td>Tailwind CSS, shadcn/Base UI, Lucide icons</td><td>Large, clear, accessible screens fast.</td></tr>
+<tr><td>Installing on a phone</td><td>Progressive web app (PWA)</td><td>"Add to home screen": no app store. Suggested by the brief.</td></tr>
+<tr><td>Hosting</td><td>Vercel (free plan)</td><td>One-command deploy; live at ruko-seven.vercel.app.</td></tr>
+<tr><td>Database and accounts</td><td>Supabase (Postgres, Mumbai region)</td><td>Family circle, alerts, payments, consent. Row-level security, hashed numbers, 12 migrations.</td></tr>
+<tr><td>AI connector</td><td>OpenRouter (free model first, one cheap backup); Gemini also wired in</td><td>One switch changes provider. Never needed for the demo to work.</td></tr>
+<tr><td>Checking AI answers</td><td>zod</td><td>Every AI reply must match a strict shape, or it's thrown away.</td></tr>
+<tr><td>Hearing the person</td><td>The browser's built-in speech recognition</td><td>Free, no audio leaves through Ruko.</td></tr>
+<tr><td>The caller's voice</td><td>Pre-recorded clips (made with edge-tts)</td><td>Same voice and tone every time, works offline, no overlap.</td></tr>
+<tr><td>The animated face and waveform</td><td>SVG + Web Audio</td><td>Lip-sync to the real audio, no video files.</td></tr>
+<tr><td>QR codes for family pairing</td><td>qrcode</td><td>Pair a family phone by scanning.</td></tr>
+<tr><td>Android call screening</td><td>Kotlin app, no libraries (in <code>android/</code>)</td><td>Grades the number before the phone rings. <b>Written, not yet run on a phone.</b></td></tr>
+<tr><td>Testing</td><td>tsx test scripts, Puppeteer, the eval harness</td><td>20 test suites, browser checks of every flow, measured AI accuracy.</td></tr>
+<tr><td>Deck</td><td>The /deck page, exported to PDF, PNG and PPTX</td><td>One source for every format.</td></tr>
+</table></div>
+
+<h2 id="ai">The AI inside Ruko</h2>
+<p>There are five places Ruko uses AI. In every one, AI <b>reads or words</b>; code makes the decision.</p>
+<div class="wrap"><table>
+<tr><th>AI helper</th><th>What it does</th><th>What it can't do</th></tr>
+<tr><td><b>Reply reader</b> (live call)</td><td>Understands an unclear reply ("sounds fishy, sir") and labels it: doubt, family, refuse… with a confidence score.</td><td>Can't pick the caller's next move or call STOP.</td></tr>
+<tr><td><b>Scam check reader</b> (/check)</td><td>Reads what someone typed, said, or a screenshot, and pulls out warning signs, quoting the words it used.</td><td>Can raise a warning, never lower a STOP.</td></tr>
+<tr><td><b>Companion</b></td><td>After hanging up, words calm next steps in plain English or Hinglish.</td><td>Can't move money or contact anyone.</td></tr>
+<tr><td><b>Ruko Line assistant</b></td><td>Asks an unknown caller who they are and reads the answer.</td><td>The put-through / message / block decision is code, and the server replays it so it can't be faked.</td></tr>
+<tr><td><b>Role-play caller</b> (the fake officer)</td><td>Used only to practise. Speaks recorded lines chosen by code; AI only helps understand you.</td><td>Never asks for real OTPs, PINs, cards, Aadhaar; never names real agencies. A guard filter blocked 22/22 unsafe test lines.</td></tr>
+</table></div>
+<p><b>Measured:</b> replies understood: rules alone 75.8%, AI alone 93.9%, hybrid 90.9%. The hybrid is a little below AI alone because the AI is ignored when unsure, which keeps it safe and fast. AI fell back to rules on 5.3% of turns. Zero false STOPs on 20 genuine calls. (Test set written by us: synthetic, and labelled so.)</p>
+
+<h2 id="built">How Ruko was built: AI agents behind the scenes</h2>
+<div class="wrap"><table>
+<tr><th>Agent / tool</th><th>Role</th></tr>
+<tr><td><b>You</b></td><td>Product owner: the problem, the rules Ruko must never break, what to cut, final say on every decision (logged in DECISIONS.md).</td></tr>
+<tr><td><b>Claude Code</b> (Anthropic)</td><td>The engineer: wrote the code, ran the tests, deployed, made the deck and docs, from your plain-English instructions.</td></tr>
+<tr><td><b>Claude sub-agents</b></td><td>Helpers spun up for side jobs: research, independent reviews, audits, checking the deck.</td></tr>
+<tr><td><b>Puppeteer test robot</b></td><td>A script-driven browser that clicked through every flow like a user and took screenshots.</td></tr>
+<tr><td><b>Eval harness</b></td><td>Scores the AI on a fixed test set so changes can be measured, not guessed.</td></tr>
+<tr><td><b>Web research</b></td><td>Found and checked sources for the numbers (I4C/MHA, NCRP, Pindrop, Deloitte).</td></tr>
+</table></div>
+<p class="say">How to say it: "I built Ruko with Claude Code as my engineering partner. I made the product and safety decisions; the AI wrote and tested the code. Inside the product, AI has a narrow job, and code stays in charge."</p>
+
+<h2 id="real">What's real and what's demo</h2>
+<div class="wrap"><table>
+<tr><th>Part</th><th>Status</th></tr>
+<tr><td>Web app, live call, scam check, family setup, alerts in the app, X-Ray, eval</td><td><span class="tag ok">Works, deployed</span></td></tr>
+<tr><td>Database, consent, hashed data, row-level security</td><td><span class="tag ok">Works</span></td></tr>
+<tr><td>AI reading with fallback; offline mode</td><td><span class="tag ok">Works</span></td></tr>
+<tr><td>Ruko Guard API (the bank's yes/hold/no)</td><td><span class="tag ok">Built and tested</span> against a practice bank</td></tr>
+<tr><td>The bank and the payment</td><td><span class="tag mock">Mock bank</span>: no real money</td></tr>
+<tr><td>The scam call</td><td><span class="tag mock">Role-play</span>: no real calls touched</td></tr>
+<tr><td>Family alert by SMS / WhatsApp</td><td><span class="tag mock">In-app + WhatsApp link</span>: no SMS service yet</td></tr>
+<tr><td>Number risk data</td><td><span class="tag mock">Sample list + reports</span>: no telecom feed yet</td></tr>
+<tr><td>Android call-screening app</td><td><span class="tag no">Written, not run on a phone</span></td></tr>
+<tr><td>Field test with 10 older adults</td><td><span class="tag no">Not done</span>: protocol ready</td></tr>
+</table></div>
+
+<h2 id="plug">What to plug in to make it fully real</h2>
+<p>Listed in order of importance. Tool names are options to evaluate, not choices already made; most need an agreement or a paid plan.</p>
+
+<h3>1. A bank or payment app (most important)</h3>
+<ul>
+<li><b>What:</b> the bank calls Ruko Guard before releasing a risky payment; Ruko answers allow / hold for family / decline.</li>
+<li><b>Plug-in:</b> a partner bank, UPI app or payment service provider; later, NPCI-level rails (UPI Circle style delegation).</li>
+<li><b>Why it matters:</b> without it, Ruko can't stop a real payment. This is also who pays.</li>
+</ul>
+
+<h3>2. Alerts that reach the family anywhere</h3>
+<ul>
+<li><b>What:</b> the family gets the alert even if the app is closed.</li>
+<li><b>Plug-ins:</b> web push notifications; SMS via MSG91 or Twilio (suggested in the brief); WhatsApp Business API; a missed-call or voice alert via Exotel for family members without smartphones.</li>
+</ul>
+
+<h3>3. Call-time warnings on real phones</h3>
+<ul>
+<li><b>What:</b> grade the incoming number before it rings.</li>
+<li><b>Plug-ins:</b> build and test the Android app (Android Studio, Play Store); number-reputation data from consented user reports, DoT's Chakshu / Financial Fraud Risk Indicator if access is granted, and caller-ID partners.</li>
+<li>iPhone allows less; there it stays the "Is this a scam?" check and the bank layer.</li>
+</ul>
+
+<h3>4. Better voices and languages</h3>
+<ul>
+<li><b>Plug-ins:</b> Sarvam AI (Indian languages, speech-to-text and voice), Deepgram or Whisper (speech-to-text), ElevenLabs (voices); for phone-number role-play practice, Vapi or Retell.</li>
+<li><b>Why:</b> Tamil, Telugu, Bengali, Marathi… and practice calls on a normal phone line, not only in the browser.</li>
+</ul>
+
+<h3>5. Running it safely at scale</h3>
+<ul>
+<li>Supabase paid plan (backups, uptime), Vercel paid plan, error monitoring (e.g. Sentry), uptime alerts.</li>
+<li>Security review and penetration test; a DPDP Act legal review; consent records kept properly.</li>
+<li>Rotate the AI key after the hackathon; keep secrets only in the hosting settings.</li>
+</ul>
+
+<h3>6. Proof</h3>
+<ul>
+<li>The 10-elder field test (already designed), then a bank pilot measuring stopped payments and false alarms.</li>
+</ul>
+
+<h2 id="run">How Ruko runs once it's live</h2>
+<ol>
+<li><b>Setup (calm, once):</b> the adult child installs Ruko on the parent's phone, adds trusted family, chooses a code word (stored only as a hash), turns on the bank link and the call-screening app.</li>
+<li><b>Before the phone rings:</b> the Android app checks the number in under 1.5 seconds. Risky: the ring is silenced, a big "Do not pay anyone on this call" shows, and the family is quietly told.</li>
+<li><b>During the call:</b> the elder can tap "Is this a scam?" and answer five questions or say what they heard. Two warning signs → STOP and "Hang up".</li>
+<li><b>At the money:</b> if they still try to pay, the bank asks Ruko Guard. Unusual payment + recent scam signs → held. The family gets the alert and must enter the code word on <i>their own</i> phone to release it. No answer → it stays held for the cooling-off period.</li>
+<li><b>After:</b> the Companion walks them through next steps; 1930 and cybercrime.gov.in are one tap away. Only signal codes are stored, in a tamper-evident log the bank can audit.</li>
+</ol>
+<p><b>Behind the scenes:</b> the phone app and web app talk to Ruko's server on Vercel; the server reads and writes Supabase; the AI is called only when rules can't understand something; and if anything is down, the safe answer is "pause and call family or 1930", never "all clear".</p>
+
+<div class="box warn"><b>Don't claim:</b> a bank is connected, real calls are screened, SMS alerts are live, or the Android app runs. Say "built and tested on a practice bank" and "next".</div>
+
+<h2 id="say">How to say it in 20 seconds</h2>
+<p class="say">"Ruko is a web app on Vercel with a Supabase database. AI reads unclear replies and screenshots; code makes every decision, so it's predictable and works offline. Today the bank is a practice bank. To go live, a bank calls our Ruko Guard API before a risky payment, alerts go out by SMS or WhatsApp, and the Android app warns before the phone rings."</p>
+
+<p>Other links: <a href="/interview.html">interview prep</a> · <a href="/Ruko-Pitch-Deck.pptx">PowerPoint</a> · <a href="/architecture">architecture</a> · <a href="/eval">eval</a></p>
+</main>
+</body>
+</html>
