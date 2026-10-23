@@ -48,12 +48,20 @@ export default function Home() {
         </p>
 
         <LossTicker />
+        <div className="mt-6 flex flex-wrap items-center gap-3">
         <Link
           href="/demo/live"
-          className="press m-tap mt-6 inline-flex min-h-[72px] items-center gap-3 rounded-[18px] bg-[#38e1ff] px-8 text-[24px] font-semibold text-[#041016] shadow-[0_0_40px_rgba(56,225,255,0.35)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          className="press m-tap inline-flex min-h-[72px] items-center gap-3 rounded-[18px] bg-[#38e1ff] px-8 text-[24px] font-semibold text-[#041016] shadow-[0_0_40px_rgba(56,225,255,0.35)] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           Take a live scam call <ArrowRight className="size-6" strokeWidth={2} />
         </Link>
+        <Link
+          href="/demo/call"
+          className="m-tap inline-flex min-h-[72px] items-center gap-3 rounded-[18px] border-2 border-white/40 px-7 text-[21px] font-semibold text-white transition hover:border-[#38e1ff] hover:text-[#38e1ff] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+        >
+          Watch a recorded scam call <ArrowRight className="size-5" strokeWidth={2} />
+        </Link>
+        </div>
           </div>
           <HeroCaller />
         </div>
